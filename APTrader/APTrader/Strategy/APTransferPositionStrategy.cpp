@@ -1,0 +1,194 @@
+#include "APTransferPositionStrategy.h"
+#include "../Utils/APTimeUtility.h"
+#include "../Futures/APFuturesIDSelector.h"
+#include "../APMarketQuotationsManager.h"
+#include "../Quotation/APFuturesQuotation.h"
+#include "../PositionCtrl/APFuturesPosCtrlWithTransfer.h"
+#include <algorithm>
+#include "../Utils/APJsonReader.h"
+
+UINT BEYOND_TRANSFER_MONTHS = 3;
+
+APTransferPositionStrategy::APTransferPositionStrategy()
+{
+}
+
+
+APTransferPositionStrategy::~APTransferPositionStrategy()
+{
+}
+
+APStrategy * APTransferPositionStrategy::create()
+{
+	return new APTransferPositionStrategy();
+}
+
+void APTransferPositionStrategy::init(std::string strategyInfo)
+{
+	APStrategy::init(strategyInfo);
+
+	APJsonReader jr;
+	jr.initWithString(strategyInfo);
+	std::string transferInfo = jr.getObjValue("Transfer");
+	initWithTransferInfo(transferInfo);
+}
+
+void APTransferPositionStrategy::initWithTransferInfo(std::string transferInfo)
+{
+	APJsonReader jr;
+	jr.initWithString(transferInfo);
+	std::string trendType = jr.getStrValue("Trend");
+	if (trendType == "Long") {
+		m_trendType = TT_Long;
+	}
+	else if (trendType == "Short") {
+		m_trendType = TT_Short;
+	}
+
+	m_commodityID = jr.getStrValue("SrcID");
+	m_targetContractID = jr.getStrValue("TargetID");
+	m_criticalDays = jr.getIntValue("CriticalDays");
+	m_deadlineDays = jr.getIntValue("DeadlineDays");
+
+	m_priceMargin = jr.getDoubleValue("PriceMargin");
+	m_priceMarginMax = jr.getDoubleValue("PriceMarginMax");
+
+	m_safePrice = jr.getDoubleValue("SafePrice");
+
+	std::string interpType = jr.getStrValue("InterpolationType");
+	if (interpType == "Linear") {
+		m_interpType = IMT_Linear;
+	}
+	else if (interpType == "Quad") {
+		m_interpType = IMT_Quad;
+	}
+
+	m_curQuotation = dynamic_cast<APFuturesQuotation*>(APMarketQuotationsManager::getInstance()->subscribeCommodity(m_commodityID));
+	m_targetQuotation = dynamic_cast<APFuturesQuotation*>(APMarketQuotationsManager::getInstance()->subscribeCommodity(m_targetContractID));
+}
+
+void APTransferPositionStrategy::update()
+{
+	if (isCloseToDeliver()) {
+		APFuturesPosCtrlWithTransfer* pc = dynamic_cast<APFuturesPosCtrlWithTransfer*>(m_positionCtrl);
+		if (pc != NULL) {
+			if (pc->isTransferFinished()) {
+				onFinishTransfer();
+				return;
+			}
+
+			if (!pc->isTransferring()) {
+				pc->beginTransfer();
+			}
+
+			if (canTransferWithCurrentPrice()) {
+				transferContracts();
+			}
+		}
+	}
+}
+
+void APTransferPositionStrategy::alert()
+{
+}
+
+bool APTransferPositionStrategy::isCloseToDeliver()
+{
+	std::string ym = APFuturesIDSelector::getTimeSymbolInFuturesID(m_targetContractID);
+	UINT months = APTimeUtility::getMonthsToFuturesDeliveryDate(ym);
+	if (months > BEYOND_TRANSFER_MONTHS) {
+		return false;
+	}
+	UINT days = APTimeUtility::getDaysToFuturesDeliveryDate(ym);
+	if (days <= m_criticalDays) {
+		return true;
+	}
+
+	return false;
+}
+
+void APTransferPositionStrategy::transferContracts()
+{
+	if (m_curQuotation != NULL && m_targetQuotation != NULL) {
+		double srcPrice = m_curQuotation->getOpenPrice();
+		long srcAmount = m_curQuotation->getOpenAmount();
+		double targetPrice = m_targetQuotation->getClosePrice();
+		long targetAmount = m_targetQuotation->getCloseAmount();
+		long amount = std::min(srcAmount, targetAmount);
+		APFuturesPosCtrlWithTransfer* pc = dynamic_cast<APFuturesPosCtrlWithTransfer*>(m_positionCtrl);
+		if (pc != NULL) {
+			pc->transferContracts(srcPrice, targetPrice, amount);
+		}
+	}
+}
+
+bool APTransferPositionStrategy::canArbitage()
+{
+	if (m_curQuotation != NULL && m_targetQuotation != NULL) {
+		if (m_trendType == TT_Long) {
+			if (m_targetQuotation->getCurPrice() <= m_curQuotation->getCurPrice()) {
+				return true;
+			}
+		}
+		else if (m_trendType == TT_Short) {
+			if (m_targetQuotation->getCurPrice() >= m_curQuotation->getCurPrice()) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+double APTransferPositionStrategy::getCurPriceMargin()
+{
+	std::string ym = APFuturesIDSelector::getTimeSymbolInFuturesID(m_targetContractID);
+	UINT days = APTimeUtility::getDaysToFuturesDeliveryDate(ym);
+
+	double pm = APInterpolator::interplate<double, double>(m_priceMarginMax, m_priceMargin, (double)m_deadlineDays, (double)m_criticalDays, (double)days, m_interpType);
+	return pm;
+}
+
+bool APTransferPositionStrategy::canTransferWithCurrentPrice()
+{
+	if (m_curQuotation != NULL && m_targetQuotation != NULL) {
+		double curTargetPrice = m_targetQuotation->getCurPrice();
+		if ((m_trendType == TT_Long && curTargetPrice > m_safePrice) ||
+			(m_trendType == TT_Short && curTargetPrice < m_safePrice)){
+			return false;
+		}
+
+		double priceMargin = getCurPriceMargin();
+		if (m_trendType == TT_Long) {
+			if (m_targetQuotation->getClosePrice() - m_curQuotation->getOpenPrice() <= priceMargin) {
+				return true;
+			}
+		}
+		else if (m_trendType == TT_Short) {
+			if (m_curQuotation->getOpenPrice() - m_targetQuotation->getClosePrice() >= priceMargin) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+void APTransferPositionStrategy::onFinishTransfer()
+{
+	// set parent strategy's new commodityID, also position ctrl's commodityID and sync positionCtrl's status
+
+
+	if (m_positionCtrl != NULL) {
+		m_positionCtrl->setCommodityID(m_targetContractID);
+		m_positionCtrl->syncPositionStatus();
+	}
+	// detach from parent strategy -- or generate new delivery date
+	APStrategy* parentStrategy = getParent();
+	if (parentStrategy != NULL) {
+		parentStrategy->setCommodityID(m_targetContractID);
+		//parentStrategy->detach(this);
+	}
+
+	detachFromParent();
+}

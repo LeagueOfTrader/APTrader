@@ -1,0 +1,18 @@
+{
+    "StrategyType": "Transfer",
+    "Priority": 10,
+    "StrategyInfo": {
+        "Subsidiary": true,
+        "Transfer": {
+            "Trend": "Long",
+            "SrcID": "rb1081",
+            "TargetID": "rb1804",
+            "CriticalDays": 30,
+            "DeadlineDays": 10,
+            "PriceMargin": 50,
+            "PriceMarginMax": 200,
+			"SafePrice":3200,
+            "InterpolationType": "Linear"
+        }
+    }
+}

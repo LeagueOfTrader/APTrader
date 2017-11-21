@@ -1,0 +1,32 @@
+{
+    "StrategyType": "Grid",
+    "Priority": 10,
+    "StrategyInfo": {
+        "Position": {
+            "CommodityID": "rb1801",
+            "TotalPosition": 500,
+            "Trend": "Long"
+        },
+        "Quotation": {
+            "QuotationDecisionType": 1,
+            "SrcID": "rb1801",
+            "TargetID": "0",
+            "Param": 0
+        },
+        "Grids": {
+            "Trend": "Long",
+            "Ceil": 40,
+            "Floor": 32.5,
+            "GridPercent": 0.05,
+            "PricePercent": 0.05,
+            "GridPosition": 50,
+            "BasePosition": 300,
+            "GridsCount": 6,
+            "LongPrice": 40.5,
+            "ShortPrice": 30
+        },
+        "SubStrategies": [
+            "Data/transfer1.cfg"
+        ]
+    }
+}

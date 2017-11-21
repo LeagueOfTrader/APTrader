@@ -1,0 +1,36 @@
+#pragma once
+#include "../APTrade.h"
+#include <vector>
+
+class APSharesTrade : public APTrade
+{
+public:
+	APSharesTrade();
+	~APSharesTrade();
+
+public:
+	virtual void open(APASSETID commodityID, APTrendType trend, double price, long amount, APTradeOrderType ot = TOT_ValidTheDay);
+	virtual void close(APASSETID commodityID, APTrendType trend, double price, long amount, APTradeOrderType ot = TOT_ValidTheDay);
+
+	virtual void cancel(APORDERID orderID);
+
+protected:
+	long buy(APASSETID commodityID, double price, long amount);
+	long sell(APASSETID commodityID, double price, long amount);
+
+	void buyOrder(APASSETID commodityID, double price, long amount);
+	void sellOrder(APASSETID commodityID, double price, long amount);
+	void cancelOrder(long orderID);
+
+	void onBought(UINT orderID, double price, long amount);
+	void onSold(UINT orderID, double price, long amount);
+	void onCancel(UINT orderID);
+
+	void cancelBuyOrderBeyondPrice(double price);
+	void cancelSellOrderUnderPrice(double price);
+
+protected:
+	std::vector<APTradeOrderInfo> m_buyOrders;
+	std::vector<APTradeOrderInfo> m_sellOrders;
+};
+

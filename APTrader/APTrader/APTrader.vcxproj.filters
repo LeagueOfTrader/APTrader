@@ -1,0 +1,303 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="APPositionCtrl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APStrategy.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Strategy\APGridStrategy.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APDef.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APGlobalConfig.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APFundPool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APPositionManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PositionCtrl\APSharesPositionCtrl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PositionCtrl\APFuturesPositionCtrl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APMarketQuotations.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APCommodityQuotation.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APObjectFactory.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APTrade.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Singleton.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Trade\APSharesTrade.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Trade\APFuturesTrade.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Shares\APSharesFilter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Quotation\APSharesQuotation.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Quotation\APFuturesQuotation.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APQuotationDecision.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="QuotationDecision\APSingleQuotationDecision.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="QuotationDecision\APPriceMarginQuotationDecision.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="QuotationDecision\APPriceRatioQuotationDecision.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\APJsonReader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\APTimeUtility.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APFramework.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APStrategyManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APStrategyFactory.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Strategy\APStandardGridStrategy.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Futures\APFuturesIDSelector.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Futures\APFuturesPositionTransfer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\APIntAccumulator.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APTradeManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\APInterpolator.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PositionCtrl\APFuturesPosCtrlWithTransfer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Strategy\APTransferPositionStrategy.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\ParentChildrenHierarchy.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APAccountAssets.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Simulation\APSimTradeSystem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Simulation\APSimFuturesTrade.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Simulation\APSimFuturesQuotation.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Simulation\APSimFramework.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Cyclebuffer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Simulation\APSimAccount.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Simulation\APSimMarketQuotations.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\APLog.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Simulation\APSimSingleQuotationDecision.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APMarketQuotationsManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APTypes.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="APPositionCtrl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Strategy\APGridStrategy.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APGlobalConfig.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APFundPool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APPositionManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PositionCtrl\APSharesPositionCtrl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PositionCtrl\APFuturesPositionCtrl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APMarketQuotations.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APCommodityQuotation.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APObjectFactory.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APTrade.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APStrategy.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Trade\APSharesTrade.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Trade\APFuturesTrade.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Shares\APSharesFilter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Quotation\APSharesQuotation.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Quotation\APFuturesQuotation.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APQuotationDecision.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="QuotationDecision\APSingleQuotationDecision.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="QuotationDecision\APPriceMarginQuotationDecision.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="QuotationDecision\APPriceRatioQuotationDecision.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\APJsonReader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\APTimeUtility.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APFramework.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APStrategyManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APStrategyFactory.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Strategy\APStandardGridStrategy.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Futures\APFuturesIDSelector.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Futures\APFuturesPositionTransfer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\APIntAccumulator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APTradeManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PositionCtrl\APFuturesPosCtrlWithTransfer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Strategy\APTransferPositionStrategy.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APAccountAssests.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Simulation\APSimTradeSystem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Simulation\APSimFuturesTrade.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Simulation\APSimFuturesQuotation.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Simulation\APSimFramework.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Simulation\APSimAccount.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Simulation\APSimMarketQuotations.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\APLog.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Simulation\APSimSingleQuotationDecision.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APMarketQuotationsManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

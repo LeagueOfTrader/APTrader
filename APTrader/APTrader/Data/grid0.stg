@@ -1,0 +1,29 @@
+{
+    "StrategyType": "Grid",
+    "Priority": 10,
+    "StrategyInfo": {
+        "Position": {
+            "CommodityID": "rb1801",
+            "TotalPosition": 600,
+            "Trend": "Long"
+        },
+        "Quotation": {
+            "QuotationDecisionType": 101,
+            "SrcID": "rb1801",
+            "TargetID": "0",
+            "Param": 0
+        },
+        "Grids": {
+            "Trend": "Long",
+            "Ceil": 3500,
+            "Floor": 3400,
+            "GridPercent": 0.05,
+            "PricePercent": 0.05,
+            "GridPosition": 50,
+            "BasePosition": 300,
+            "GridsCount": 6,
+            "LongPrice": 3500,
+            "ShortPrice": 3400
+        }
+    }
+}
