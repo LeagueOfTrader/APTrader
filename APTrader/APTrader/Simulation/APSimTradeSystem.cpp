@@ -124,6 +124,12 @@ void APSimTradeSystem::onTradeFinished(APORDERID orderID, APASSETID commodityID,
 		else if (type == TDT_Close) {
 			tradeTypeStr = "Close";
 		}
+		else if (type == TDT_CancelOpen) {
+			tradeTypeStr = "CancelOpen";
+		}
+		else if (type == TDT_CancelClose) {
+			tradeTypeStr = "CancelClose";
+		}
 		APLogger->log("Sim Trade Finish, %s targetID: %s, contractType:%d, price:%f, amount:%d .", 
 						tradeTypeStr.c_str(), commodityID.c_str(), trend, price, amount);
 	}

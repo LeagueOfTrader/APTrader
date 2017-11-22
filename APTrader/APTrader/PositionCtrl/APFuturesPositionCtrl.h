@@ -25,6 +25,7 @@ public:
 	virtual void closeAll(APTrendType type, double price);
 
 	virtual void cancel(APTradeType type, double price, long amount);
+	virtual void cancel(APTradeType type, double price, APTrendType trend);
 	virtual void cancel(APTradeType type);
 	virtual void cancelAll();
 

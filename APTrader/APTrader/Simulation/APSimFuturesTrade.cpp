@@ -51,6 +51,11 @@ void APSimFuturesTrade::close(APASSETID commodityID, APTrendType trend, double p
 	APLogger->log("<<<< Close %s position price: %f, amount: %d. ", trendStr.c_str(), price, amount);
 }
 
+void APSimFuturesTrade::cancel(APORDERID orderID)
+{
+	APSimTradeSystem::getInstance()->requestCancel(orderID);
+}
+
 void APSimFuturesTrade::onFundChanged(APASSETID commodityID, APTradeType type, double variableFund, APORDERID orderID, APTrendType trend)
 {
 	APSimAccount::getInstance()->saveFund(variableFund);

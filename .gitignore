@@ -1,0 +1,14 @@
+
+APTrader/x64/Debug/APTrader.exe
+APTrader/.vs/APTrader/v15/.suo
+*.db
+*.opendb
+*.ipch
+*.db-shm
+*.db-wal
+*.tlog
+*.obj
+*.log
+*.idb
+*.pdb
+*.ilk

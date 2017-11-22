@@ -50,6 +50,7 @@ void APGridStrategy::update()
 
 		m_curIndex = 0;
 		goTrendGrid(curValue);
+		goThroughGrids();
 		m_lastIndex = m_curIndex;
 	}
 }
@@ -139,41 +140,35 @@ bool APGridStrategy::inCloseSection(double value)
 
 void APGridStrategy::goThroughGrids()
 {
-	if (m_curIndex == m_lastIndex) {
+	if (m_curIndex == m_lastIndex || m_lastIndex == 0) {
 		return;
-	}
-
-	int gridIndex = m_curIndex;
+	}	
 
 	APTradeType type = TDT_Num;
-	if (m_curIndex < 0) {
-		// in open section
+	if(m_lastIndex < 0){
 		type = TDT_Open;
 	}
-	else if(m_curIndex > 0){
-		// in close section
+	else {
 		type = TDT_Close;
 	}
+
+	int gridIndex = m_lastIndex;
+
+	//bool isGoingPoles = true;
+	//if (abs(m_curIndex) > abs(m_lastIndex)) {
+	//	isGoingPoles = false;
+	//}
+
+	double refPrice = 0.0;
+	if (gridIndex > 0) {
+		refPrice = m_closeGrids[gridIndex - 1].price;
+	}
 	else {
-		// in waiting section
-		if(m_lastIndex < 0){
-			type = TDT_Open;
-		}
-		else {
-			type = TDT_Close;
-		}
-
-		gridIndex = m_lastIndex;
+		refPrice = m_openGrids[-gridIndex - 1].price;
 	}
-
-	bool isGoingPoles = true;
-	if (abs(m_curIndex) > abs(m_lastIndex)) {
-		isGoingPoles = false;
-	}
-
 
 	if (m_positionCtrl != NULL) {
-		m_positionCtrl->cancelTrade(type, , );
+		m_positionCtrl->cancelTrade(type, refPrice, m_trend);
 	}
 }
 

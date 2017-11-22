@@ -221,7 +221,7 @@ void APPositionCtrl::cancelTrade(APTradeType type, double price, long amount)
 
 void APPositionCtrl::cancelTrade(APTradeType type, double price, APTrendType trend)
 {
-	//
+	cancel(type, price, trend);
 }
 
 void APPositionCtrl::cancelTrade(APTradeType type)
@@ -292,4 +292,6 @@ void APPositionCtrl::setBaseParam(std::string positionInfo)
 	syncPositionStatus();
 }
 
-
+void APPositionCtrl::cancel(APTradeType type, double price, APTrendType trend)
+{
+}

@@ -47,12 +47,25 @@ void APFuturesPositionCtrl::cancel(APTradeType type, double price, long amount)
 {
 }
 
+void APFuturesPositionCtrl::cancel(APTradeType type, double price, APTrendType trend)
+{
+	if (m_trade != NULL) {
+		m_trade->cancel(m_commodityID, type, trend, price, this);
+	}
+}
+
 void APFuturesPositionCtrl::cancel(APTradeType type)
 {
+	if (m_trade != NULL) {
+		m_trade->cancel(m_commodityID, type, this);
+	}
 }
 
 void APFuturesPositionCtrl::cancelAll()
 {
+	if (m_trade != NULL) {
+		m_trade->cancelAll(m_commodityID, this);
+	}
 }
 
 void APFuturesPositionCtrl::onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long amount, APTrendType trend)

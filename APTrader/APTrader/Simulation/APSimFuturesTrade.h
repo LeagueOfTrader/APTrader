@@ -11,6 +11,7 @@ public:
 
 	virtual void open(APASSETID commodityID, APTrendType trend, double price, long amount, APTradeOrderType ot = TOT_ValidTheDay);
 	virtual void close(APASSETID commodityID, APTrendType trend, double price, long amount, APTradeOrderType ot = TOT_ValidTheDay);
+	virtual void cancel(APORDERID orderID);
 
 	virtual void onFundChanged(APASSETID commodityID, APTradeType type, double variableFund, APORDERID orderID, APTrendType trend = TT_Long);
 

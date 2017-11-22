@@ -46,27 +46,93 @@ void APTrade::close(APASSETID commodityID, APTrendType trend, double price, long
 	close(commodityID, trend, price, amount, ot);
 }
 
-void APTrade::cancel(APASSETID commodityID, APTradeType type, APTrendType trend, double price, long amount, APPositionCtrl* pc) {
+void APTrade::cancel(APASSETID commodityID, APTradeType type, APTrendType trend, double price, APPositionCtrl* pc) {
 	if (pc == NULL) {
 		return;
 	}
 
-	APORDERID orderID = UNDISTURBED_ORDER_ID;
-	std::list<APTradeOrderPositionInfo>::iterator it;
-	for (it = m_ordersApplied.begin(); it != m_ordersApplied.end(); it++) {
-		APTradeOrderPositionInfo& info = *it;
-		if (info.orderInfo.commodityID == commodityID &&
-			info.orderInfo.type == type &&
-			fabs(info.orderInfo.price - price) < DBL_EPSILON &&
-			info.orderInfo.amount == amount &&
-			info.orderInfo.trend == trend) {
-			orderID = info.orderInfo.orderID;
-			break;
+	std::vector<UINT> relatedOrders = getRelatedOrders(pc);
+
+	std::vector<UINT> cancelOrders;
+	for (int i = 0; i < relatedOrders.size(); i++) {
+		UINT id = relatedOrders[i];
+		if (m_ordersSubmitted.find(id) != m_ordersSubmitted.end()) {
+			APTradeOrderInfo& info = m_ordersSubmitted[id];
+			if (info.commodityID == commodityID &&
+				info.type == type &&
+				info.trend == trend) {
+				if ( fabs(info.price - price) < DBL_EPSILON ||
+					(((trend == TT_Long && type == TDT_Close) || (trend == TT_Short && type == TDT_Open)) && info.price > price) ||  // Long Close / Short Open, cancel higher offered price
+					(((trend == TT_Short && type == TDT_Close) || (trend == TT_Long && type == TDT_Open)) && info.price < price) ) { // Long Open / Short Close, cancel lower offered price
+					UINT orderID = info.orderID;
+					cancelOrders.push_back(orderID);
+				}
+			}
 		}
 	}
 
-	if (orderID != UNDISTURBED_ORDER_ID){
-		cancel(orderID);
+	for (int i = 0; i < cancelOrders.size(); i++) {
+		UINT orderID = cancelOrders[i];
+		if (orderID != UNDISTURBED_ORDER_ID) {
+			cancel(orderID);
+		}
+	}
+}
+
+void APTrade::cancel(APASSETID commodityID, APTradeType type, APPositionCtrl * pc)
+{
+	if (pc == NULL) {
+		return;
+	}
+
+	std::vector<UINT> relatedOrders = getRelatedOrders(pc);
+
+	std::vector<UINT> cancelOrders;
+	for (int i = 0; i < relatedOrders.size(); i++) {
+		UINT id = relatedOrders[i];
+		if (m_ordersSubmitted.find(id) != m_ordersSubmitted.end()) {
+			APTradeOrderInfo& info = m_ordersSubmitted[id];
+			if (info.commodityID == commodityID &&
+				info.type == type) {
+				UINT orderID = info.orderID;
+				cancelOrders.push_back(orderID);
+			}
+		}
+	}
+
+	for (int i = 0; i < cancelOrders.size(); i++) {
+		UINT orderID = cancelOrders[i];
+		if (orderID != UNDISTURBED_ORDER_ID) {
+			cancel(orderID);
+		}
+	}
+}
+
+void APTrade::cancelAll(APASSETID commodityID, APPositionCtrl * pc)
+{
+	if (pc == NULL) {
+		return;
+	}
+
+	std::vector<UINT> relatedOrders = getRelatedOrders(pc);
+
+	std::vector<UINT> cancelOrders;
+	for (int i = 0; i < relatedOrders.size(); i++) {
+		UINT id = relatedOrders[i];
+		if (m_ordersSubmitted.find(id) != m_ordersSubmitted.end()) {
+			APTradeOrderInfo& info = m_ordersSubmitted[id];
+			if (info.commodityID == commodityID) {
+				UINT orderID = info.orderID;
+				cancelOrders.push_back(orderID);
+			}
+		}
+	}
+
+	for (int i = 0; i < cancelOrders.size(); i++) {
+		UINT orderID = cancelOrders[i];
+		if (orderID != UNDISTURBED_ORDER_ID) {
+			cancel(orderID);
+		}
 	}
 }
 
@@ -146,6 +212,25 @@ void APTrade::onTradeOrdered(APASSETID commodityID, APTradeType type, double pri
 
 void APTrade::onFundChanged(APASSETID commodityID, APTradeType type, double variableFund, APORDERID orderID, APTrendType trend) {
 	//
+}
+
+std::vector<UINT> APTrade::getRelatedOrders(APPositionCtrl * pc)
+{
+	std::vector<UINT> orders;
+	if (pc == NULL) {
+		return orders;
+	}
+
+	UINT pcID = pc->getID();
+	std::map<UINT, UINT>::iterator itor;
+	for (itor = m_orderPosCtrlRelation.begin(); itor != m_orderPosCtrlRelation.end(); itor++) {
+		UINT id = itor->second;
+		if (pcID == id) {
+			orders.push_back(itor->first);
+		}
+	}
+
+	return orders;
 }
 
 //void APTrade::setPositionCtrl(APPositionCtrl * positionCtrl)

@@ -67,6 +67,7 @@ protected:
 	virtual void openAll(APTrendType type, double price) = 0;
 	virtual void closeAll(APTrendType type, double price) = 0;
 	virtual void cancel(APTradeType type, double price, long amount) = 0;
+	virtual void cancel(APTradeType type, double price, APTrendType trend);
 	virtual void cancel(APTradeType type) = 0;
 	virtual void cancelAll() = 0;
 	
