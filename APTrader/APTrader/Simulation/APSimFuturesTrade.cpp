@@ -17,10 +17,10 @@ APSimFuturesTrade::~APSimFuturesTrade()
 	m_orderRecord.clear();
 }
 
-void APSimFuturesTrade::open(APASSETID commodityID, APTrendType trend, double price, long amount, APTradeOrderType ot)
+void APSimFuturesTrade::open(APASSETID commodityID, APTrendType trend, double price, long volume, APTradeOrderType ot)
 {
-	UINT orderID = APSimTradeSystem::getInstance()->requestOpen(commodityID, trend, price, amount);
-	APTradeOrderInfo order = {orderID, TDT_Open, commodityID, price, amount, trend};
+	UINT orderID = APSimTradeSystem::getInstance()->requestOpen(commodityID, trend, price, volume);
+	APTradeOrderInfo order = {orderID, TDT_Open, commodityID, price, volume, trend};
 
 	m_orderRecord[orderID] = order;
 
@@ -31,13 +31,13 @@ void APSimFuturesTrade::open(APASSETID commodityID, APTrendType trend, double pr
 	else if (trend == TT_Short) {
 		trendStr = "Short";
 	}
-	APLogger->log(">>>> Open %s position price: %f, amount: %d. ", trendStr.c_str(), price, amount);
+	APLogger->log(">>>> Open %s position price: %f, volume: %d. ", trendStr.c_str(), price, volume);
 }
 
-void APSimFuturesTrade::close(APASSETID commodityID, APTrendType trend, double price, long amount, APTradeOrderType ot)
+void APSimFuturesTrade::close(APASSETID commodityID, APTrendType trend, double price, long volume, APTradeOrderType ot)
 {
-	UINT orderID = APSimTradeSystem::getInstance()->requestClose(commodityID, trend, price, amount);
-	APTradeOrderInfo order = { orderID, TDT_Close, commodityID, price, amount, trend };
+	UINT orderID = APSimTradeSystem::getInstance()->requestClose(commodityID, trend, price, volume);
+	APTradeOrderInfo order = { orderID, TDT_Close, commodityID, price, volume, trend };
 
 	m_orderRecord[orderID] = order;
 
@@ -48,7 +48,7 @@ void APSimFuturesTrade::close(APASSETID commodityID, APTrendType trend, double p
 	else if (trend == TT_Short) {
 		trendStr = "Short";
 	}
-	APLogger->log("<<<< Close %s position price: %f, amount: %d. ", trendStr.c_str(), price, amount);
+	APLogger->log("<<<< Close %s position price: %f, volume: %d. ", trendStr.c_str(), price, volume);
 }
 
 void APSimFuturesTrade::cancel(APORDERID orderID)
@@ -61,33 +61,33 @@ void APSimFuturesTrade::onFundChanged(APASSETID commodityID, APTradeType type, d
 	APSimAccount::getInstance()->saveFund(variableFund);
 }
 
-//void APSimFuturesTrade::cancel(APASSETID commodityID, APTradeType type, APTrendType trend, double price, long amount)
+//void APSimFuturesTrade::cancel(APASSETID commodityID, APTradeType type, APTrendType trend, double price, long volume)
 //{
-//	//int orderID = findOrder(commodityID, type, price, amount, trend);
+//	//int orderID = findOrder(commodityID, type, price, volume, trend);
 //	//if (orderID >= 0) {
 //	//	APSimTradeSystem::getInstance()->requestCancel(orderID);
 //	//}
 //}
 
-//void APSimFuturesTrade::onTradeFinished(APASSETID commodityID, APTradeType type, double price, long amount, APORDERID orderID, APTrendType trend)
+//void APSimFuturesTrade::onTradeFinished(APASSETID commodityID, APTradeType type, double price, long volume, APORDERID orderID, APTrendType trend)
 //{
 //	//APORDERID orderID = UNDISTURBED_ORDER_ID;
 //	//if (type == TDT_Open || type == TDT_Close) {
 //	//	orderID = findOrder(commodityID, type, price, trend);
 //	//	if (orderID >= 0) {
-//	//		m_orderRecord[orderID].amount -= amount;
-//	//		if (m_orderRecord[orderID].amount <= 0) {
+//	//		m_orderRecord[orderID].volume -= volume;
+//	//		if (m_orderRecord[orderID].volume <= 0) {
 //	//			m_orderRecord.erase(orderID);
 //	//		}
 //	//	}
 //	//}
 //	//else {
-//	//	orderID = findOrder(commodityID, type, price, amount, trend);
+//	//	orderID = findOrder(commodityID, type, price, volume, trend);
 //	//	if (orderID >= 0) {
 //	//		m_orderRecord.erase(orderID);
 //	//	}
 //	//}
-//	APTrade::onTradeFinished(commodityID, type, price, amount, orderID, trend);
+//	APTrade::onTradeFinished(commodityID, type, price, volume, orderID, trend);
 //}
 //
 //int APSimFuturesTrade::findOrder(APASSETID commodityID, APTradeType type, double price, APTrendType trend)
@@ -104,13 +104,13 @@ void APSimFuturesTrade::onFundChanged(APASSETID commodityID, APTradeType type, d
 //	return -1;
 //}
 //
-//int APSimFuturesTrade::findOrder(APASSETID commodityID, APTradeType type, double price, long amount, APTrendType trend)
+//int APSimFuturesTrade::findOrder(APASSETID commodityID, APTradeType type, double price, long volume, APTrendType trend)
 //{
 //	std::map<int, APTradeOrderInfo>::iterator it;
 //	for (it = m_orderRecord.begin(); it != m_orderRecord.end(); it++) {
 //		const APTradeOrderInfo& order = it->second;
 //		if (commodityID == order.commodityID && type == order.type && trend == order.trend
-//			&& fabs(price - order.price) < DBL_EPSILON && amount == order.amount) {
+//			&& fabs(price - order.price) < DBL_EPSILON && volume == order.volume) {
 //			return it->first;
 //		}
 //	}

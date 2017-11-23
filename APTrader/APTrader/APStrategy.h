@@ -30,8 +30,8 @@ public:
 	void setCommodityID(APASSETID commodityID);
 
 protected:
-	void open(APTrendType type, double price, long amount);
-	void close(APTrendType type, double price, long amount);
+	void open(APTrendType type, double price, long volume);
+	void close(APTrendType type, double price, long volume);
 	void openAll(APTrendType type, double price);
 	void closeAll(APTrendType type, double price);
 

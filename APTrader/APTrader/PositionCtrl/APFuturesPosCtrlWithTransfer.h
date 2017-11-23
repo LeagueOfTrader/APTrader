@@ -10,16 +10,16 @@ public:
 	virtual void init(std::string positionInfo);
 
 	void setTargetContractID(APASSETID contractID);
-	virtual void onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long amount, APTrendType trend = TT_Long);
+	virtual void onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APTrendType trend = TT_Long);
 
-	virtual void open(APTrendType type, double price, long amount);
-	virtual void close(APTrendType type, double price, long amount);
+	virtual void open(APTrendType type, double price, long volume);
+	virtual void close(APTrendType type, double price, long volume);
 
 	void beginTransfer();
 	bool isTransferring();
 	bool isTransferFinished();
 
-	void transferContracts(double droppedContractPrice, double targetContractPrice, long amount);
+	void transferContracts(double droppedContractPrice, double targetContractPrice, long volume);
 
 protected:
 	void checkTransferStatus();

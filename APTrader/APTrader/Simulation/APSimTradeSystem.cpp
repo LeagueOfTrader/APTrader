@@ -21,24 +21,24 @@ APSimTradeSystem::~APSimTradeSystem()
 	m_tradeIDAccumulator = NULL;
 }
 
-UINT APSimTradeSystem::requestOpen(APASSETID commodityID, APTrendType trend, double price, long amount)
+UINT APSimTradeSystem::requestOpen(APASSETID commodityID, APTrendType trend, double price, long volume)
 {
 	APORDERID orderID = m_orderIDAccumulator->generateID();
-	APTradeOrderInfo order = {orderID, TDT_Open, commodityID, price, amount, trend};
+	APTradeOrderInfo order = {orderID, TDT_Open, commodityID, price, volume, trend};
 	m_orderList.push_back(order);
 	if (m_trade != NULL) {
-		m_trade->onTradeOrdered(commodityID, TDT_Open, price, amount, orderID, trend);
+		m_trade->onTradeOrdered(commodityID, TDT_Open, price, volume, orderID, trend);
 	}
 	return orderID;
 }
 
-UINT APSimTradeSystem::requestClose(APASSETID commodityID, APTrendType trend, double price, long amount)
+UINT APSimTradeSystem::requestClose(APASSETID commodityID, APTrendType trend, double price, long volume)
 {
 	APORDERID orderID = m_orderIDAccumulator->generateID();
-	APTradeOrderInfo order = { orderID, TDT_Close, commodityID, price, amount, trend };
+	APTradeOrderInfo order = { orderID, TDT_Close, commodityID, price, volume, trend };
 	m_orderList.push_back(order);
 	if (m_trade != NULL) {
-		m_trade->onTradeOrdered(commodityID, TDT_Close, price, amount, orderID, trend);
+		m_trade->onTradeOrdered(commodityID, TDT_Close, price, volume, orderID, trend);
 	}
 	return orderID;
 }
@@ -59,7 +59,7 @@ void APSimTradeSystem::requestCancel(UINT orderID)
 				cancelType = TDT_CancelClose;
 			}
 
-			onTradeFinished(orderID, order.commodityID, cancelType, order.price, order.amount, order.trend);
+			onTradeFinished(orderID, order.commodityID, cancelType, order.price, order.volume, order.trend);
 			m_orderList.erase(it);
 			break;
 		}
@@ -112,10 +112,10 @@ double APSimTradeSystem::calcFloatingProfit()
 	return floatingProfit;
 }
 
-void APSimTradeSystem::onTradeFinished(APORDERID orderID, APASSETID commodityID, APTradeType type, double price, long amount, APTrendType trend)
+void APSimTradeSystem::onTradeFinished(APORDERID orderID, APASSETID commodityID, APTradeType type, double price, long volume, APTrendType trend)
 {
 	if (m_trade != NULL) {
-		m_trade->onTradeFinished(commodityID, type, price, amount, orderID, trend);
+		m_trade->onTradeFinished(commodityID, type, price, volume, orderID, trend);
 
 		std::string tradeTypeStr;
 		if (type == TDT_Open) {
@@ -130,8 +130,8 @@ void APSimTradeSystem::onTradeFinished(APORDERID orderID, APASSETID commodityID,
 		else if (type == TDT_CancelClose) {
 			tradeTypeStr = "CancelClose";
 		}
-		APLogger->log("Sim Trade Finish, %s targetID: %s, contractType:%d, price:%f, amount:%d .", 
-						tradeTypeStr.c_str(), commodityID.c_str(), trend, price, amount);
+		APLogger->log("Sim Trade Finish, %s targetID: %s, contractType:%d, price:%f, volume:%d .", 
+						tradeTypeStr.c_str(), commodityID.c_str(), trend, price, volume);
 	}
 }
 
@@ -161,13 +161,13 @@ bool APSimTradeSystem::arrangeTrade(APTradeOrderInfo & order)
 	}
 
 	if (result) {
-		closeTheDeal(order.orderID, order.commodityID, order.type, price, order.amount, order.trend);
+		closeTheDeal(order.orderID, order.commodityID, order.type, price, order.volume, order.trend);
 	}
 
 	return result;
 }
 
-double APSimTradeSystem::calcProfitAndLoss(double costPrice, double currentPrice, long amount, APTrendType trend) {
+double APSimTradeSystem::calcProfitAndLoss(double costPrice, double currentPrice, long volume, APTrendType trend) {
 	double profitAndLoss = 0.0;
 	double unitPnL = 0.0;
 
@@ -178,16 +178,16 @@ double APSimTradeSystem::calcProfitAndLoss(double costPrice, double currentPrice
 		unitPnL = costPrice - currentPrice;
 	}
 
-	profitAndLoss = (double)amount * unitPnL;
+	profitAndLoss = (double)volume * unitPnL;
 
 	return profitAndLoss;
 }
 
-void APSimTradeSystem::closeTheDeal(APORDERID orderID, APASSETID commodityID, APTradeType type, double price, long amount, APTrendType trend) {
+void APSimTradeSystem::closeTheDeal(APORDERID orderID, APASSETID commodityID, APTradeType type, double price, long volume, APTrendType trend) {
 	// process deal
 	UINT tradeID = m_tradeIDAccumulator->generateID();
 	if (type == TDT_Open) {
-		APSimTradeStub stub = { tradeID, commodityID, trend, price, amount, orderID };
+		APSimTradeStub stub = { tradeID, commodityID, trend, price, volume, orderID };
 		if (trend == TT_Long) {
 			m_tradeLongStubs[commodityID].push_back(stub);
 		}
@@ -196,7 +196,7 @@ void APSimTradeSystem::closeTheDeal(APORDERID orderID, APASSETID commodityID, AP
 		}
 
 		double account = 0.0;
-		account = -price * (double)amount;
+		account = -price * (double)volume;
 		if (m_trade != NULL) {
 			m_trade->onFundChanged(commodityID, TDT_Open, account, orderID, trend);
 		}
@@ -215,14 +215,14 @@ void APSimTradeSystem::closeTheDeal(APORDERID orderID, APASSETID commodityID, AP
 
 		while (!finishProcess) {
 			APSimTradeStub& stub = stubsQueue.front();
-			if (stub.amount < amount) {
-				account += calcProfitAndLoss(stub.costPrice, price, stub.amount, trend);
-				account += stub.costPrice * stub.amount;
+			if (stub.volume < volume) {
+				account += calcProfitAndLoss(stub.costPrice, price, stub.volume, trend);
+				account += stub.costPrice * stub.volume;
 			}
 			else {
-				stub.amount -= amount;
-				account += calcProfitAndLoss(stub.costPrice, price, amount, trend);
-				account += stub.costPrice * amount;
+				stub.volume -= volume;
+				account += calcProfitAndLoss(stub.costPrice, price, volume, trend);
+				account += stub.costPrice * volume;
 				finishProcess = true;
 			}
 		}
@@ -233,7 +233,7 @@ void APSimTradeSystem::closeTheDeal(APORDERID orderID, APASSETID commodityID, AP
 		}
 	}
 	
-	onTradeFinished(orderID, commodityID, type, price, amount, trend);
+	onTradeFinished(orderID, commodityID, type, price, volume, trend);
 }
 
 void APSimTradeSystem::validQuotation(APASSETID commodityID)
@@ -252,8 +252,8 @@ double APSimTradeSystem::calcFloatingProfit(APSimTradeStub& tradeStub)
 	double curPrice = 0.0;
 	if (m_quotations[targetID] != NULL) {
 		curPrice = m_quotations[targetID]->getCurPrice();				
-		double curPnL = calcProfitAndLoss(tradeStub.costPrice, curPrice, tradeStub.amount, tradeStub.trend);
-		double cost = tradeStub.costPrice * tradeStub.amount;
+		double curPnL = calcProfitAndLoss(tradeStub.costPrice, curPrice, tradeStub.volume, tradeStub.trend);
+		double cost = tradeStub.costPrice * tradeStub.volume;
 		return curPnL + cost;
 	}
 

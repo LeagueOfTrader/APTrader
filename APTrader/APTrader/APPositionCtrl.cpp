@@ -152,10 +152,10 @@ long APPositionCtrl::getCloseOrderedPosition()
 	return m_closeOrdersPosition;
 }
 
-void APPositionCtrl::openTrade(APTrendType type, double price, long amount)
+void APPositionCtrl::openTrade(APTrendType type, double price, long volume)
 {	
-	if (amount > m_availablePosition) {
-		amount = m_availablePosition;
+	if (volume > m_availablePosition) {
+		volume = m_availablePosition;
 	}
 
 	double quotePrice = price;
@@ -171,15 +171,15 @@ void APPositionCtrl::openTrade(APTrendType type, double price, long amount)
 		}
 	}
 
-	m_availablePosition -= amount;
-	m_openOrdersPosition += amount;
-	open(type, quotePrice, amount);
+	m_availablePosition -= volume;
+	m_openOrdersPosition += volume;
+	open(type, quotePrice, volume);
 }
 
-void APPositionCtrl::closeTrade(APTrendType type, double price, long amount)
+void APPositionCtrl::closeTrade(APTrendType type, double price, long volume)
 {
-	if (amount > m_holdPosition) {
-		amount = m_holdPosition;
+	if (volume > m_holdPosition) {
+		volume = m_holdPosition;
 	}
 
 	double quotePrice = price;
@@ -195,9 +195,9 @@ void APPositionCtrl::closeTrade(APTrendType type, double price, long amount)
 		}
 	}
 
-	m_holdPosition -= amount;
-	m_closeOrdersPosition += amount;
-	close(type, quotePrice, amount);
+	m_holdPosition -= volume;
+	m_closeOrdersPosition += volume;
+	close(type, quotePrice, volume);
 }
 
 void APPositionCtrl::openAllTrade(APTrendType type, double price)
@@ -214,9 +214,9 @@ void APPositionCtrl::closeAllTrade(APTrendType type, double price)
 	m_holdPosition = 0;	
 }
 
-void APPositionCtrl::cancelTrade(APTradeType type, double price, long amount)
+void APPositionCtrl::cancelTrade(APTradeType type, double price, long volume)
 {
-	cancel(type, price, amount);
+	cancel(type, price, volume);
 }
 
 void APPositionCtrl::cancelTrade(APTradeType type, double price, APTrendType trend)

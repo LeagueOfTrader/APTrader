@@ -19,24 +19,24 @@ public:
 
 	virtual void init(std::string positionInfo);
 
-	virtual void open(APTrendType type, double price, long amount);
-	virtual void close(APTrendType type, double price, long amount);
+	virtual void open(APTrendType type, double price, long volume);
+	virtual void close(APTrendType type, double price, long volume);
 	virtual void openAll(APTrendType type, double price);
 	virtual void closeAll(APTrendType type, double price);
 
-	virtual void cancel(APTradeType type, double price, long amount);
+	virtual void cancel(APTradeType type, double price, long volume);
 	virtual void cancel(APTradeType type, double price, APTrendType trend);
 	virtual void cancel(APTradeType type);
 	virtual void cancelAll();
 
-	virtual void onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long amount, APTrendType trend = TT_Long);
+	virtual void onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APTrendType trend = TT_Long);
 
 	void setContractID(APASSETID contractID);
 	void setContractType(APTrendType type);
 
 	// api trade futures directly
-	void open(APASSETID contractID, APTrendType trend, double price, long amount, APTradeOrderType ot = TOT_ValidTheDay);
-	void close(APASSETID contractID, APTrendType trend, double price, long amount, APTradeOrderType ot = TOT_ValidTheDay);
+	void open(APASSETID contractID, APTrendType trend, double price, long volume, APTradeOrderType ot = TOT_ValidTheDay);
+	void close(APASSETID contractID, APTrendType trend, double price, long volume, APTradeOrderType ot = TOT_ValidTheDay);
 
 
 

@@ -23,14 +23,14 @@ void APSharesPositionCtrl::init(std::string positionInfo)
 	m_trade = dynamic_cast<APSharesTrade*>(APTradeManager::getInstance()->getTradeInstance());
 }
 
-void APSharesPositionCtrl::open(APTrendType type, double price, long amount)
+void APSharesPositionCtrl::open(APTrendType type, double price, long volume)
 {
-	m_trade->open(m_commodityID, type, price, amount, this);
+	m_trade->open(m_commodityID, type, price, volume, this);
 }
 
-void APSharesPositionCtrl::close(APTrendType type, double price, long amount)
+void APSharesPositionCtrl::close(APTrendType type, double price, long volume)
 {
-	m_trade->close(m_commodityID, type, price, amount, this);
+	m_trade->close(m_commodityID, type, price, volume, this);
 }
 
 void APSharesPositionCtrl::openAll(APTrendType type, double price)
@@ -43,7 +43,7 @@ void APSharesPositionCtrl::closeAll(APTrendType type, double price)
 	//
 }
 
-void APSharesPositionCtrl::cancel(APTradeType type, double price, long amount)
+void APSharesPositionCtrl::cancel(APTradeType type, double price, long volume)
 {
 }
 
@@ -55,24 +55,24 @@ void APSharesPositionCtrl::cancelAll()
 {
 }
 
-void APSharesPositionCtrl::onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long amount, APTrendType trend)
+void APSharesPositionCtrl::onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APTrendType trend)
 {
 	switch (type) {
 		case TDT_Open:
-			m_frozenPosition += amount;
-			m_openOrdersPosition -= amount;
+			m_frozenPosition += volume;
+			m_openOrdersPosition -= volume;
 			break;
 		case TDT_Close:
-			m_availablePosition += amount;
-			m_closeOrdersPosition -= amount;
+			m_availablePosition += volume;
+			m_closeOrdersPosition -= volume;
 			break;
 		case TDT_CancelOpen:
-			m_availablePosition += amount;
-			m_openOrdersPosition -= amount;
+			m_availablePosition += volume;
+			m_openOrdersPosition -= volume;
 			break;
 		case TDT_CancelClose:
-			m_holdPosition += amount;
-			m_closeOrdersPosition -= amount;
+			m_holdPosition += volume;
+			m_closeOrdersPosition -= volume;
 			break;
 		default:
 			break;

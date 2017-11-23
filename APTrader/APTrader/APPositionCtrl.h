@@ -46,27 +46,27 @@ public:
 	long getOpenOrderedPosition();
 	long getCloseOrderedPosition();
 
-	void openTrade(APTrendType type, double price, long amount);
-	void closeTrade(APTrendType type, double price, long amount);
+	void openTrade(APTrendType type, double price, long volume);
+	void closeTrade(APTrendType type, double price, long volume);
 	void openAllTrade(APTrendType type, double price);
 	void closeAllTrade(APTrendType type, double price);
-	void cancelTrade(APTradeType type, double price, long amount); // may implement later
+	void cancelTrade(APTradeType type, double price, long volume); // may implement later
 	void cancelTrade(APTradeType type, double price, APTrendType trend);
 	void cancelTrade(APTradeType type);
 	void cancelAllTrade();
 
-	virtual void onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long amount, APTrendType trend = TT_Long) = 0;
+	virtual void onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APTrendType trend = TT_Long) = 0;
 
 	virtual void update();
 
 	void bindTrade(APTrade* trade);
 
 protected:
-	virtual void open(APTrendType type, double price, long amount) = 0;
-	virtual void close(APTrendType type, double price, long amount) = 0;
+	virtual void open(APTrendType type, double price, long volume) = 0;
+	virtual void close(APTrendType type, double price, long volume) = 0;
 	virtual void openAll(APTrendType type, double price) = 0;
 	virtual void closeAll(APTrendType type, double price) = 0;
-	virtual void cancel(APTradeType type, double price, long amount) = 0;
+	virtual void cancel(APTradeType type, double price, long volume) = 0;
 	virtual void cancel(APTradeType type, double price, APTrendType trend);
 	virtual void cancel(APTradeType type) = 0;
 	virtual void cancelAll() = 0;

@@ -102,11 +102,11 @@ void APGridStrategy::goTrendGrid(double value) // , std::vector<APGridData>& ope
 		m_curIndex = i + 1;
 
 		if (m_curIndex > m_lastIndex) {
-			long amount = std::min(m_positionCtrl->getTradablePosition(), m_closeGrids[i].position);
+			long volume = std::min(m_positionCtrl->getTradablePosition(), m_closeGrids[i].position);
 			if (i == m_closeGrids.size() - 1) {
-				amount = m_positionCtrl->getTradablePosition();
+				volume = m_positionCtrl->getTradablePosition();
 			}
-			close(m_trend, m_closeGrids[i].price, amount);
+			close(m_trend, m_closeGrids[i].price, volume);
 		}
 	}
 	else if (inOpenSection(value)) {
@@ -120,8 +120,8 @@ void APGridStrategy::goTrendGrid(double value) // , std::vector<APGridData>& ope
 		m_curIndex = -(i + 1);
 
 		if (m_positionCtrl->getCurPosition() + m_positionCtrl->getOpenOrderedPosition() < m_openGrids[i].position) {
-			long amount = m_openGrids[i].position - (m_positionCtrl->getCurPosition() + m_positionCtrl->getOpenOrderedPosition());
-			open(m_trend, m_openGrids[i].price, amount);
+			long volume = m_openGrids[i].position - (m_positionCtrl->getCurPosition() + m_positionCtrl->getOpenOrderedPosition());
+			open(m_trend, m_openGrids[i].price, volume);
 		}
 	}
 }

@@ -23,14 +23,14 @@ void APFuturesPositionCtrl::init(std::string positionInfo)
 }
 
 
-void APFuturesPositionCtrl::open(APTrendType type, double price, long amount)
+void APFuturesPositionCtrl::open(APTrendType type, double price, long volume)
 {
-	open(m_commodityID, type, price, amount);
+	open(m_commodityID, type, price, volume);
 }
 
-void APFuturesPositionCtrl::close(APTrendType type, double price, long amount)
+void APFuturesPositionCtrl::close(APTrendType type, double price, long volume)
 {
-	close(m_commodityID, type, price, amount);
+	close(m_commodityID, type, price, volume);
 }
 
 void APFuturesPositionCtrl::openAll(APTrendType type, double price)
@@ -43,7 +43,7 @@ void APFuturesPositionCtrl::closeAll(APTrendType type, double price)
 	close(type, price, m_holdPosition);
 }
 
-void APFuturesPositionCtrl::cancel(APTradeType type, double price, long amount)
+void APFuturesPositionCtrl::cancel(APTradeType type, double price, long volume)
 {
 }
 
@@ -68,7 +68,7 @@ void APFuturesPositionCtrl::cancelAll()
 	}
 }
 
-void APFuturesPositionCtrl::onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long amount, APTrendType trend)
+void APFuturesPositionCtrl::onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APTrendType trend)
 {
 	if (commodityID != m_commodityID || trend != m_trendType) {
 		return;
@@ -76,22 +76,22 @@ void APFuturesPositionCtrl::onTradeFinished(APASSETID commodityID, APTradeType t
 
 	switch (type) {
 	case TDT_Open:
-		m_holdPosition += amount;
-		m_openOrdersPosition -= amount;
-		//changeContractPossession(commodityID, amount, trend);
+		m_holdPosition += volume;
+		m_openOrdersPosition -= volume;
+		//changeContractPossession(commodityID, volume, trend);
 		break;
 	case TDT_Close:
-		m_availablePosition += amount;
-		m_closeOrdersPosition -= amount;
-		//changeContractPossession(commodityID, -amount, trend);
+		m_availablePosition += volume;
+		m_closeOrdersPosition -= volume;
+		//changeContractPossession(commodityID, -volume, trend);
 		break;
 	case TDT_CancelOpen:
-		m_availablePosition += amount;
-		m_openOrdersPosition -= amount;
+		m_availablePosition += volume;
+		m_openOrdersPosition -= volume;
 		break;
 	case TDT_CancelClose:
-		m_holdPosition += amount;
-		m_closeOrdersPosition -= amount;
+		m_holdPosition += volume;
+		m_closeOrdersPosition -= volume;
 		break;
 	default:
 		break;
@@ -108,17 +108,17 @@ void APFuturesPositionCtrl::setContractType(APTrendType type)
 	m_trendType = type;
 }
 
-void APFuturesPositionCtrl::open(APASSETID contractID, APTrendType trend, double price, long amount, APTradeOrderType ot)
+void APFuturesPositionCtrl::open(APASSETID contractID, APTrendType trend, double price, long volume, APTradeOrderType ot)
 {
 	if (m_trade != NULL) {
-		m_trade->open(contractID, trend, price, amount, this, ot);
+		m_trade->open(contractID, trend, price, volume, this, ot);
 	}
 }
 
-void APFuturesPositionCtrl::close(APASSETID contractID, APTrendType trend, double price, long amount, APTradeOrderType ot)
+void APFuturesPositionCtrl::close(APASSETID contractID, APTrendType trend, double price, long volume, APTradeOrderType ot)
 {
 	if (m_trade != NULL) {
-		m_trade->close(contractID, trend, price, amount, this, ot);
+		m_trade->close(contractID, trend, price, volume, this, ot);
 	}
 }
 

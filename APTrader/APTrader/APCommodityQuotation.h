@@ -5,7 +5,7 @@
 
 struct APOrderInfo {
 	double price;
-	long amount;
+	long volume;
 };
 
 class APCommodityQuotation
@@ -19,8 +19,8 @@ public:
 	virtual double getCurPrice();
 	virtual double getOpenPrice(UINT index = 0);
 	virtual double getClosePrice(UINT index = 0);
-	virtual long getOpenAmount(UINT index = 0);
-	virtual long getCloseAmount(UINT index = 0);
+	virtual long getOpenvolume(UINT index = 0);
+	virtual long getClosevolume(UINT index = 0);
 
 protected:
 	APASSETID m_commodityID;

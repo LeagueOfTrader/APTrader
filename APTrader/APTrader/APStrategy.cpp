@@ -91,17 +91,17 @@ void APStrategy::setID(UINT id)
 	m_id = id;
 }
 
-void APStrategy::open(APTrendType type, double price, long amount)
+void APStrategy::open(APTrendType type, double price, long volume)
 {
 	if (m_positionCtrl != NULL) {
-		m_positionCtrl->openTrade(type, price, amount);
+		m_positionCtrl->openTrade(type, price, volume);
 	}
 }
 
-void APStrategy::close(APTrendType type, double price, long amount)
+void APStrategy::close(APTrendType type, double price, long volume)
 {
 	if (m_positionCtrl != NULL) {
-		m_positionCtrl->closeTrade(type, price, amount);
+		m_positionCtrl->closeTrade(type, price, volume);
 	}
 }
 

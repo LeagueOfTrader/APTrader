@@ -10,27 +10,27 @@ public:
 
 	virtual void init(std::string positionInfo);
 
-	virtual void open(APTrendType type, double price, long amount);
-	virtual void close(APTrendType type, double price, long amount);
+	virtual void open(APTrendType type, double price, long volume);
+	virtual void close(APTrendType type, double price, long volume);
 	virtual void openAll(APTrendType type, double price);
 	virtual void closeAll(APTrendType type, double price);
-	virtual void cancel(APTradeType type, double price, long amount);
+	virtual void cancel(APTradeType type, double price, long volume);
 	virtual void cancel(APTradeType type);
 	virtual void cancelAll();
 
-	virtual void onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long amount, APTrendType trend = TT_Long);
+	virtual void onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APTrendType trend = TT_Long);
 
 //protected:
-//	void buy(double price, long amount);
-//	void sell(double price, long amount);
-//	void buyAtLeast(double price, long amount);
+//	void buy(double price, long volume);
+//	void sell(double price, long volume);
+//	void buyAtLeast(double price, long volume);
 //
 //	void overBuy(double price);
 //	void overSell(double price);
 //
-//	void onBuyOrdered(double price, long amount);
-//	void onBought(double price, long amount);
-//	void onSold(double price, long amount);
+//	void onBuyOrdered(double price, long volume);
+//	void onBought(double price, long volume);
+//	void onSold(double price, long volume);
 
 protected:
 	//
