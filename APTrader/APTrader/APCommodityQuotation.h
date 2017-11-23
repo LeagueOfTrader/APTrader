@@ -19,8 +19,8 @@ public:
 	virtual double getCurPrice();
 	virtual double getOpenPrice(UINT index = 0);
 	virtual double getClosePrice(UINT index = 0);
-	virtual long getOpenvolume(UINT index = 0);
-	virtual long getClosevolume(UINT index = 0);
+	virtual long getOpenVolume(UINT index = 0);
+	virtual long getCloseVolume(UINT index = 0);
 
 protected:
 	APASSETID m_commodityID;

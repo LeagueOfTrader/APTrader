@@ -30,12 +30,12 @@ struct APTradeOrderInfo {
 	APTradeOrderInfo() {
 	}
 
-	APTradeOrderInfo(APORDERID theOrderID, APTradeType theType, APASSETID theCommodityID, double thePrice, long thevolume, APTrendType theTrend) {
+	APTradeOrderInfo(APORDERID theOrderID, APTradeType theType, APASSETID theCommodityID, double thePrice, long theVolume, APTrendType theTrend) {
 		orderID = theOrderID;
 		type = theType;
 		commodityID = theCommodityID;
 		price = thePrice;
-		volume = thevolume;
+		volume = theVolume;
 		trend = theTrend;
 	}
 

@@ -34,7 +34,7 @@ double APCommodityQuotation::getClosePrice(UINT index)
 	return m_closeOrderList[index].price;
 }
 
-long APCommodityQuotation::getOpenvolume(UINT index)
+long APCommodityQuotation::getOpenVolume(UINT index)
 {
 	if (index >= m_openOrderList.size()) {
 		return 0;
@@ -43,7 +43,7 @@ long APCommodityQuotation::getOpenvolume(UINT index)
 	return m_openOrderList[index].volume;
 }
 
-long APCommodityQuotation::getClosevolume(UINT index)
+long APCommodityQuotation::getCloseVolume(UINT index)
 {
 	if (index >= m_closeOrderList.size()) {
 		return 0;

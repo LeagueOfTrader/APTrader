@@ -58,8 +58,8 @@ void APFuturesPosCtrlWithTransfer::open(APTrendType type, double price, long vol
 void APFuturesPosCtrlWithTransfer::close(APTrendType type, double price, long volume)
 {
 	if (m_isTransferring) {
-		long srcContractvolume = std::min(volume, m_holdPosition - m_closeOrdersPosition);
-		APFuturesPositionCtrl::close(type, price, srcContractvolume);
+		long srcContractVolume = std::min(volume, m_holdPosition - m_closeOrdersPosition);
+		APFuturesPositionCtrl::close(type, price, srcContractVolume);
 		if (volume > m_holdPosition - m_closeOrdersPosition) {
 			long volumeSurplus = volume - (m_holdPosition - m_closeOrdersPosition);
 			APFuturesPositionCtrl::close(m_targetContractID, type, price, volumeSurplus);
@@ -88,12 +88,12 @@ bool APFuturesPosCtrlWithTransfer::isTransferFinished()
 
 void APFuturesPosCtrlWithTransfer::transferContracts(double droppedContractPrice, double targetContractPrice, long volume)
 {
-	long realvolume = std::min(volume, m_holdPosition - m_closeOrdersPosition);
+	long realVolume = std::min(volume, m_holdPosition - m_closeOrdersPosition);
 	//fak may has mistakes
-	APFuturesPositionCtrl::close(m_commodityID, m_trendType, droppedContractPrice, realvolume);
-	realvolume = std::min(realvolume, m_positonNeedTransfer - m_targetContractHoldPosition);
-	if (realvolume > 0) {
-		APFuturesPositionCtrl::open(m_targetContractID, m_trendType, targetContractPrice, realvolume);
+	APFuturesPositionCtrl::close(m_commodityID, m_trendType, droppedContractPrice, realVolume);
+	realVolume = std::min(realVolume, m_positonNeedTransfer - m_targetContractHoldPosition);
+	if (realVolume > 0) {
+		APFuturesPositionCtrl::open(m_targetContractID, m_trendType, targetContractPrice, realVolume);
 	}
 }
 

@@ -111,10 +111,10 @@ void APTransferPositionStrategy::transferContracts()
 {
 	if (m_curQuotation != NULL && m_targetQuotation != NULL) {
 		double srcPrice = m_curQuotation->getOpenPrice();
-		long srcvolume = m_curQuotation->getOpenvolume();
+		long srcVolume = m_curQuotation->getOpenVolume();
 		double targetPrice = m_targetQuotation->getClosePrice();
-		long targetvolume = m_targetQuotation->getClosevolume();
-		long volume = std::min(srcvolume, targetvolume);
+		long targetVolume = m_targetQuotation->getCloseVolume();
+		long volume = std::min(srcVolume, targetVolume);
 		APFuturesPosCtrlWithTransfer* pc = dynamic_cast<APFuturesPosCtrlWithTransfer*>(m_positionCtrl);
 		if (pc != NULL) {
 			pc->transferContracts(srcPrice, targetPrice, volume);
