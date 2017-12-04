@@ -51,7 +51,7 @@ public:
 	void closeTrade(APTrendType type, double price, long volume);
 	void openAllTrade(APTrendType type, double price);
 	void closeAllTrade(APTrendType type, double price);
-	void cancelTrade(APTradeType type, double price, long volume); // may implement later
+	//void cancelTrade(APTradeType type, double price, long volume); // may implement later
 	void cancelTrade(APTradeType type, double price, APTrendType trend);
 	void cancelTrade(APTradeType type);
 	void cancelAllTrade();
@@ -69,10 +69,10 @@ protected:
 	virtual void close(APTrendType type, double price, long volume) = 0;
 	virtual void openAll(APTrendType type, double price) = 0;
 	virtual void closeAll(APTrendType type, double price) = 0;
-	virtual void cancel(APTradeType type, double price, long volume) = 0;
-	virtual void cancel(APTradeType type, double price, APTrendType trend);
+	//virtual void cancel(APTradeType type, double price, long volume) = 0;
+	virtual void cancel(APTradeType type, double price, APTrendType trend = TT_Long);
 	virtual void cancel(APTradeType type) = 0;
-	virtual void cancelAll() = 0;
+	virtual void cancelAll();
 	
 	virtual void onSyncPositionStatus(const APPositionData& data);
 

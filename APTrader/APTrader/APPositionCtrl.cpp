@@ -5,6 +5,7 @@
 #include "APCommodityQuotation.h"
 #include "APMarketQuotationsManager.h"
 #include "APPositionManager.h"
+#include "APTrade.h"
 
 APPositionCtrl::APPositionCtrl()
 {
@@ -214,10 +215,10 @@ void APPositionCtrl::closeAllTrade(APTrendType type, double price)
 	m_holdPosition = 0;	
 }
 
-void APPositionCtrl::cancelTrade(APTradeType type, double price, long volume)
-{
-	cancel(type, price, volume);
-}
+//void APPositionCtrl::cancelTrade(APTradeType type, double price, long volume)
+//{
+//	cancel(type, price, volume);
+//}
 
 void APPositionCtrl::cancelTrade(APTradeType type, double price, APTrendType trend)
 {
@@ -304,4 +305,17 @@ void APPositionCtrl::setBaseParam(std::string positionInfo)
 
 void APPositionCtrl::cancel(APTradeType type, double price, APTrendType trend)
 {
+}
+
+void APPositionCtrl::cancelAll()
+{
+	if (m_trade != NULL) {
+		std::list<APORDERID>::iterator it;
+		for (it = m_openOrderList.begin(); it != m_openOrderList.end(); it++) {
+			m_trade->cancel(*it, this);
+		}
+		for (it = m_closeOrderList.begin(); it != m_closeOrderList.end(); it++) {
+			m_trade->cancel(*it, this);
+		}
+	}
 }

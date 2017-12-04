@@ -14,9 +14,9 @@ public:
 	virtual void close(APTrendType type, double price, long volume);
 	virtual void openAll(APTrendType type, double price);
 	virtual void closeAll(APTrendType type, double price);
-	virtual void cancel(APTradeType type, double price, long volume);
+	virtual void cancel(APTradeType type, double price, APTrendType trend = TT_Long);
 	virtual void cancel(APTradeType type);
-	virtual void cancelAll();
+	//virtual void cancelAll();
 
 	virtual void onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APORDERID orderID, APTrendType trend = TT_Long);
 

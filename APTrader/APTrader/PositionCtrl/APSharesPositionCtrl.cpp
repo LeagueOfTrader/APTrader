@@ -25,12 +25,18 @@ void APSharesPositionCtrl::init(std::string positionInfo)
 
 void APSharesPositionCtrl::open(APTrendType type, double price, long volume)
 {
-	m_trade->open(m_commodityID, type, price, volume, this);
+	APORDERID orderID = m_trade->open(m_commodityID, type, price, volume, this);
+	if (orderID != INVALID_TRADE_ORDER_ID) {
+		m_openOrderList.push_back(orderID);
+	}
 }
 
 void APSharesPositionCtrl::close(APTrendType type, double price, long volume)
 {
-	m_trade->close(m_commodityID, type, price, volume, this);
+	APORDERID orderID = m_trade->close(m_commodityID, type, price, volume, this);
+	if (orderID != INVALID_TRADE_ORDER_ID) {
+		m_closeOrderList.push_back(orderID);
+	}
 }
 
 void APSharesPositionCtrl::openAll(APTrendType type, double price)
@@ -43,17 +49,47 @@ void APSharesPositionCtrl::closeAll(APTrendType type, double price)
 	//
 }
 
-void APSharesPositionCtrl::cancel(APTradeType type, double price, long volume)
+void APSharesPositionCtrl::cancel(APTradeType type, double price, APTrendType trend)
 {
+	if (trend != TT_Long) {
+		return;
+	}
+
+	if (m_trade != NULL) {
+		//m_trade->cancel(m_commodityID, type, trend, price, this);
+		std::list<APORDERID>::iterator it;
+		APTradeOrderInfo info;
+		if (type == TDT_Open) {
+			for (it = m_openOrderList.begin(); it != m_openOrderList.end(); it++) {
+				//m_trade->cancel(*it, this);				
+				if (m_trade->getOrderInfo(*it, info)) {					
+					if (fabs(info.price - price) < DBL_EPSILON ||						
+						info.price < price) { 
+						m_trade->cancel(*it, this);
+					}					
+				}
+			}
+		}
+		else if (type == TDT_Close) {
+			for (it = m_closeOrderList.begin(); it != m_closeOrderList.end(); it++) {
+				if (m_trade->getOrderInfo(*it, info)) {
+					if (fabs(info.price - price) < DBL_EPSILON ||
+						info.price > price) {
+						m_trade->cancel(*it, this);
+					}					
+				}
+			}
+		}
+	}
 }
 
 void APSharesPositionCtrl::cancel(APTradeType type)
 {
 }
 
-void APSharesPositionCtrl::cancelAll()
-{
-}
+//void APSharesPositionCtrl::cancelAll()
+//{
+//}
 
 void APSharesPositionCtrl::onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APORDERID orderID, APTrendType trend)
 {
