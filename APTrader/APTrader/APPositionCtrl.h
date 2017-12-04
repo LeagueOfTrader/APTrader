@@ -3,6 +3,7 @@
 #include <string>
 #include "APAccountAssets.h"
 #include "APTypes.h"
+#include <list>
 
 class APTrade;
 class APCommodityQuotation;
@@ -55,11 +56,13 @@ public:
 	void cancelTrade(APTradeType type);
 	void cancelAllTrade();
 
-	virtual void onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APTrendType trend = TT_Long) = 0;
+	virtual void onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APORDERID orderID, APTrendType trend = TT_Long) = 0;
 
 	virtual void update();
 
 	void bindTrade(APTrade* trade);
+
+	void onCompleteOrder(APORDERID orderID, APTradeType type);
 
 protected:
 	virtual void open(APTrendType type, double price, long volume) = 0;
@@ -95,6 +98,9 @@ protected:
 	UINT m_id;
 
 	APCommodityQuotation* m_quotation;
+
+	std::list<APORDERID> m_openOrderList;
+	std::list<APORDERID> m_closeOrderList;
 
 public:
 	friend class APPositionManager;

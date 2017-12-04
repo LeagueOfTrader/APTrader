@@ -16,7 +16,7 @@ APGridStrategy::APGridStrategy()
 	m_openGrids.clear();
 	m_closeGrids.clear();
 
-
+	m_closeOnly = false;
 }
 
 APGridStrategy::~APGridStrategy()
@@ -110,6 +110,10 @@ void APGridStrategy::goTrendGrid(double value) // , std::vector<APGridData>& ope
 		}
 	}
 	else if (inOpenSection(value)) {
+		if (m_closeOnly) {
+			return;
+		}
+
 		int i = getCurTrendGridIndex(m_openGrids, value, true);
 
 		if (i >= m_openGrids.size()) {

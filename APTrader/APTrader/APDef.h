@@ -59,3 +59,5 @@ enum APTradeOrderType {
 	TOT_FOK,
 	TOT_Num,
 };
+
+const unsigned int INVALID_TRADE_ORDER_ID = 0;

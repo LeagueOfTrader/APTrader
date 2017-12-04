@@ -1,18 +1,27 @@
 #include "APTrade.h"
 #include "APPositionCtrl.h"
 #include "APPositionManager.h"
+#include "./Utils/APIntAccumulator.h"
+#include "./Utils/APTimeUtility.h"
+
+const UINT TRADE_ID_SHIFT = 1000;
 
 APTrade::APTrade()
 {
+	m_idAccumulator = new APIntAccumulator();
 }
 
 APTrade::~APTrade()
 {
+	if (m_idAccumulator != NULL) {
+		delete m_idAccumulator;
+		m_idAccumulator = NULL;
+	}
 }
 
-void APTrade::open(APASSETID commodityID, APTrendType trend, double price, long volume, APPositionCtrl* pc, APTradeOrderType ot) {
+APORDERID APTrade::open(APASSETID commodityID, APTrendType trend, double price, long volume, APPositionCtrl* pc, APTradeOrderType ot) {
 	if (pc == NULL) {
-		return;
+		return INVALID_TRADE_ORDER_ID;
 	}
 
 	if (ot == TOT_ValidTheDay) {
@@ -23,14 +32,15 @@ void APTrade::open(APASSETID commodityID, APTrendType trend, double price, long 
 		APTradeOrderPositionInfo info = { MATCH_ANY_ORDER_ID, TDT_Open, commodityID, price, volume, trend, pc->getID() };
 		m_quickDealOrders.push_back(info);
 	}
-	
 
-	open(commodityID, trend, price, volume, ot);
+	APORDERID orderID = generateOrderID();
+	open(orderID, commodityID, trend, price, volume, ot);
+	return orderID;
 }
 
-void APTrade::close(APASSETID commodityID, APTrendType trend, double price, long volume, APPositionCtrl* pc, APTradeOrderType ot) {
+APORDERID APTrade::close(APASSETID commodityID, APTrendType trend, double price, long volume, APPositionCtrl* pc, APTradeOrderType ot) {
 	if (pc == NULL) {
-		return;
+		return INVALID_TRADE_ORDER_ID;
 	}
 
 	if (ot == TOT_ValidTheDay) {
@@ -42,8 +52,9 @@ void APTrade::close(APASSETID commodityID, APTrendType trend, double price, long
 		m_quickDealOrders.push_back(info);
 	}
 	
-
-	close(commodityID, trend, price, volume, ot);
+	APORDERID orderID = generateOrderID();
+	close(orderID, commodityID, trend, price, volume, ot);
+	return orderID;
 }
 
 void APTrade::cancel(APASSETID commodityID, APTradeType type, APTrendType trend, double price, APPositionCtrl* pc) {
@@ -136,6 +147,11 @@ void APTrade::cancelAll(APASSETID commodityID, APPositionCtrl * pc)
 	}
 }
 
+void APTrade::cancel(APORDERID orderID, APPositionCtrl * pc)
+{
+	cancel(orderID);
+}
+
 
 void APTrade::onTradeFinished(APASSETID commodityID, APTradeType type, double price, long volume, APORDERID orderID, APTrendType trend)
 {
@@ -151,7 +167,7 @@ void APTrade::onTradeFinished(APASSETID commodityID, APTradeType type, double pr
 		UINT posCtrlID = m_orderPosCtrlRelation[orderID];
 		APPositionCtrl* posCtrl = APPositionManager::getInstance()->getPositionCtrl(posCtrlID);
 		if (posCtrl != NULL) {
-			posCtrl->onTradeFinished(commodityID, type, price, volume, trend);
+			posCtrl->onTradeFinished(commodityID, type, price, volume, orderID, trend);
 		}
 
 		// 
@@ -166,6 +182,9 @@ void APTrade::onTradeFinished(APASSETID commodityID, APTradeType type, double pr
 
 		if (orderInfo.volume == 0) {
 			//trade fully finished
+			if (posCtrl != NULL) {
+				posCtrl->onCompleteOrder(orderID, type);
+			}
 			m_orderPosCtrlRelation.erase(orderID);
 			m_ordersSubmitted.erase(orderID);
 		}
@@ -214,7 +233,24 @@ void APTrade::onFundChanged(APASSETID commodityID, APTradeType type, double vari
 	//
 }
 
-std::vector<UINT> APTrade::getRelatedOrders(APPositionCtrl * pc)
+bool APTrade::getOrderInfo(APORDERID orderID, APTradeOrderInfo& orderInfo)
+{
+	if (m_ordersSubmitted.find(orderID) != m_ordersSubmitted.end()) {
+		orderInfo = m_ordersSubmitted[orderID];
+		return true;
+	}
+
+	return false;
+}
+
+APORDERID APTrade::generateOrderID()
+{
+	UINT accumID = m_idAccumulator->generateID();
+	APORDERID orderID = APTimeUtility::getTimestamp() * TRADE_ID_SHIFT + accumID % TRADE_ID_SHIFT;
+	return orderID;
+}
+
+std::vector<APORDERID> APTrade::getRelatedOrders(APPositionCtrl * pc)
 {
 	std::vector<UINT> orders;
 	if (pc == NULL) {
@@ -222,7 +258,7 @@ std::vector<UINT> APTrade::getRelatedOrders(APPositionCtrl * pc)
 	}
 
 	UINT pcID = pc->getID();
-	std::map<UINT, UINT>::iterator itor;
+	std::map<APORDERID, UINT>::iterator itor;
 	for (itor = m_orderPosCtrlRelation.begin(); itor != m_orderPosCtrlRelation.end(); itor++) {
 		UINT id = itor->second;
 		if (pcID == id) {

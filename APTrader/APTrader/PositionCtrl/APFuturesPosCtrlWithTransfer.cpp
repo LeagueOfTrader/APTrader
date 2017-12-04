@@ -21,7 +21,7 @@ void APFuturesPosCtrlWithTransfer::setTargetContractID(APASSETID contractID)
 	m_targetContractID = contractID;
 }
 
-void APFuturesPosCtrlWithTransfer::onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APTrendType trend)
+void APFuturesPosCtrlWithTransfer::onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APORDERID orderID, APTrendType trend)
 {
 	if (commodityID != m_commodityID || commodityID != m_targetContractID || type != m_trendType) {
 		return;
@@ -37,7 +37,7 @@ void APFuturesPosCtrlWithTransfer::onTradeFinished(APASSETID commodityID, APTrad
 		m_openOrdersPosition -= volume;		
 	}
 	else {
-		APFuturesPositionCtrl::onTradeFinished(commodityID, type, price, volume, trend);
+		APFuturesPositionCtrl::onTradeFinished(commodityID, type, price, volume, orderID, trend);
 	}
 
 	if (!m_finishTransferring) {

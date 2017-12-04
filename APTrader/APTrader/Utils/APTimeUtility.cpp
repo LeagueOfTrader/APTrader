@@ -1,5 +1,6 @@
 #include "APTimeUtility.h"
 #include <windows.h>
+#include <time.h>
 
 UINT MONTH_DAYS_APPROXIMATION = 30;
 UINT DAYS_IN_MONTH[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
@@ -115,5 +116,13 @@ UINT APTimeUtility::getDaysToFuturesDeliveryDate(std::string ym)
 
 UINT APTimeUtility::getWorkDaysToFuturesDeliveryDate(std::string ym)
 {
+	// todo: search calender...
 	return 0;
+}
+
+UINT APTimeUtility::getTimestamp()
+{
+	time_t t = time(0);
+	localtime(&t);
+	return t;
 }

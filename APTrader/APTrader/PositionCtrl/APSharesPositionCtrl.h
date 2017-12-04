@@ -18,7 +18,7 @@ public:
 	virtual void cancel(APTradeType type);
 	virtual void cancelAll();
 
-	virtual void onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APTrendType trend = TT_Long);
+	virtual void onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APORDERID orderID, APTrendType trend = TT_Long);
 
 //protected:
 //	void buy(double price, long volume);

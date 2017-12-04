@@ -50,25 +50,72 @@ void APFuturesPositionCtrl::cancel(APTradeType type, double price, long volume)
 void APFuturesPositionCtrl::cancel(APTradeType type, double price, APTrendType trend)
 {
 	if (m_trade != NULL) {
-		m_trade->cancel(m_commodityID, type, trend, price, this);
+		//m_trade->cancel(m_commodityID, type, trend, price, this);
+		std::list<APORDERID>::iterator it;
+		APTradeOrderInfo info;
+		if (type == TDT_Open) {
+			for (it = m_openOrderList.begin(); it != m_openOrderList.end(); it++) {
+				//m_trade->cancel(*it, this);				
+				if (m_trade->getOrderInfo(*it, info)) {
+					if (info.trend == trend) {
+						if (fabs(info.price - price) < DBL_EPSILON ||
+							(trend == TT_Short && info.price > price) ||  //Short Open, cancel higher offered price
+							(trend == TT_Long &&  info.price < price)) { // Long Open, cancel lower offered price
+							m_trade->cancel(*it, this);
+						}
+					}
+				}
+			}
+		}
+		else if (type == TDT_Close) {
+			for (it = m_closeOrderList.begin(); it != m_closeOrderList.end(); it++) {
+				if (m_trade->getOrderInfo(*it, info)) {
+					if (info.trend == trend) {
+						if (fabs(info.price - price) < DBL_EPSILON ||
+							(trend == TT_Long  && info.price > price) ||  // Long Close, cancel higher offered price
+							(trend == TT_Short && info.price < price)) { // Short Close, cancel lower offered price
+							m_trade->cancel(*it, this);
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
 void APFuturesPositionCtrl::cancel(APTradeType type)
 {
 	if (m_trade != NULL) {
-		m_trade->cancel(m_commodityID, type, this);
+		//m_trade->cancel(m_commodityID, type, this);
+		std::list<APORDERID>::iterator it;
+		if (type == TDT_Open) {
+			for (it = m_openOrderList.begin(); it != m_openOrderList.end(); it++) {
+				m_trade->cancel(*it, this);
+			}
+		}
+		else if (type == TDT_Close) {
+			for (it = m_closeOrderList.begin(); it != m_closeOrderList.end(); it++) {
+				m_trade->cancel(*it, this);
+			}
+		}
 	}
 }
 
 void APFuturesPositionCtrl::cancelAll()
 {
 	if (m_trade != NULL) {
-		m_trade->cancelAll(m_commodityID, this);
+		//m_trade->cancelAll(m_commodityID, this);
+		std::list<APORDERID>::iterator it;
+		for (it = m_openOrderList.begin(); it != m_openOrderList.end(); it++) {
+			m_trade->cancel(*it, this);
+		}
+		for (it = m_closeOrderList.begin(); it != m_closeOrderList.end(); it++) {
+			m_trade->cancel(*it, this);
+		}
 	}
 }
 
-void APFuturesPositionCtrl::onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APTrendType trend)
+void APFuturesPositionCtrl::onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APORDERID orderID, APTrendType trend)
 {
 	if (commodityID != m_commodityID || trend != m_trendType) {
 		return;
@@ -88,10 +135,12 @@ void APFuturesPositionCtrl::onTradeFinished(APASSETID commodityID, APTradeType t
 	case TDT_CancelOpen:
 		m_availablePosition += volume;
 		m_openOrdersPosition -= volume;
+		m_openOrderList.remove(orderID);
 		break;
 	case TDT_CancelClose:
 		m_holdPosition += volume;
 		m_closeOrdersPosition -= volume;
+		m_closeOrderList.remove(orderID);
 		break;
 	default:
 		break;
@@ -111,14 +160,20 @@ void APFuturesPositionCtrl::setContractType(APTrendType type)
 void APFuturesPositionCtrl::open(APASSETID contractID, APTrendType trend, double price, long volume, APTradeOrderType ot)
 {
 	if (m_trade != NULL) {
-		m_trade->open(contractID, trend, price, volume, this, ot);
+		APORDERID orderID = m_trade->open(contractID, trend, price, volume, this, ot);
+		if (ot == TOT_ValidTheDay && orderID != INVALID_TRADE_ORDER_ID) {
+			m_openOrderList.push_back(orderID);
+		}
 	}
 }
 
 void APFuturesPositionCtrl::close(APASSETID contractID, APTrendType trend, double price, long volume, APTradeOrderType ot)
 {
 	if (m_trade != NULL) {
-		m_trade->close(contractID, trend, price, volume, this, ot);
+		APORDERID orderID = m_trade->close(contractID, trend, price, volume, this, ot);
+		if (ot == TOT_ValidTheDay && orderID != INVALID_TRADE_ORDER_ID) {
+			m_closeOrderList.push_back(orderID);
+		}
 	}
 }
 

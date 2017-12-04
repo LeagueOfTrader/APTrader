@@ -59,4 +59,6 @@ protected:
 
 	int m_curIndex;
 	int m_lastIndex;
+
+	bool m_closeOnly;
 };

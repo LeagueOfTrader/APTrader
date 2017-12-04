@@ -17,5 +17,7 @@ public:
 	static UINT getMonthsToFuturesDeliveryDate(std::string ym);
 	static UINT getDaysToFuturesDeliveryDate(std::string ym);
 	static UINT getWorkDaysToFuturesDeliveryDate(std::string ym);
+
+	static UINT getTimestamp();
 };
 

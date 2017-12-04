@@ -55,7 +55,7 @@ void APSharesPositionCtrl::cancelAll()
 {
 }
 
-void APSharesPositionCtrl::onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APTrendType trend)
+void APSharesPositionCtrl::onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APORDERID orderID, APTrendType trend)
 {
 	switch (type) {
 		case TDT_Open:
@@ -69,10 +69,12 @@ void APSharesPositionCtrl::onTradeFinished(APASSETID commodityID, APTradeType ty
 		case TDT_CancelOpen:
 			m_availablePosition += volume;
 			m_openOrdersPosition -= volume;
+			m_openOrderList.remove(orderID);
 			break;
 		case TDT_CancelClose:
 			m_holdPosition += volume;
 			m_closeOrdersPosition -= volume;
+			m_closeOrderList.remove(orderID);
 			break;
 		default:
 			break;

@@ -243,6 +243,16 @@ void APPositionCtrl::bindTrade(APTrade * trade)
 	m_trade = trade;
 }
 
+void APPositionCtrl::onCompleteOrder(APORDERID orderID, APTradeType type)
+{
+	if (type == TDT_Open) {
+		m_openOrderList.remove(orderID);
+	}
+	else if (type == TDT_Close) {
+		m_closeOrderList.remove(orderID);
+	}
+}
+
 void APPositionCtrl::onSyncPositionStatus(const APPositionData & pd)
 {
 	m_availablePosition = m_maxPosition - pd.holdPosition;
