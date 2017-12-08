@@ -11,13 +11,13 @@ public:
 
 	virtual void open(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume, APTradeOrderType ot = TOT_ValidTheDay);
 	virtual void close(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume, APTradeOrderType ot = TOT_ValidTheDay);
-	virtual void cancel(APORDERID orderID);
+	virtual void cancel(APSYSTEMID sysID);
 
 	virtual void onFundChanged(APASSETID commodityID, APTradeType type, double variableFund, APORDERID orderID, APTrendType trend = TT_Long);
 
 //	virtual void cancel(APASSETID commodityID, APTradeType type, APTrendType trend, double price, long volume);
 //
-//	virtual void onTradeFinished(APASSETID commodityID, APTradeType type, double price, long volume, APORDERID orderID, APTrendType trend = TT_Long);
+//	virtual void onTradeDealt(APASSETID commodityID, APTradeType type, double price, long volume, APORDERID orderID, APTrendType trend = TT_Long);
 //
 //private:
 //	int findOrder(APASSETID commodityID, APTradeType type, double price, APTrendType trend);

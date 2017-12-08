@@ -24,16 +24,16 @@ APORDERID APTrade::open(APASSETID commodityID, APTrendType trend, double price, 
 		return INVALID_TRADE_ORDER_ID;
 	}
 
+	APORDERID orderID = generateOrderID();
 	if (ot == TOT_ValidTheDay) {
-		APTradeOrderPositionInfo info = { UNDISTURBED_ORDER_ID, TDT_Open, commodityID, price, volume, trend, pc->getID()};
-		m_ordersApplied.push_back(info);
+		APTradeOrderPositionInfo info = { orderID, TDT_Open, commodityID, price, volume, trend, pc->getID()};
+		m_ordersApplied[orderID] = info;
 	}
 	else {
-		APTradeOrderPositionInfo info = { MATCH_ANY_ORDER_ID, TDT_Open, commodityID, price, volume, trend, pc->getID() };
-		m_quickDealOrders.push_back(info);
+		APTradeOrderPositionInfo info = { orderID, TDT_Open, commodityID, price, volume, trend, pc->getID() };
+		m_quickDealOrders[orderID] = info;
 	}
-
-	APORDERID orderID = generateOrderID();
+	
 	open(orderID, commodityID, trend, price, volume, ot);
 	return orderID;
 }
@@ -43,16 +43,16 @@ APORDERID APTrade::close(APASSETID commodityID, APTrendType trend, double price,
 		return INVALID_TRADE_ORDER_ID;
 	}
 
+	APORDERID orderID = generateOrderID();
 	if (ot == TOT_ValidTheDay) {
 		APTradeOrderPositionInfo info = { UNDISTURBED_ORDER_ID, TDT_Close, commodityID, price, volume, trend, pc->getID() };
-		m_ordersApplied.push_back(info);
+		m_ordersApplied[orderID] = info;
 	}
 	else {
 		APTradeOrderPositionInfo info = { MATCH_ANY_ORDER_ID, TDT_Close, commodityID, price, volume, trend, pc->getID() };
-		m_quickDealOrders.push_back(info);
-	}
+		m_quickDealOrders[orderID] = info;
+	}	
 	
-	APORDERID orderID = generateOrderID();
 	close(orderID, commodityID, trend, price, volume, ot);
 	return orderID;
 }
@@ -67,8 +67,8 @@ void APTrade::cancel(APASSETID commodityID, APTradeType type, APTrendType trend,
 	std::vector<UINT> cancelOrders;
 	for (int i = 0; i < relatedOrders.size(); i++) {
 		UINT id = relatedOrders[i];
-		if (m_ordersSubmitted.find(id) != m_ordersSubmitted.end()) {
-			APTradeOrderInfo& info = m_ordersSubmitted[id];
+		if (m_ordersConfirmed.find(id) != m_ordersConfirmed.end()) {
+			APTradeOrderInfo& info = m_ordersConfirmed[id];
 			if (info.commodityID == commodityID &&
 				info.type == type &&
 				info.trend == trend) {
@@ -101,8 +101,8 @@ void APTrade::cancel(APASSETID commodityID, APTradeType type, APPositionCtrl * p
 	std::vector<UINT> cancelOrders;
 	for (int i = 0; i < relatedOrders.size(); i++) {
 		UINT id = relatedOrders[i];
-		if (m_ordersSubmitted.find(id) != m_ordersSubmitted.end()) {
-			APTradeOrderInfo& info = m_ordersSubmitted[id];
+		if (m_ordersConfirmed.find(id) != m_ordersConfirmed.end()) {
+			APTradeOrderInfo& info = m_ordersConfirmed[id];
 			if (info.commodityID == commodityID &&
 				info.type == type) {
 				UINT orderID = info.orderID;
@@ -130,8 +130,8 @@ void APTrade::cancelAll(APASSETID commodityID, APPositionCtrl * pc)
 	std::vector<UINT> cancelOrders;
 	for (int i = 0; i < relatedOrders.size(); i++) {
 		UINT id = relatedOrders[i];
-		if (m_ordersSubmitted.find(id) != m_ordersSubmitted.end()) {
-			APTradeOrderInfo& info = m_ordersSubmitted[id];
+		if (m_ordersConfirmed.find(id) != m_ordersConfirmed.end()) {
+			APTradeOrderInfo& info = m_ordersConfirmed[id];
 			if (info.commodityID == commodityID) {
 				UINT orderID = info.orderID;
 				cancelOrders.push_back(orderID);
@@ -149,83 +149,78 @@ void APTrade::cancelAll(APASSETID commodityID, APPositionCtrl * pc)
 
 void APTrade::cancel(APORDERID orderID, APPositionCtrl * pc)
 {
-	cancel(orderID);
+	std::map<APORDERID, APTradeOrderPositionInfo>::iterator itor = m_ordersApplied.find(orderID);
+	if (itor != m_ordersApplied.end()) {
+		m_ordersApplied.erase(orderID);
+	}
+	std::map<APORDERID, APTradeOrderInfo>::iterator it = m_ordersConfirmed.find(orderID);
+	if (it != m_ordersConfirmed.end()) {
+		APTradeOrderInfo& info = it->second;
+		cancel(info.sysID);
+	}
+	//cancel(sysID);
 }
 
 
-void APTrade::onTradeFinished(APASSETID commodityID, APTradeType type, double price, long volume, APORDERID orderID, APTrendType trend)
+void APTrade::onTradeDealt(APASSETID commodityID, APTradeType type, double price, long volume, APORDERID orderID, 
+							APTradeState state, APSYSTEMID sysID, APTrendType trend)
 {
 	//if (m_positionData.find(commodityID) != m_positionData.end()) {
 	//	//std::vector<APTradePositionData>& data = m_positionData[commodityID];
 	//	//int i = 0;
 	//	//for (; i < data.size(); i++) {
-	//	//	data[i].positionCtrl->onTradeFinished(commodityID, type, price, volume, trend);
+	//	//	data[i].positionCtrl->onTradeDealt(commodityID, type, price, volume, trend);
 	//	//}
 	//}
 	if (m_orderPosCtrlRelation.find(orderID) != m_orderPosCtrlRelation.end() &&
-		m_ordersSubmitted.find(orderID) != m_ordersSubmitted.end()) {
+		m_ordersConfirmed.find(orderID) != m_ordersConfirmed.end()) {
 		UINT posCtrlID = m_orderPosCtrlRelation[orderID];
+
+		APTradeOrderInfo& orderInfo = m_ordersConfirmed[orderID];
+		orderInfo.volume = volume;
+		orderInfo.sysID = sysID;
+		orderInfo.state = state;
+
 		APPositionCtrl* posCtrl = APPositionManager::getInstance()->getPositionCtrl(posCtrlID);
 		if (posCtrl != NULL) {
-			posCtrl->onTradeFinished(commodityID, type, price, volume, orderID, trend);
+			long deltaVolume = orderInfo.volume - volume;
+			if (deltaVolume > 0) {
+				posCtrl->onTradeDealt(commodityID, type, price, volume, orderID, trend);
+			}
 		}
-
-		// 
-		APTradeOrderInfo& orderInfo = m_ordersSubmitted[orderID];
-		if (orderInfo.volume >= volume) {
-			orderInfo.volume -= volume;
-		}
-		else {
-			// error
-			return;
-		}
-
+		
 		if (orderInfo.volume == 0) {
 			//trade fully finished
 			if (posCtrl != NULL) {
 				posCtrl->onCompleteOrder(orderID, type);
 			}
 			m_orderPosCtrlRelation.erase(orderID);
-			m_ordersSubmitted.erase(orderID);
-		}
-		else {
-			return;
+			m_ordersConfirmed.erase(orderID);
 		}
 	}
 	else {
-		std::list<APTradeOrderPositionInfo>::iterator it;
-		for (it = m_quickDealOrders.begin(); it != m_quickDealOrders.end(); it++) {
-			APTradeOrderPositionInfo& info = *it;
-			if (info.orderInfo.commodityID == commodityID &&
-				fabs(info.orderInfo.price - price) < DBL_EPSILON &&
-				info.orderInfo.trend == trend &&
-				info.orderInfo.type == type) {				
-				UINT posCtrlID = info.positionCtrlID;
-				APPositionCtrl* posCtrl = APPositionManager::getInstance()->getPositionCtrl(posCtrlID);
-				if (posCtrl != NULL) {
-					posCtrl->onTradeFinished(commodityID, type, price, volume, trend);
-				}
+		//
+		std::map<APORDERID, APTradeOrderPositionInfo>::iterator it = m_quickDealOrders.find(orderID);
+		if(it != m_quickDealOrders.end()) {
+			APTradeOrderPositionInfo& info = it->second;
+			
+			UINT posCtrlID = info.positionCtrlID;
+			APPositionCtrl* posCtrl = APPositionManager::getInstance()->getPositionCtrl(posCtrlID);
+			if (posCtrl != NULL) {
+				posCtrl->onTradeDealt(commodityID, type, price, volume, trend);
 			}
 		}
 	}
 }
 
-void APTrade::onTradeOrdered(APASSETID commodityID, APTradeType type, double price, long volume, APORDERID orderID, APTrendType trend) {
-	std::list<APTradeOrderPositionInfo>::iterator it;
-	for (it = m_ordersApplied.begin(); it != m_ordersApplied.end(); it++) {
-		APTradeOrderPositionInfo& info = *it;
-		if (info.orderInfo.commodityID == commodityID && 
-			info.orderInfo.type == type &&
-			fabs(info.orderInfo.price - price) < DBL_EPSILON && 
-			info.orderInfo.volume == volume &&
-			info.orderInfo.trend == trend &&
-			info.orderInfo.orderID == UNDISTURBED_ORDER_ID) {
-			info.orderInfo.orderID = orderID;
-			m_ordersSubmitted[orderID] = info.orderInfo;
-			m_orderPosCtrlRelation[orderID] = info.positionCtrlID;
-			m_ordersApplied.erase(it);
-			break;
-		}
+void APTrade::onTradeOrdered(APASSETID commodityID, APTradeType type, double price, long volume, APORDERID orderID, APTradeState state, APSYSTEMID sysID, APTrendType trend) {
+	std::map<APORDERID, APTradeOrderPositionInfo>::iterator it = m_ordersApplied.find(orderID);
+	if(it != m_ordersApplied.end()) {
+		APTradeOrderPositionInfo& info = it->second;
+		info.orderInfo.sysID = sysID;
+		m_ordersConfirmed[orderID] = info.orderInfo;
+		m_orderPosCtrlRelation[orderID] = info.positionCtrlID;
+		m_ordersApplied.erase(it);
 	}
 }
 
@@ -235,8 +230,8 @@ void APTrade::onFundChanged(APASSETID commodityID, APTradeType type, double vari
 
 bool APTrade::getOrderInfo(APORDERID orderID, APTradeOrderInfo& orderInfo)
 {
-	if (m_ordersSubmitted.find(orderID) != m_ordersSubmitted.end()) {
-		orderInfo = m_ordersSubmitted[orderID];
+	if (m_ordersConfirmed.find(orderID) != m_ordersConfirmed.end()) {
+		orderInfo = m_ordersConfirmed[orderID];
 		return true;
 	}
 

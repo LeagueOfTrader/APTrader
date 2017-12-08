@@ -114,7 +114,7 @@ void APFuturesPositionCtrl::cancel(APTradeType type)
 //	}
 //}
 
-void APFuturesPositionCtrl::onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APORDERID orderID, APTrendType trend)
+void APFuturesPositionCtrl::onTradeDealt(APASSETID commodityID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend)
 {
 	if (commodityID != m_commodityID || trend != m_trendType) {
 		return;
@@ -122,23 +122,23 @@ void APFuturesPositionCtrl::onTradeFinished(APASSETID commodityID, APTradeType t
 
 	switch (type) {
 	case TDT_Open:
-		m_holdPosition += volume;
-		m_openOrdersPosition -= volume;
+		m_holdPosition += deltaVolume;
+		m_openOrdersPosition -= deltaVolume;
 		//changeContractPossession(commodityID, volume, trend);
 		break;
 	case TDT_Close:
-		m_availablePosition += volume;
-		m_closeOrdersPosition -= volume;
+		m_availablePosition += deltaVolume;
+		m_closeOrdersPosition -= deltaVolume;
 		//changeContractPossession(commodityID, -volume, trend);
 		break;
 	case TDT_CancelOpen:
-		m_availablePosition += volume;
-		m_openOrdersPosition -= volume;
+		m_availablePosition += deltaVolume;
+		m_openOrdersPosition -= deltaVolume;
 		m_openOrderList.remove(orderID);
 		break;
 	case TDT_CancelClose:
-		m_holdPosition += volume;
-		m_closeOrdersPosition -= volume;
+		m_holdPosition += deltaVolume;
+		m_closeOrdersPosition -= deltaVolume;
 		m_closeOrderList.remove(orderID);
 		break;
 	default:

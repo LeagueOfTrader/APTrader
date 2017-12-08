@@ -25,9 +25,9 @@ public:
 	APSimTradeSystem();
 	~APSimTradeSystem();
 
-	UINT requestOpen(APASSETID commodityID, APTrendType trend, double price, long volume);
-	UINT requestClose(APASSETID commodityID, APTrendType trend, double price, long volume);
-	void requestCancel(UINT orderID);
+	UINT requestOpen(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume);
+	UINT requestClose(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume);
+	void requestCancel(APSYSTEMID sysID);
 
 	void init();
 	void update();
@@ -35,9 +35,9 @@ public:
 	double calcFloatingProfit();
 
 protected:
-	void onTradeFinished(APORDERID orderID, APASSETID commodityID, APTradeType type, double price, long volume, APTrendType trend);
+	void onTradeDealt(APORDERID orderID, APASSETID commodityID, APTradeType type, double price, long volume, APSYSTEMID sysID, APTrendType trend);
 	bool arrangeTrade(APTradeOrderInfo& order);
-	void closeTheDeal(APORDERID orderID, APASSETID commodityID, APTradeType type, double price, long volume, APTrendType trend);
+	void closeTheDeal(APORDERID orderID, APASSETID commodityID, APTradeType type, double price, long volume, APSYSTEMID sysID, APTrendType trend);
 	double calcProfitAndLoss(double costPrice, double currentPrice, long volume, APTrendType trend);
 
 private:

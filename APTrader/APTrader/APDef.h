@@ -60,4 +60,14 @@ enum APTradeOrderType {
 	TOT_Num,
 };
 
+enum APTradeState {
+	TS_Apply,
+	TS_Ordered,
+	TS_New,
+	TS_PartiallyFilled,
+	TS_Filled,
+	TS_None,
+	TS_Num
+};
+
 const unsigned int INVALID_TRADE_ORDER_ID = 0;

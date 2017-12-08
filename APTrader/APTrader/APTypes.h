@@ -6,3 +6,5 @@ typedef unsigned int APORDERID;
 typedef unsigned int UINT;
 
 typedef std::string APASSETID;
+
+typedef unsigned int APSYSTEMID;

@@ -22,7 +22,7 @@ void APSharesTrade::close(APORDERID orderID, APASSETID commodityID, APTrendType 
 	}
 }
 
-void APSharesTrade::cancel(APORDERID orderID)
+void APSharesTrade::cancel(APSYSTEMID sysID)
 {
 }
 

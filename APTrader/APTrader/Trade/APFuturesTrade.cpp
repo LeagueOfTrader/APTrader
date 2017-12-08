@@ -17,6 +17,6 @@ void APFuturesTrade::close(APORDERID orderID, APASSETID commodityID, APTrendType
 {
 }
 
-void APFuturesTrade::cancel(APORDERID orderID)
+void APFuturesTrade::cancel(APSYSTEMID sysID)
 {
 }

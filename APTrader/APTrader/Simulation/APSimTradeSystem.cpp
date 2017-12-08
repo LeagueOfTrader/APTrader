@@ -21,36 +21,36 @@ APSimTradeSystem::~APSimTradeSystem()
 	m_tradeIDAccumulator = NULL;
 }
 
-UINT APSimTradeSystem::requestOpen(APASSETID commodityID, APTrendType trend, double price, long volume)
+UINT APSimTradeSystem::requestOpen(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume)
 {
-	APORDERID orderID = m_orderIDAccumulator->generateID();
-	APTradeOrderInfo order = {orderID, TDT_Open, commodityID, price, volume, trend};
+	APSYSTEMID sysID = m_orderIDAccumulator->generateID();
+	APTradeOrderInfo order = {orderID, TDT_Open, commodityID, price, volume, trend, TS_Ordered, sysID};
 	m_orderList.push_back(order);
 	if (m_trade != NULL) {
-		m_trade->onTradeOrdered(commodityID, TDT_Open, price, volume, orderID, trend);
+		m_trade->onTradeOrdered(commodityID, TDT_Open, price, volume, orderID, TS_Ordered, sysID, trend);
 	}
 	return orderID;
 }
 
-UINT APSimTradeSystem::requestClose(APASSETID commodityID, APTrendType trend, double price, long volume)
+UINT APSimTradeSystem::requestClose(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume)
 {
-	APORDERID orderID = m_orderIDAccumulator->generateID();
-	APTradeOrderInfo order = { orderID, TDT_Close, commodityID, price, volume, trend };
+	APSYSTEMID sysID = m_orderIDAccumulator->generateID();
+	APTradeOrderInfo order = { orderID, TDT_Close, commodityID, price, volume, trend, TS_Ordered, sysID };
 	m_orderList.push_back(order);
 	if (m_trade != NULL) {
-		m_trade->onTradeOrdered(commodityID, TDT_Close, price, volume, orderID, trend);
+		m_trade->onTradeOrdered(commodityID, TDT_Close, price, volume, orderID, TS_Ordered, sysID, trend);
 	}
 	return orderID;
 }
 
 
-void APSimTradeSystem::requestCancel(UINT orderID)
+void APSimTradeSystem::requestCancel(APSYSTEMID sysID)
 {
 	std::list<APTradeOrderInfo>::iterator it = m_orderList.begin();
 	while (it != m_orderList.end())
 	{
 		APTradeOrderInfo& order = *it;
-		if (order.orderID == orderID) {
+		if (order.sysID == sysID) {
 			APTradeType cancelType = TDT_Num;
 			if (order.type == TDT_Open) {
 				cancelType = TDT_CancelOpen;
@@ -59,7 +59,7 @@ void APSimTradeSystem::requestCancel(UINT orderID)
 				cancelType = TDT_CancelClose;
 			}
 
-			onTradeFinished(orderID, order.commodityID, cancelType, order.price, order.volume, order.trend);
+			onTradeDealt(order.orderID, order.commodityID, cancelType, order.price, order.volume, sysID, order.trend);
 			m_orderList.erase(it);
 			break;
 		}
@@ -112,10 +112,10 @@ double APSimTradeSystem::calcFloatingProfit()
 	return floatingProfit;
 }
 
-void APSimTradeSystem::onTradeFinished(APORDERID orderID, APASSETID commodityID, APTradeType type, double price, long volume, APTrendType trend)
+void APSimTradeSystem::onTradeDealt(APORDERID orderID, APASSETID commodityID, APTradeType type, double price, long volume, APSYSTEMID sysID, APTrendType trend)
 {
 	if (m_trade != NULL) {
-		m_trade->onTradeFinished(commodityID, type, price, volume, orderID, trend);
+		m_trade->onTradeDealt(commodityID, type, price, volume, orderID, TS_Filled, sysID, trend);
 
 		std::string tradeTypeStr;
 		if (type == TDT_Open) {
@@ -161,7 +161,7 @@ bool APSimTradeSystem::arrangeTrade(APTradeOrderInfo & order)
 	}
 
 	if (result) {
-		closeTheDeal(order.orderID, order.commodityID, order.type, price, order.volume, order.trend);
+		closeTheDeal(order.orderID, order.commodityID, order.type, price, order.volume, order.sysID, order.trend);
 	}
 
 	return result;
@@ -183,7 +183,7 @@ double APSimTradeSystem::calcProfitAndLoss(double costPrice, double currentPrice
 	return profitAndLoss;
 }
 
-void APSimTradeSystem::closeTheDeal(APORDERID orderID, APASSETID commodityID, APTradeType type, double price, long volume, APTrendType trend) {
+void APSimTradeSystem::closeTheDeal(APORDERID orderID, APASSETID commodityID, APTradeType type, double price, long volume, APSYSTEMID sysID, APTrendType trend) {
 	// process deal
 	UINT tradeID = m_tradeIDAccumulator->generateID();
 	if (type == TDT_Open) {
@@ -233,7 +233,9 @@ void APSimTradeSystem::closeTheDeal(APORDERID orderID, APASSETID commodityID, AP
 		}
 	}
 	
-	onTradeFinished(orderID, commodityID, type, price, volume, trend);
+	onTradeDealt(orderID, commodityID, type, price, 
+		volume, 
+		sysID, trend);
 }
 
 void APSimTradeSystem::validQuotation(APASSETID commodityID)

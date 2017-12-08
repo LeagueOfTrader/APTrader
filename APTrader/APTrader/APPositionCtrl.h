@@ -56,7 +56,7 @@ public:
 	void cancelTrade(APTradeType type);
 	void cancelAllTrade();
 
-	virtual void onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APORDERID orderID, APTrendType trend = TT_Long) = 0;
+	virtual void onTradeDealt(APASSETID commodityID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend = TT_Long) = 0;
 
 	virtual void update();
 

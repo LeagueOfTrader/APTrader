@@ -18,21 +18,7 @@ public:
 	virtual void cancel(APTradeType type);
 	//virtual void cancelAll();
 
-	virtual void onTradeFinished(APASSETID commodityID, APTradeType type,  double price, long volume, APORDERID orderID, APTrendType trend = TT_Long);
+	virtual void onTradeDealt(APASSETID commodityID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend = TT_Long);
 
-//protected:
-//	void buy(double price, long volume);
-//	void sell(double price, long volume);
-//	void buyAtLeast(double price, long volume);
-//
-//	void overBuy(double price);
-//	void overSell(double price);
-//
-//	void onBuyOrdered(double price, long volume);
-//	void onBought(double price, long volume);
-//	void onSold(double price, long volume);
-
-protected:
-	//
 };
 
