@@ -2,7 +2,7 @@
 
 
 
-APSharesQuotation::APSharesQuotation(APASSETID shareID) : APCommodityQuotation(shareID)
+APSharesQuotation::APSharesQuotation(APASSETID shareID) : APInstrumentQuotation(shareID)
 {
 }
 

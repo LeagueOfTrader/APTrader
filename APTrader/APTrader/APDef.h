@@ -7,7 +7,7 @@ enum APTrendType {
 	TT_Num
 };
 
-enum APFinancialCommodityType {
+enum APFinancialInstrumentType {
 	FCT_Shares,
 	FCT_Futrues,
 	FCT_Options,

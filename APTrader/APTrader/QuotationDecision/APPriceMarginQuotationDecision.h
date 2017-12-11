@@ -3,20 +3,20 @@
 #include <string>
 #include "../APTypes.h"
 
-class APCommodityQuotation;
+class APInstrumentQuotation;
 
 class APPriceMarginQuotationDecision :
 	public APQuotationDecision
 {
 public:
-	APPriceMarginQuotationDecision(APASSETID srcCommodityID, APASSETID targetCommodityID, double priceDiff);
+	APPriceMarginQuotationDecision(APASSETID srcInstrumentID, APASSETID targetInstrumentID, double priceDiff);
 	~APPriceMarginQuotationDecision();
 
 	virtual double getValueReference();
 
 protected:
-	APCommodityQuotation* m_srcQuotation;
-	APCommodityQuotation* m_targetQuotation;
+	APInstrumentQuotation* m_srcQuotation;
+	APInstrumentQuotation* m_targetQuotation;
 
 	double m_priceDiff;
 };

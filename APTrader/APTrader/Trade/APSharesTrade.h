@@ -9,17 +9,17 @@ public:
 	~APSharesTrade();
 
 public:
-	virtual void open(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume, APTradeOrderType ot = TOT_ValidTheDay);
-	virtual void close(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume, APTradeOrderType ot = TOT_ValidTheDay);
+	virtual void open(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APTradeOrderType ot = TOT_ValidTheDay);
+	virtual void close(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APTradeOrderType ot = TOT_ValidTheDay);
 
 	virtual void cancel(APSYSTEMID sysID);
 
 //protected:
-//	long buy(APASSETID commodityID, double price, long volume);
-//	long sell(APASSETID commodityID, double price, long volume);
+//	long buy(APASSETID instrumentID, double price, long volume);
+//	long sell(APASSETID instrumentID, double price, long volume);
 //
-//	void buyOrder(APASSETID commodityID, double price, long volume);
-//	void sellOrder(APASSETID commodityID, double price, long volume);
+//	void buyOrder(APASSETID instrumentID, double price, long volume);
+//	void sellOrder(APASSETID instrumentID, double price, long volume);
 //	void cancelOrder(long orderID);
 //
 //	void onBought(UINT orderID, double price, long volume);

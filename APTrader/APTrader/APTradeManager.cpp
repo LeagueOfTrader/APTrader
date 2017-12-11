@@ -16,10 +16,10 @@ APTradeManager::~APTradeManager()
 	}
 }
 
-//void APTradeManager::registerPositionCtrl(APASSETID commodityID, APTrendType trend, APPositionCtrl * positionCtrl)
+//void APTradeManager::registerPositionCtrl(APASSETID instrumentID, APTrendType trend, APPositionCtrl * positionCtrl)
 //{
 //	if (m_trader != NULL) {
-//		m_trader->registerPositionCtrl(commodityID, trend, positionCtrl);
+//		m_trader->registerPositionCtrl(instrumentID, trend, positionCtrl);
 //	}
 //}
 //
@@ -32,7 +32,7 @@ APTradeManager::~APTradeManager()
 
 void APTradeManager::init()
 {
-	m_trader = APObjectFactory::newTrade(APGlobalConfig::getInstance()->getCommodityType());
+	m_trader = APObjectFactory::newTrade(APGlobalConfig::getInstance()->getInstrumentType());
 }
 
 void APTradeManager::setTradeInstance(APTrade * tradeInstance)

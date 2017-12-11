@@ -15,14 +15,14 @@ void APAccountAssets::init()
 {
 }
 
-bool APAccountAssets::getPositionData(APASSETID commodityID, APTrendType trend, APPositionData & data)
+bool APAccountAssets::getPositionData(APASSETID instrumentID, APTrendType trend, APPositionData & data)
 {
 	bool ret = false;
 
 	bool isMultiID = false;
-	switch (APGlobalConfig::getInstance()->getCommodityType()) {
+	switch (APGlobalConfig::getInstance()->getInstrumentType()) {
 		case FCT_Futrues:
-			isMultiID = APFuturesIDSelector::isMultipleID(commodityID);
+			isMultiID = APFuturesIDSelector::isMultipleID(instrumentID);
 			break;
 		case FCT_Shares:
 			break;
@@ -36,7 +36,7 @@ bool APAccountAssets::getPositionData(APASSETID commodityID, APTrendType trend, 
 		std::map<APASSETID, APPositionData>::iterator it;
 
 		if (trend == TT_Long) {
-			it = m_longPositionData.find(commodityID);
+			it = m_longPositionData.find(instrumentID);
 
 			if (it != m_longPositionData.end()) {
 				data = it->second;
@@ -44,7 +44,7 @@ bool APAccountAssets::getPositionData(APASSETID commodityID, APTrendType trend, 
 			}
 		}
 		else if (trend == TT_Short) {
-			it = m_shortPositionData.find(commodityID);
+			it = m_shortPositionData.find(instrumentID);
 
 			if (it != m_shortPositionData.end()) {
 				data = it->second;
@@ -61,17 +61,17 @@ bool APAccountAssets::getPositionData(APASSETID commodityID, APTrendType trend, 
 			positionData = m_shortPositionData;
 		}
 
-		data.id = commodityID;
+		data.id = instrumentID;
 		data.type = trend;
 
-		std::string timeSymbol = APFuturesIDSelector::getTimeSymbolInMultiID(commodityID);
-		std::string varietyID = APFuturesIDSelector::getVarietyID(commodityID);
+		std::string timeSymbol = APFuturesIDSelector::getTimeSymbolInMultiID(instrumentID);
+		std::string varietyID = APFuturesIDSelector::getVarietyID(instrumentID);
 
 		std::map<APASSETID, APPositionData>::iterator it;
 		for (it = positionData.begin(); it != positionData.end(); it++) {
 			std::string holdID = it->first;
 			if (holdID.find(varietyID) != std::string::npos) {
-				std::string futuresTimeSymbol = APFuturesIDSelector::getTimeSymbolInFuturesID(commodityID);
+				std::string futuresTimeSymbol = APFuturesIDSelector::getTimeSymbolInFuturesID(instrumentID);
 				if (APTimeUtility::compareFuturesYearMonth(timeSymbol, futuresTimeSymbol) <= 0) {
 					data.append(it->second);
 					ret = true;

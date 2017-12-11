@@ -21,14 +21,14 @@ void APFuturesPosCtrlWithTransfer::setTargetContractID(APASSETID contractID)
 	m_targetContractID = contractID;
 }
 
-void APFuturesPosCtrlWithTransfer::onTradeDealt(APASSETID commodityID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend)
+void APFuturesPosCtrlWithTransfer::onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend)
 {
-	if (commodityID != m_commodityID || commodityID != m_targetContractID || type != m_trendType) {
+	if (instrumentID != m_instrumentID || instrumentID != m_targetContractID || type != m_trendType) {
 		return;
 	}	
 
 	if (m_isTransferring && !m_finishTransferring && type == TDT_Open) {
-		if (commodityID == m_commodityID) {
+		if (instrumentID == m_instrumentID) {
 			m_holdPosition += deltaVolume;
 		}
 		else {
@@ -37,7 +37,7 @@ void APFuturesPosCtrlWithTransfer::onTradeDealt(APASSETID commodityID, APTradeTy
 		m_openOrdersPosition -= deltaVolume;
 	}
 	else {
-		APFuturesPositionCtrl::onTradeDealt(commodityID, type, price, deltaVolume, orderID, trend);
+		APFuturesPositionCtrl::onTradeDealt(instrumentID, type, price, deltaVolume, orderID, trend);
 	}
 
 	if (!m_finishTransferring) {
@@ -90,7 +90,7 @@ void APFuturesPosCtrlWithTransfer::transferContracts(double droppedContractPrice
 {
 	long realVolume = std::min(volume, m_holdPosition - m_closeOrdersPosition);
 	//fak may has mistakes
-	APFuturesPositionCtrl::close(m_commodityID, m_trendType, droppedContractPrice, realVolume);
+	APFuturesPositionCtrl::close(m_instrumentID, m_trendType, droppedContractPrice, realVolume);
 	realVolume = std::min(realVolume, m_positonNeedTransfer - m_targetContractHoldPosition);
 	if (realVolume > 0) {
 		APFuturesPositionCtrl::open(m_targetContractID, m_trendType, targetContractPrice, realVolume);

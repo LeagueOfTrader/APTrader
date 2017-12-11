@@ -1,5 +1,5 @@
 #include "APGridStrategy.h"
-#include "../APCommodityQuotation.h"
+#include "../APInstrumentQuotation.h"
 #include "../APGlobalConfig.h"
 #include "../APPositionCtrl.h"
 #include <algorithm>

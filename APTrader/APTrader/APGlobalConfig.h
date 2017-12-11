@@ -11,7 +11,7 @@ public:
 
 	void init();
 
-	APFinancialCommodityType getCommodityType();
+	APFinancialInstrumentType getInstrumentType();
 	UINT getTransactionDays(); // t + n
 
 	double getNearByPrice();
@@ -20,7 +20,7 @@ public:
 	APOpenPositionLimit getOpenLimitType();
 
 private:
-	APFinancialCommodityType m_financialCommodityType;
+	APFinancialInstrumentType m_financialInstrumentType;
 	double m_nearByPrice;
 	UINT m_visibleOrdersCount;
 

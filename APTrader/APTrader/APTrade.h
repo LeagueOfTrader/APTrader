@@ -15,7 +15,7 @@ class APPositionCtrl;
 class APIntAccumulator;
 
 struct APTradePositionData {
-	APASSETID commodityID;
+	APASSETID instrumentID;
 	APTrendType trend;
 	UINT positionCtrlID;
 };
@@ -23,7 +23,7 @@ struct APTradePositionData {
 struct APTradeOrderInfo {
 	APORDERID orderID;
 	APTradeType type;
-	APASSETID commodityID;
+	APASSETID instrumentID;
 	double price;
 	long volume;
 	APTrendType trend;
@@ -33,11 +33,11 @@ struct APTradeOrderInfo {
 	APTradeOrderInfo() {
 	}
 
-	APTradeOrderInfo(APORDERID theOrderID, APTradeType theType, APASSETID theCommodityID, double thePrice, long theVolume, 
+	APTradeOrderInfo(APORDERID theOrderID, APTradeType theType, APASSETID theInstrumentID, double thePrice, long theVolume, 
 					APTrendType theTrend, APTradeState theState, APSYSTEMID theSysID) {
 		orderID = theOrderID;
 		type = theType;
-		commodityID = theCommodityID;
+		instrumentID = theInstrumentID;
 		price = thePrice;
 		volume = theVolume;
 		trend = theTrend;
@@ -48,7 +48,7 @@ struct APTradeOrderInfo {
 	APTradeOrderInfo(const APTradeOrderInfo& info) {
 		orderID = info.orderID;
 		type = info.type;
-		commodityID = info.commodityID;
+		instrumentID = info.instrumentID;
 		price = info.price;
 		volume = info.volume;
 		trend = info.trend;
@@ -65,8 +65,8 @@ struct APTradeOrderPositionInfo{
 
 	}
 
-	APTradeOrderPositionInfo(UINT orderID, APTradeType type, APASSETID commodityID, double price, long volume, APTrendType trend, UINT posCtrlID) {
-		orderInfo = { orderID, type, commodityID, price, volume, trend, TS_Apply, 0 };
+	APTradeOrderPositionInfo(UINT orderID, APTradeType type, APASSETID instrumentID, double price, long volume, APTrendType trend, UINT posCtrlID) {
+		orderInfo = { orderID, type, instrumentID, price, volume, trend, TS_Apply, 0 };
 		positionCtrlID = posCtrlID;
 	}
 };
@@ -78,25 +78,25 @@ public:
 	~APTrade();
 
 public:
-	virtual APORDERID open(APASSETID commodityID, APTrendType trend, double price, long volume, APPositionCtrl* pc, APTradeOrderType ot = TOT_ValidTheDay);
-	virtual APORDERID close(APASSETID commodityID, APTrendType trend, double price, long volume, APPositionCtrl* pc, APTradeOrderType ot = TOT_ValidTheDay);
+	virtual APORDERID open(APASSETID instrumentID, APTrendType trend, double price, long volume, APPositionCtrl* pc, APTradeOrderType ot = TOT_ValidTheDay);
+	virtual APORDERID close(APASSETID instrumentID, APTrendType trend, double price, long volume, APPositionCtrl* pc, APTradeOrderType ot = TOT_ValidTheDay);
 
-	virtual void cancel(APASSETID commodityID, APTradeType type, APTrendType trend, double price, APPositionCtrl* pc);
-	virtual void cancel(APASSETID commodityID, APTradeType type, APPositionCtrl* pc);
-	virtual void cancelAll(APASSETID commodityID, APPositionCtrl* pc);
+	virtual void cancel(APASSETID instrumentID, APTradeType type, APTrendType trend, double price, APPositionCtrl* pc);
+	virtual void cancel(APASSETID instrumentID, APTradeType type, APPositionCtrl* pc);
+	virtual void cancelAll(APASSETID instrumentID, APPositionCtrl* pc);
 	virtual void cancel(APORDERID sysID, APPositionCtrl* pc);
 	
-	virtual void onTradeDealt(APASSETID commodityID, APTradeType type, double price, long volume, APORDERID orderID, 
+	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, 
 								APTradeState state, APSYSTEMID sysID, APTrendType trend = TT_Long);
-	virtual void onTradeOrdered(APASSETID commodityID, APTradeType type, double price, long volume, APORDERID orderID, 
+	virtual void onTradeOrdered(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, 
 								APTradeState state, APSYSTEMID sysID, APTrendType trend = TT_Long);
-	virtual void onFundChanged(APASSETID commodityID, APTradeType type, double variableFund, APORDERID orderID, APTrendType trend = TT_Long);
+	virtual void onFundChanged(APASSETID instrumentID, APTradeType type, double variableFund, APORDERID orderID, APTrendType trend = TT_Long);
 
 	bool getOrderInfo(APORDERID orderID, APTradeOrderInfo& orderInfo);
 
 protected:
-	virtual void open(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume, APTradeOrderType ot = TOT_ValidTheDay) = 0;
-	virtual void close(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume, APTradeOrderType ot = TOT_ValidTheDay) = 0;
+	virtual void open(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APTradeOrderType ot = TOT_ValidTheDay) = 0;
+	virtual void close(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APTradeOrderType ot = TOT_ValidTheDay) = 0;
 
 	virtual void cancel(APSYSTEMID sysID) = 0;
 

@@ -45,7 +45,7 @@ void APTransferPositionStrategy::initWithTransferInfo(std::string transferInfo)
 		m_trendType = TT_Short;
 	}
 
-	m_commodityID = jr.getStrValue("SrcID");
+	m_instrumentID = jr.getStrValue("SrcID");
 	m_targetContractID = jr.getStrValue("TargetID");
 	m_criticalDays = jr.getIntValue("CriticalDays");
 	m_deadlineDays = jr.getIntValue("DeadlineDays");
@@ -63,8 +63,8 @@ void APTransferPositionStrategy::initWithTransferInfo(std::string transferInfo)
 		m_interpType = IMT_Quad;
 	}
 
-	m_curQuotation = dynamic_cast<APFuturesQuotation*>(APMarketQuotationsManager::getInstance()->subscribeCommodity(m_commodityID));
-	m_targetQuotation = dynamic_cast<APFuturesQuotation*>(APMarketQuotationsManager::getInstance()->subscribeCommodity(m_targetContractID));
+	m_curQuotation = dynamic_cast<APFuturesQuotation*>(APMarketQuotationsManager::getInstance()->subscribeInstrument(m_instrumentID));
+	m_targetQuotation = dynamic_cast<APFuturesQuotation*>(APMarketQuotationsManager::getInstance()->subscribeInstrument(m_targetContractID));
 }
 
 void APTransferPositionStrategy::update()
@@ -176,17 +176,17 @@ bool APTransferPositionStrategy::canTransferWithCurrentPrice()
 
 void APTransferPositionStrategy::onFinishTransfer()
 {
-	// set parent strategy's new commodityID, also position ctrl's commodityID and sync positionCtrl's status
+	// set parent strategy's new instrumentID, also position ctrl's instrumentID and sync positionCtrl's status
 
 
 	if (m_positionCtrl != NULL) {
-		m_positionCtrl->setCommodityID(m_targetContractID);
+		m_positionCtrl->setInstrumentID(m_targetContractID);
 		m_positionCtrl->syncPositionStatus();
 	}
 	// detach from parent strategy -- or generate new delivery date
 	APStrategy* parentStrategy = getParent();
 	if (parentStrategy != NULL) {
-		parentStrategy->setCommodityID(m_targetContractID);
+		parentStrategy->setInstrumentID(m_targetContractID);
 		//parentStrategy->detach(this);
 	}
 

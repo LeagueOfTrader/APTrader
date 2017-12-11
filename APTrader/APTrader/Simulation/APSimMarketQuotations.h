@@ -9,6 +9,6 @@ public:
 	~APSimMarketQuotations();
 
 protected:
-	virtual APCommodityQuotation* generateQuotation(APASSETID commodityID);
+	virtual APInstrumentQuotation* generateQuotation(APASSETID instrumentID);
 };
 

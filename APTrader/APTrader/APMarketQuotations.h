@@ -6,7 +6,7 @@
 #include "APDef.h"
 #include "APTypes.h"
 
-class APCommodityQuotation;
+class APInstrumentQuotation;
 
 class APMarketQuotations
 {
@@ -14,16 +14,16 @@ public:
 	APMarketQuotations();
 	~APMarketQuotations();
 
-	APCommodityQuotation* subscribeCommodity(APASSETID commodityID);
+	APInstrumentQuotation* subscribeInstrument(APASSETID instrumentID);
 
 	void init();
 	void update();
 
 protected:
-	virtual APCommodityQuotation* generateQuotation(APASSETID commodityID);
+	virtual APInstrumentQuotation* generateQuotation(APASSETID instrumentID);
 
 protected:
-	std::map<APASSETID, APCommodityQuotation*> m_commodityQuotations;
-	APFinancialCommodityType m_marketType;
+	std::map<APASSETID, APInstrumentQuotation*> m_instrumentQuotations;
+	APFinancialInstrumentType m_marketType;
 };
 

@@ -1,10 +1,10 @@
 #pragma once
-#include "../APCommodityQuotation.h"
+#include "../APInstrumentQuotation.h"
 class APFuturesQuotation :
-	public APCommodityQuotation
+	public APInstrumentQuotation
 {
 public:
-	APFuturesQuotation(APASSETID commodityID);
+	APFuturesQuotation(APASSETID instrumentID);
 	~APFuturesQuotation();
 
 	virtual void queryQuotation();

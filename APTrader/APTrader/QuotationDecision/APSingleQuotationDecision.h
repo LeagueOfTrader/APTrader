@@ -3,19 +3,19 @@
 #include <string>
 #include "../APTypes.h"
 
-class APCommodityQuotation;
+class APInstrumentQuotation;
 
 class APSingleQuotationDecision :
 	public APQuotationDecision
 {
 public:
 	APSingleQuotationDecision();
-	APSingleQuotationDecision(APASSETID commodityID);
+	APSingleQuotationDecision(APASSETID instrumentID);
 	~APSingleQuotationDecision();
 
 	virtual double getValueReference();
 
 protected:
-	APCommodityQuotation* m_quotation;
+	APInstrumentQuotation* m_quotation;
 };
 

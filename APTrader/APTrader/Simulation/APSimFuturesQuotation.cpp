@@ -22,11 +22,11 @@ void splitString(const std::string& s, std::vector<std::string>& v, const std::s
 	}
 }
 
-APSimFuturesQuotation::APSimFuturesQuotation(APASSETID commodityID) : APFuturesQuotation(commodityID)
+APSimFuturesQuotation::APSimFuturesQuotation(APASSETID instrumentID) : APFuturesQuotation(instrumentID)
 {
 	m_loop = false;
 	m_finished = false;
-	init(commodityID);
+	init(instrumentID);
 }
 
 
@@ -41,7 +41,7 @@ void APSimFuturesQuotation::queryQuotation()
 	}
 
 	m_curPrice = m_simPrices[m_curIndex++];
-	APLogger->log("Sim Quotation, id:%s, price:%f. ", m_commodityID.c_str(), m_curPrice);
+	APLogger->log("Sim Quotation, id:%s, price:%f. ", m_instrumentID.c_str(), m_curPrice);
 	if (m_curIndex >= m_simPrices.size()) {
 		if (m_loop) {
 			m_curIndex = 0;
@@ -57,11 +57,11 @@ int APSimFuturesQuotation::getSimPricesCount()
 	return m_simPrices.size();
 }
 
-void APSimFuturesQuotation::init(APASSETID commodityID)
+void APSimFuturesQuotation::init(APASSETID instrumentID)
 {
 	m_curIndex = 0;
 
-	std::string filename = simDataPath + commodityID + ".txt";
+	std::string filename = simDataPath + instrumentID + ".txt";
 
 	std::fstream file;
 	file.open(filename, std::ios::in, _SH_DENYNO);

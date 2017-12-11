@@ -17,10 +17,10 @@ void APGlobalConfig::init()
 	jr.initWithFile(globalConfigFile);
 	std::string type = jr.getStrValue("TradeType");
 	if (type == "Futures") {
-		m_financialCommodityType = FCT_Futrues;
+		m_financialInstrumentType = FCT_Futrues;
 	}
 	else if (type == "Shares") {
-		m_financialCommodityType = FCT_Shares;
+		m_financialInstrumentType = FCT_Shares;
 	}
 
 	m_nearByPrice = jr.getDoubleValue("NearbyPrice");
@@ -37,15 +37,15 @@ void APGlobalConfig::init()
 	m_openLimit = OPL_Position;
 }
 
-APFinancialCommodityType APGlobalConfig::getCommodityType()
+APFinancialInstrumentType APGlobalConfig::getInstrumentType()
 {
-	return m_financialCommodityType;
+	return m_financialInstrumentType;
 }
 
 UINT APGlobalConfig::getTransactionDays()
 {
 	UINT tPlusNDays = 0;
-	switch (m_financialCommodityType)
+	switch (m_financialInstrumentType)
 	{
 	case FCT_Futrues:
 		break;

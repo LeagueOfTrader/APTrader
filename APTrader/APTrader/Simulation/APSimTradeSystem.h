@@ -12,7 +12,7 @@ class APSimFuturesQuotation;
 
 struct APSimTradeStub {
 	UINT tradeID;
-	APASSETID commodityID;
+	APASSETID instrumentID;
 	APTrendType trend;
 	double costPrice;
 	long volume;
@@ -25,8 +25,8 @@ public:
 	APSimTradeSystem();
 	~APSimTradeSystem();
 
-	APSYSTEMID requestOpen(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume);
-	APSYSTEMID requestClose(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume);
+	APSYSTEMID requestOpen(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume);
+	APSYSTEMID requestClose(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume);
 	void requestCancel(APSYSTEMID sysID);
 
 	void init();
@@ -35,13 +35,13 @@ public:
 	double calcFloatingProfit();
 
 protected:
-	void onTradeDealt(APORDERID orderID, APASSETID commodityID, APTradeType type, double price, long volume, APSYSTEMID sysID, APTrendType trend);
+	void onTradeDealt(APORDERID orderID, APASSETID instrumentID, APTradeType type, double price, long volume, APSYSTEMID sysID, APTrendType trend);
 	bool arrangeTrade(APTradeOrderInfo& order);
-	void closeTheDeal(APORDERID orderID, APASSETID commodityID, APTradeType type, double price, long volume, APSYSTEMID sysID, APTrendType trend);
+	void closeTheDeal(APORDERID orderID, APASSETID instrumentID, APTradeType type, double price, long volume, APSYSTEMID sysID, APTrendType trend);
 	double calcProfitAndLoss(double costPrice, double currentPrice, long volume, APTrendType trend);
 
 private:
-	void validQuotation(APASSETID commodityID);
+	void validQuotation(APASSETID instrumentID);
 	double calcFloatingProfit(APSimTradeStub& tradeStub);
 
 protected:

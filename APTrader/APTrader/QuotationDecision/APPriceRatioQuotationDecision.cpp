@@ -1,11 +1,11 @@
 #include "APPriceRatioQuotationDecision.h"
-#include "../APCommodityQuotation.h"
+#include "../APInstrumentQuotation.h"
 #include "../APMarketQuotationsManager.h"
 
-APPriceRatioQuotationDecision::APPriceRatioQuotationDecision(APASSETID srcCommodityID, APASSETID targetCommodityID, double priceRatio)
+APPriceRatioQuotationDecision::APPriceRatioQuotationDecision(APASSETID srcInstrumentID, APASSETID targetInstrumentID, double priceRatio)
 {
-	m_srcQuotation = APMarketQuotationsManager::getInstance()->subscribeCommodity(srcCommodityID);
-	m_targetQuotation = APMarketQuotationsManager::getInstance()->subscribeCommodity(targetCommodityID);
+	m_srcQuotation = APMarketQuotationsManager::getInstance()->subscribeInstrument(srcInstrumentID);
+	m_targetQuotation = APMarketQuotationsManager::getInstance()->subscribeInstrument(targetInstrumentID);
 	m_priceRatio = priceRatio;
 }
 

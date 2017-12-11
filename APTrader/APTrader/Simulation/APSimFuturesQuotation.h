@@ -4,7 +4,7 @@ class APSimFuturesQuotation :
 	public APFuturesQuotation
 {
 public:
-	APSimFuturesQuotation(APASSETID commodityID);
+	APSimFuturesQuotation(APASSETID instrumentID);
 	~APSimFuturesQuotation();
 
 	virtual void queryQuotation();
@@ -12,7 +12,7 @@ public:
 	int getSimPricesCount();
 
 private:
-	void init(APASSETID commodityID);
+	void init(APASSETID instrumentID);
 
 protected:
 	int m_curIndex;

@@ -17,11 +17,11 @@ APPositionManager::~APPositionManager()
 
 APPositionCtrl * APPositionManager::createPositionCtrl(std::string positionInfo)
 {
-	APPositionCtrl* pc = APObjectFactory::newPositionCtrl(APGlobalConfig::getInstance()->getCommodityType());
+	APPositionCtrl* pc = APObjectFactory::newPositionCtrl(APGlobalConfig::getInstance()->getInstrumentType());
 	pc->m_id = m_idAccumulator->generateID();
 	pc->init(positionInfo);
 	m_positionCtrls[pc->m_id] = pc;
-	//APTradeManager::getInstance()->registerPositionCtrl(pc->getCommodityID(), pc->getTrendType(), pc);
+	//APTradeManager::getInstance()->registerPositionCtrl(pc->getInstrumentID(), pc->getTrendType(), pc);
 	return pc;
 }
 

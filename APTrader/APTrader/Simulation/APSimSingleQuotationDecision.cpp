@@ -2,9 +2,9 @@
 #include "APSimMarketQuotations.h"
 
 
-APSimSingleQuotationDecision::APSimSingleQuotationDecision(APASSETID commodityID)
+APSimSingleQuotationDecision::APSimSingleQuotationDecision(APASSETID instrumentID)
 {
-	m_quotation = APSimMarketQuotations::getInstance()->subscribeCommodity(commodityID);
+	m_quotation = APSimMarketQuotations::getInstance()->subscribeInstrument(instrumentID);
 }
 
 

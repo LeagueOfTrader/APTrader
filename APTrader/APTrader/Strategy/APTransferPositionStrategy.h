@@ -31,7 +31,7 @@ private:
 	void onFinishTransfer();
 
 private:
-	//APASSETID m_srcContractID; //use m_commodityID
+	//APASSETID m_srcContractID; //use m_instrumentID
 	APASSETID m_targetContractID;
 	UINT m_criticalDays;
 	UINT m_deadlineDays;

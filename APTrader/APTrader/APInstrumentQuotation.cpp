@@ -1,22 +1,22 @@
-#include "APCommodityQuotation.h"
+#include "APInstrumentQuotation.h"
 #include "APGlobalConfig.h"
 
-APCommodityQuotation::APCommodityQuotation(APASSETID commodityID)
+APInstrumentQuotation::APInstrumentQuotation(APASSETID instrumentID)
 {
-	m_commodityID = commodityID;
+	m_instrumentID = instrumentID;
 }
 
 
-APCommodityQuotation::~APCommodityQuotation()
+APInstrumentQuotation::~APInstrumentQuotation()
 {
 }
 
-double APCommodityQuotation::getCurPrice()
+double APInstrumentQuotation::getCurPrice()
 {
 	return m_curPrice;
 }
 
-double APCommodityQuotation::getOpenPrice(UINT index)
+double APInstrumentQuotation::getOpenPrice(UINT index)
 {
 	if (index >= m_openOrderList.size()) {
 		return 0.0f;
@@ -25,7 +25,7 @@ double APCommodityQuotation::getOpenPrice(UINT index)
 	return m_openOrderList[index].price;
 }
 
-double APCommodityQuotation::getClosePrice(UINT index)
+double APInstrumentQuotation::getClosePrice(UINT index)
 {
 	if (index >= m_closeOrderList.size()) {
 		return 0.0f;
@@ -34,7 +34,7 @@ double APCommodityQuotation::getClosePrice(UINT index)
 	return m_closeOrderList[index].price;
 }
 
-long APCommodityQuotation::getOpenVolume(UINT index)
+long APInstrumentQuotation::getOpenVolume(UINT index)
 {
 	if (index >= m_openOrderList.size()) {
 		return 0;
@@ -43,7 +43,7 @@ long APCommodityQuotation::getOpenVolume(UINT index)
 	return m_openOrderList[index].volume;
 }
 
-long APCommodityQuotation::getCloseVolume(UINT index)
+long APInstrumentQuotation::getCloseVolume(UINT index)
 {
 	if (index >= m_closeOrderList.size()) {
 		return 0;

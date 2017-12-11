@@ -11,7 +11,7 @@ APSimMarketQuotations::~APSimMarketQuotations()
 {
 }
 
-APCommodityQuotation * APSimMarketQuotations::generateQuotation(APASSETID commodityID)
+APInstrumentQuotation * APSimMarketQuotations::generateQuotation(APASSETID instrumentID)
 {
-	return new APSimFuturesQuotation(commodityID);
+	return new APSimFuturesQuotation(instrumentID);
 }

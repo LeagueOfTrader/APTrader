@@ -149,10 +149,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="APAccountAssets.h" />
-    <ClInclude Include="APCommodityQuotation.h" />
     <ClInclude Include="APDef.h" />
     <ClInclude Include="APFramework.h" />
     <ClInclude Include="APFundPool.h" />
+    <ClInclude Include="APInstrumentQuotation.h" />
     <ClInclude Include="APMarketQuotationsManager.h" />
     <ClInclude Include="APTypes.h" />
     <ClInclude Include="Simulation\APSimSingleQuotationDecision.h" />
@@ -200,9 +200,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APAccountAssests.cpp" />
-    <ClCompile Include="APCommodityQuotation.cpp" />
     <ClCompile Include="APFramework.cpp" />
     <ClCompile Include="APFundPool.cpp" />
+    <ClCompile Include="APInstrumentQuotation.cpp" />
     <ClCompile Include="APMarketQuotationsManager.cpp" />
     <ClCompile Include="Simulation\APSimSingleQuotationDecision.cpp" />
     <ClCompile Include="Utils\APLog.cpp" />

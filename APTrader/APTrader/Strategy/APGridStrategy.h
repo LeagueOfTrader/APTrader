@@ -4,7 +4,7 @@
 #include <vector>
 
 class APPositionCtrl;
-class APCommodityQuotation;
+class APInstrumentQuotation;
 
 struct APGridData {
 	double valueRef;
@@ -49,7 +49,7 @@ protected:
 protected:
 	APTrendType m_trend;
 	
-	//APASSETID m_commodityID;
+	//APASSETID m_instrumentID;
 
 	std::vector<APGridData> m_openGrids;
 	std::vector<APGridData> m_closeGrids;

@@ -6,7 +6,7 @@
 #include <list>
 
 class APTrade;
-class APCommodityQuotation;
+class APInstrumentQuotation;
 
 class APPositionCtrl
 {
@@ -18,9 +18,9 @@ public:
 
 	virtual void syncPositionStatus();	
 
-	void setCommodityID(APASSETID commodityID);
+	void setInstrumentID(APASSETID instrumentID);
 	APTrendType getTrendType();
-	const APASSETID& getCommodityID();
+	const APASSETID& getInstrumentID();
 	UINT getID();
 
 	//void subscribeGoodsInfo();
@@ -56,7 +56,7 @@ public:
 	void cancelTrade(APTradeType type);
 	void cancelAllTrade();
 
-	virtual void onTradeDealt(APASSETID commodityID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend = TT_Long) = 0;
+	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend = TT_Long) = 0;
 
 	virtual void update();
 
@@ -92,12 +92,12 @@ protected:
 
 	APTrade* m_trade;
 	bool m_isRecyclingFund;
-	APASSETID m_commodityID;
+	APASSETID m_instrumentID;
 	APTrendType m_trendType;
 
 	UINT m_id;
 
-	APCommodityQuotation* m_quotation;
+	APInstrumentQuotation* m_quotation;
 
 	std::list<APORDERID> m_openOrderList;
 	std::list<APORDERID> m_closeOrderList;

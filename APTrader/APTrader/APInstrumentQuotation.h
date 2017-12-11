@@ -8,11 +8,11 @@ struct APOrderInfo {
 	long volume;
 };
 
-class APCommodityQuotation
+class APInstrumentQuotation
 {
 public:
-	APCommodityQuotation(APASSETID commodityID);
-	~APCommodityQuotation();
+	APInstrumentQuotation(APASSETID instrumentID);
+	~APInstrumentQuotation();
 
 	virtual void queryQuotation() = 0;
 	
@@ -23,7 +23,7 @@ public:
 	virtual long getCloseVolume(UINT index = 0);
 
 protected:
-	APASSETID m_commodityID;
+	APASSETID m_instrumentID;
 
 	double m_curPrice;
 	double m_openingPrice;

@@ -134,9 +134,9 @@ void APStrategy::initQuotationDecision(std::string quotationInfo)
 	}
 }
 
-void APStrategy::setCommodityID(APASSETID commodityID)
+void APStrategy::setInstrumentID(APASSETID instrumentID)
 {
-	m_commodityID = commodityID;
+	m_instrumentID = instrumentID;
 }
 
 

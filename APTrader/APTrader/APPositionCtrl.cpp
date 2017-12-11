@@ -2,7 +2,7 @@
 #include "APTradeManager.h"
 #include "APGlobalConfig.h"
 #include "Utils\APJsonReader.h"
-#include "APCommodityQuotation.h"
+#include "APInstrumentQuotation.h"
 #include "APMarketQuotationsManager.h"
 #include "APPositionManager.h"
 #include "APTrade.h"
@@ -25,14 +25,14 @@ APPositionCtrl::~APPositionCtrl()
 //}
 
 
-void APPositionCtrl::setCommodityID(APASSETID commodityID)
+void APPositionCtrl::setInstrumentID(APASSETID instrumentID)
 {
-	m_commodityID = commodityID;
+	m_instrumentID = instrumentID;
 }
 
-const APASSETID& APPositionCtrl::getCommodityID()
+const APASSETID& APPositionCtrl::getInstrumentID()
 {
-	return m_commodityID;
+	return m_instrumentID;
 }
 
 APTrendType APPositionCtrl::getTrendType() {
@@ -266,7 +266,7 @@ void APPositionCtrl::onSyncPositionStatus(const APPositionData & pd)
 void APPositionCtrl::syncPositionStatus()
 {
 	APPositionData pd;
-	if (APAccountAssets::getInstance()->getPositionData(m_commodityID, m_trendType, pd)) {
+	if (APAccountAssets::getInstance()->getPositionData(m_instrumentID, m_trendType, pd)) {
 		onSyncPositionStatus(pd);
 	}
 	else {
@@ -282,7 +282,7 @@ void APPositionCtrl::setBaseParam(std::string positionInfo)
 {
 	APJsonReader jr;
 	jr.initWithString(positionInfo);
-	m_commodityID = jr.getStrValue("CommodityID");
+	m_instrumentID = jr.getStrValue("InstrumentID");
 	m_maxPosition = jr.getIntValue("TotalPosition");
 	std::string strTrend = jr.getStrValue("Trend");
 	if (strTrend == "Long") {
@@ -293,7 +293,7 @@ void APPositionCtrl::setBaseParam(std::string positionInfo)
 	}
 
 #ifndef _DEBUG
-	m_quotation = APMarketQuotationsManager::getInstance()->subscribeCommodity(m_commodityID);
+	m_quotation = APMarketQuotationsManager::getInstance()->subscribeInstrument(m_instrumentID);
 #else 
 	m_quotation = NULL;
 #endif // !_DEBUG

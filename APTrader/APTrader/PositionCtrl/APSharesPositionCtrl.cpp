@@ -19,13 +19,13 @@ APSharesPositionCtrl::~APSharesPositionCtrl()
 void APSharesPositionCtrl::init(std::string positionInfo)
 {
 	setBaseParam(positionInfo);
-	//APTradeManager::getInstance()->registerPositionCtrl(m_commodityID, TT_Long, this);
+	//APTradeManager::getInstance()->registerPositionCtrl(m_instrumentID, TT_Long, this);
 	m_trade = dynamic_cast<APSharesTrade*>(APTradeManager::getInstance()->getTradeInstance());
 }
 
 void APSharesPositionCtrl::open(APTrendType type, double price, long volume)
 {
-	APORDERID orderID = m_trade->open(m_commodityID, type, price, volume, this);
+	APORDERID orderID = m_trade->open(m_instrumentID, type, price, volume, this);
 	if (orderID != INVALID_TRADE_ORDER_ID) {
 		m_openOrderList.push_back(orderID);
 	}
@@ -33,7 +33,7 @@ void APSharesPositionCtrl::open(APTrendType type, double price, long volume)
 
 void APSharesPositionCtrl::close(APTrendType type, double price, long volume)
 {
-	APORDERID orderID = m_trade->close(m_commodityID, type, price, volume, this);
+	APORDERID orderID = m_trade->close(m_instrumentID, type, price, volume, this);
 	if (orderID != INVALID_TRADE_ORDER_ID) {
 		m_closeOrderList.push_back(orderID);
 	}
@@ -56,7 +56,7 @@ void APSharesPositionCtrl::cancel(APTradeType type, double price, APTrendType tr
 	}
 
 	if (m_trade != NULL) {
-		//m_trade->cancel(m_commodityID, type, trend, price, this);
+		//m_trade->cancel(m_instrumentID, type, trend, price, this);
 		std::list<APORDERID>::iterator it;
 		APTradeOrderInfo info;
 		if (type == TDT_Open) {
@@ -91,7 +91,7 @@ void APSharesPositionCtrl::cancel(APTradeType type)
 //{
 //}
 
-void APSharesPositionCtrl::onTradeDealt(APASSETID commodityID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend)
+void APSharesPositionCtrl::onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend)
 {
 	switch (type) {
 		case TDT_Open:

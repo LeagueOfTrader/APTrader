@@ -3,7 +3,7 @@
     "Priority": 10,
     "StrategyInfo": {
         "Position": {
-            "CommodityID": "rb1801",
+            "InstrumentID": "rb1801",
             "TotalPosition": 500,
             "Trend": "Long"
         },

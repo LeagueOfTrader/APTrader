@@ -20,15 +20,15 @@ APObjectFactory::~APObjectFactory()
 {
 }
 
-APCommodityQuotation * APObjectFactory::newCommodityQuotation(APFinancialCommodityType type, APASSETID commodityID)
+APInstrumentQuotation * APObjectFactory::newInstrumentQuotation(APFinancialInstrumentType type, APASSETID instrumentID)
 {
-	APCommodityQuotation* cq = NULL;
+	APInstrumentQuotation* cq = NULL;
 	switch (type) {
 	case FCT_Shares:
-		cq = new APSharesQuotation(commodityID);
+		cq = new APSharesQuotation(instrumentID);
 		break;
 	case FCT_Futrues:
-		cq = new APFuturesQuotation(commodityID);
+		cq = new APFuturesQuotation(instrumentID);
 		break;
 	case FCT_Options:
 		break;
@@ -38,7 +38,7 @@ APCommodityQuotation * APObjectFactory::newCommodityQuotation(APFinancialCommodi
 	return cq;
 }
 
-APPositionCtrl * APObjectFactory::newPositionCtrl(APFinancialCommodityType type)
+APPositionCtrl * APObjectFactory::newPositionCtrl(APFinancialInstrumentType type)
 {
 	APPositionCtrl* pc = NULL;
 	switch (type) {
@@ -56,7 +56,7 @@ APPositionCtrl * APObjectFactory::newPositionCtrl(APFinancialCommodityType type)
 	return pc;
 }
 
-APTrade * APObjectFactory::newTrade(APFinancialCommodityType type)
+APTrade * APObjectFactory::newTrade(APFinancialInstrumentType type)
 {
 	APTrade* trader = NULL;
 	switch (type) {

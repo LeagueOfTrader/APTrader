@@ -27,7 +27,7 @@ public:
 	UINT getID();
 	void setID(UINT id);
 
-	void setCommodityID(APASSETID commodityID);
+	void setInstrumentID(APASSETID instrumentID);
 
 protected:
 	void open(APTrendType type, double price, long volume);
@@ -38,7 +38,7 @@ protected:
 	void initQuotationDecision(std::string quotationInfo);	
 
 protected:
-	APASSETID m_commodityID;
+	APASSETID m_instrumentID;
 
 	APPositionCtrl* m_positionCtrl;
 	APQuotationDecision* m_quotationDecision;

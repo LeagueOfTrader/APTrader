@@ -29,7 +29,7 @@ public:
 
 	virtual void init();
 
-	bool getPositionData(APASSETID commodityID, APTrendType type, APPositionData& positionData);	
+	bool getPositionData(APASSETID instrumentID, APTrendType type, APPositionData& positionData);	
 
 private:
 	std::map<APASSETID, APPositionData> m_longPositionData;

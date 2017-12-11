@@ -8,17 +8,17 @@ APSharesTrade::~APSharesTrade()
 {
 }
 
-void APSharesTrade::open(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume, APTradeOrderType ot)
+void APSharesTrade::open(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APTradeOrderType ot)
 {
 	if (trend == TT_Long) {
-		//buy(commodityID, price, volume);
+		//buy(instrumentID, price, volume);
 	}
 }
 
-void APSharesTrade::close(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume, APTradeOrderType ot)
+void APSharesTrade::close(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APTradeOrderType ot)
 {
 	if (trend == TT_Long) {
-		//sell(commodityID, price, volume);
+		//sell(instrumentID, price, volume);
 	}
 }
 
@@ -26,21 +26,21 @@ void APSharesTrade::cancel(APSYSTEMID sysID)
 {
 }
 
-//long APSharesTrade::buy(APASSETID commodityID, double price, long volume)
+//long APSharesTrade::buy(APASSETID instrumentID, double price, long volume)
 //{
 //	return 0;
 //}
 //
-//long APSharesTrade::sell(APASSETID commodityID, double price, long volume)
+//long APSharesTrade::sell(APASSETID instrumentID, double price, long volume)
 //{
 //	return 0;
 //}
 //
-//void APSharesTrade::buyOrder(APASSETID commodityID, double price, long volume)
+//void APSharesTrade::buyOrder(APASSETID instrumentID, double price, long volume)
 //{
 //}
 //
-//void APSharesTrade::sellOrder(APASSETID commodityID, double price, long volume)
+//void APSharesTrade::sellOrder(APASSETID instrumentID, double price, long volume)
 //{
 //}
 //

@@ -6,7 +6,7 @@
 class APSimSingleQuotationDecision : public APSingleQuotationDecision
 {
 public:
-	APSimSingleQuotationDecision(APASSETID commodityID);
+	APSimSingleQuotationDecision(APASSETID instrumentID);
 	~APSimSingleQuotationDecision();
 };
 

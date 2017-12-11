@@ -18,7 +18,7 @@ public:
 	virtual void cancel(APTradeType type);
 	//virtual void cancelAll();
 
-	virtual void onTradeDealt(APASSETID commodityID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend = TT_Long);
+	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend = TT_Long);
 
 };
 

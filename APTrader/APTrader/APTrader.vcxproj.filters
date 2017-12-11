@@ -48,9 +48,6 @@
     <ClInclude Include="APMarketQuotations.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="APCommodityQuotation.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="APObjectFactory.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -165,6 +162,9 @@
     <ClInclude Include="APTypes.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="APInstrumentQuotation.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APPositionCtrl.cpp">
@@ -189,9 +189,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="APMarketQuotations.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="APCommodityQuotation.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="APObjectFactory.cpp">
@@ -297,6 +294,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="APMarketQuotationsManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APInstrumentQuotation.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

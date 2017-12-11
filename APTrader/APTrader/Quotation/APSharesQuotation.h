@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
-#include "../APCommodityQuotation.h"
+#include "../APInstrumentQuotation.h"
 
-class APSharesQuotation : public APCommodityQuotation
+class APSharesQuotation : public APInstrumentQuotation
 {
 public:
 	APSharesQuotation(APASSETID shareID);

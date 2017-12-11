@@ -3,7 +3,7 @@
 #include <string>
 #include "APTypes.h"
 
-class APCommodityQuotation;
+class APInstrumentQuotation;
 class APPositionCtrl;
 class APQuotationDecision;
 class APTrade;
@@ -14,9 +14,9 @@ public:
 	APObjectFactory();
 	~APObjectFactory();
 
-	static APCommodityQuotation* newCommodityQuotation(APFinancialCommodityType type, APASSETID commodityID);
-	static APPositionCtrl* newPositionCtrl(APFinancialCommodityType type);
-	static APTrade* newTrade(APFinancialCommodityType type);
+	static APInstrumentQuotation* newInstrumentQuotation(APFinancialInstrumentType type, APASSETID instrumentID);
+	static APPositionCtrl* newPositionCtrl(APFinancialInstrumentType type);
+	static APTrade* newTrade(APFinancialInstrumentType type);
 	static APQuotationDecision* newQuotationDecision(APQuotationDecisionType type, APASSETID srcID, APASSETID targetID = "", double param = 0.0f);
 };
 
