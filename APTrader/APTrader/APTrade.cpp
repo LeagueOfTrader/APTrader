@@ -25,7 +25,7 @@ APORDERID APTrade::open(APASSETID instrumentID, APTrendType trend, double price,
 	}
 
 	APORDERID orderID = generateOrderID();
-	if (ot == TOT_ValidTheDay) {
+	if (ot == TOT_GoodForDay) {
 		APTradeOrderPositionInfo info = { orderID, TDT_Open, instrumentID, price, volume, trend, pc->getID()};
 		m_ordersApplied[orderID] = info;
 	}
@@ -44,7 +44,7 @@ APORDERID APTrade::close(APASSETID instrumentID, APTrendType trend, double price
 	}
 
 	APORDERID orderID = generateOrderID();
-	if (ot == TOT_ValidTheDay) {
+	if (ot == TOT_GoodForDay) {
 		APTradeOrderPositionInfo info = { UNDISTURBED_ORDER_ID, TDT_Close, instrumentID, price, volume, trend, pc->getID() };
 		m_ordersApplied[orderID] = info;
 	}

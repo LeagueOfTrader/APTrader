@@ -170,7 +170,7 @@ void APFuturesPositionCtrl::open(APASSETID contractID, APTrendType trend, double
 {
 	if (m_trade != NULL) {
 		APORDERID orderID = m_trade->open(contractID, trend, price, volume, this, ot);
-		if (ot == TOT_ValidTheDay && orderID != INVALID_TRADE_ORDER_ID) {
+		if (ot == TOT_GoodForDay && orderID != INVALID_TRADE_ORDER_ID) {
 			m_openOrderList.push_back(orderID);
 		}
 	}
@@ -180,7 +180,7 @@ void APFuturesPositionCtrl::close(APASSETID contractID, APTrendType trend, doubl
 {
 	if (m_trade != NULL) {
 		APORDERID orderID = m_trade->close(contractID, trend, price, volume, this, ot);
-		if (ot == TOT_ValidTheDay && orderID != INVALID_TRADE_ORDER_ID) {
+		if (ot == TOT_GoodForDay && orderID != INVALID_TRADE_ORDER_ID) {
 			m_closeOrderList.push_back(orderID);
 		}
 	}
