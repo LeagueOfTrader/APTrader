@@ -21,7 +21,7 @@ APSimTradeSystem::~APSimTradeSystem()
 	m_tradeIDAccumulator = NULL;
 }
 
-UINT APSimTradeSystem::requestOpen(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume)
+APSYSTEMID APSimTradeSystem::requestOpen(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume)
 {
 	APSYSTEMID sysID = m_orderIDAccumulator->generateID();
 	APTradeOrderInfo order = {orderID, TDT_Open, commodityID, price, volume, trend, TS_Ordered, sysID};
@@ -29,10 +29,10 @@ UINT APSimTradeSystem::requestOpen(APORDERID orderID, APASSETID commodityID, APT
 	if (m_trade != NULL) {
 		m_trade->onTradeOrdered(commodityID, TDT_Open, price, volume, orderID, TS_Ordered, sysID, trend);
 	}
-	return orderID;
+	return sysID;
 }
 
-UINT APSimTradeSystem::requestClose(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume)
+APSYSTEMID APSimTradeSystem::requestClose(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume)
 {
 	APSYSTEMID sysID = m_orderIDAccumulator->generateID();
 	APTradeOrderInfo order = { orderID, TDT_Close, commodityID, price, volume, trend, TS_Ordered, sysID };
@@ -40,7 +40,7 @@ UINT APSimTradeSystem::requestClose(APORDERID orderID, APASSETID commodityID, AP
 	if (m_trade != NULL) {
 		m_trade->onTradeOrdered(commodityID, TDT_Close, price, volume, orderID, TS_Ordered, sysID, trend);
 	}
-	return orderID;
+	return sysID;
 }
 
 
@@ -234,7 +234,7 @@ void APSimTradeSystem::closeTheDeal(APORDERID orderID, APASSETID commodityID, AP
 	}
 	
 	onTradeDealt(orderID, commodityID, type, price, 
-		volume, 
+		0, //volume, 
 		sysID, trend);
 }
 

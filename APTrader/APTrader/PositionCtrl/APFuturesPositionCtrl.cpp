@@ -54,30 +54,40 @@ void APFuturesPositionCtrl::cancel(APTradeType type, double price, APTrendType t
 		std::list<APORDERID>::iterator it;
 		APTradeOrderInfo info;
 		if (type == TDT_Open) {
-			for (it = m_openOrderList.begin(); it != m_openOrderList.end(); it++) {
+			for (it = m_openOrderList.begin(); it != m_openOrderList.end(); ) {
 				//m_trade->cancel(*it, this);				
 				if (m_trade->getOrderInfo(*it, info)) {
 					if (info.trend == trend) {
 						if (fabs(info.price - price) < DBL_EPSILON ||
 							(trend == TT_Short && info.price > price) ||  //Short Open, cancel higher offered price
 							(trend == TT_Long &&  info.price < price)) { // Long Open, cancel lower offered price
-							m_trade->cancel(*it, this);
+							APORDERID orderID = *it;
+							std::list<APORDERID>::iterator itNext = ++it;
+							m_trade->cancel(orderID, this);
+							it = itNext;
+							continue;
 						}
 					}
 				}
+				it++;
 			}
 		}
 		else if (type == TDT_Close) {
-			for (it = m_closeOrderList.begin(); it != m_closeOrderList.end(); it++) {
+			for (it = m_closeOrderList.begin(); it != m_closeOrderList.end();) {
 				if (m_trade->getOrderInfo(*it, info)) {
 					if (info.trend == trend) {
 						if (fabs(info.price - price) < DBL_EPSILON ||
 							(trend == TT_Long  && info.price > price) ||  // Long Close, cancel higher offered price
 							(trend == TT_Short && info.price < price)) { // Short Close, cancel lower offered price
-							m_trade->cancel(*it, this);
+							APORDERID orderID = *it;
+							std::list<APORDERID>::iterator itNext = ++it;
+							m_trade->cancel(orderID, this);
+							it = itNext;
+							continue;
 						}
 					}
 				}
+				it++;
 			}
 		}
 	}

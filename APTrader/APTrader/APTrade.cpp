@@ -177,16 +177,16 @@ void APTrade::onTradeDealt(APASSETID commodityID, APTradeType type, double price
 		UINT posCtrlID = m_orderPosCtrlRelation[orderID];
 
 		APTradeOrderInfo& orderInfo = m_ordersConfirmed[orderID];
+		long deltaVolume = orderInfo.volume - volume;
 		orderInfo.volume = volume;
 		orderInfo.sysID = sysID;
 		orderInfo.state = state;
 
 		APPositionCtrl* posCtrl = APPositionManager::getInstance()->getPositionCtrl(posCtrlID);
-		if (posCtrl != NULL) {
-			long deltaVolume = orderInfo.volume - volume;
-			if (deltaVolume > 0) {
-				posCtrl->onTradeDealt(commodityID, type, price, volume, orderID, trend);
-			}
+		if (posCtrl != NULL) {			
+			//if (deltaVolume > 0) {
+			posCtrl->onTradeDealt(commodityID, type, price, deltaVolume, orderID, trend);
+			//}
 		}
 		
 		if (orderInfo.volume == 0) {
@@ -203,11 +203,12 @@ void APTrade::onTradeDealt(APASSETID commodityID, APTradeType type, double price
 		std::map<APORDERID, APTradeOrderPositionInfo>::iterator it = m_quickDealOrders.find(orderID);
 		if(it != m_quickDealOrders.end()) {
 			APTradeOrderPositionInfo& info = it->second;
+			long deltaVolume = info.orderInfo.volume - volume;
 			
 			UINT posCtrlID = info.positionCtrlID;
 			APPositionCtrl* posCtrl = APPositionManager::getInstance()->getPositionCtrl(posCtrlID);
 			if (posCtrl != NULL) {
-				posCtrl->onTradeDealt(commodityID, type, price, volume, trend);
+				posCtrl->onTradeDealt(commodityID, type, price, deltaVolume, trend);
 			}
 		}
 	}

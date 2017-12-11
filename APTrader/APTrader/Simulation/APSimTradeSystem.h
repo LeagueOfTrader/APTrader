@@ -25,8 +25,8 @@ public:
 	APSimTradeSystem();
 	~APSimTradeSystem();
 
-	UINT requestOpen(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume);
-	UINT requestClose(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume);
+	APSYSTEMID requestOpen(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume);
+	APSYSTEMID requestClose(APORDERID orderID, APASSETID commodityID, APTrendType trend, double price, long volume);
 	void requestCancel(APSYSTEMID sysID);
 
 	void init();
