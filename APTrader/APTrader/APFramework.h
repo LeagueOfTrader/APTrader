@@ -7,9 +7,9 @@ public:
 	APFramework();
 	~APFramework();
 
-	virtual void init();
-	virtual void update();
-	virtual void exit();
+	virtual void init() = 0;
+	virtual void update(float deltaTime = 0.0f) = 0;
+	virtual void exit() = 0;
 
 	virtual bool finished();
 

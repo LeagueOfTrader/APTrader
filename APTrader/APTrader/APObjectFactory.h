@@ -14,9 +14,9 @@ public:
 	APObjectFactory();
 	~APObjectFactory();
 
-	static APInstrumentQuotation* newInstrumentQuotation(APFinancialInstrumentType type, APASSETID instrumentID);
-	static APPositionCtrl* newPositionCtrl(APFinancialInstrumentType type);
-	static APTrade* newTrade(APFinancialInstrumentType type);
+	static APInstrumentQuotation* newInstrumentQuotation(APFinancialInstrumentType marketType, APASSETID instrumentID);
+	static APPositionCtrl* newPositionCtrl(APFinancialInstrumentType marketType);
+	static APTrade* newTrade(APFinancialInstrumentType marketType);
 	static APQuotationDecision* newQuotationDecision(APQuotationDecisionType type, APASSETID srcID, APASSETID targetID = "", double param = 0.0f);
 };
 

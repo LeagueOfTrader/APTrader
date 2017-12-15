@@ -3,7 +3,7 @@
 #include "APGlobalConfig.h"
 #include "Utils\APJsonReader.h"
 #include "APInstrumentQuotation.h"
-#include "APMarketQuotationsManager.h"
+//#include "APMarketQuotationsManager.h"
 #include "APPositionManager.h"
 #include "APTrade.h"
 

@@ -21,6 +21,8 @@ APInstrumentQuotation* APMarketQuotations::subscribeInstrument(APASSETID instrum
 		return  it->second;
 	}
 
+	subscribeInstrumentInfo(instrumentID);
+
 	APInstrumentQuotation* instrumentQuotation = this->generateQuotation(instrumentID);//APObjectFactory::newInstrumentQuotation(m_marketType, instrumentID);
 	m_instrumentQuotations[instrumentID] = instrumentQuotation;
 	return instrumentQuotation;
@@ -31,7 +33,7 @@ void APMarketQuotations::init()
 	m_marketType = APGlobalConfig::getInstance()->getInstrumentType();
 }
 
-void APMarketQuotations::update()
+void APMarketQuotations::update(float deltaTime)
 {
 	std::map<std::string, APInstrumentQuotation*>::iterator it = m_instrumentQuotations.begin();
 	for (; it != m_instrumentQuotations.end(); it++) {

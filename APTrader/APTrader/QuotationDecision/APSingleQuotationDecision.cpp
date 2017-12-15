@@ -1,6 +1,6 @@
 #include "APSingleQuotationDecision.h"
 #include "../APInstrumentQuotation.h"
-#include "../APMarketQuotationsManager.h"
+#include "../APMarketDataManager.h"
 
 
 APSingleQuotationDecision::APSingleQuotationDecision()
@@ -10,7 +10,7 @@ APSingleQuotationDecision::APSingleQuotationDecision()
 
 APSingleQuotationDecision::APSingleQuotationDecision(APASSETID instrumentID)
 {
-	m_quotation = APMarketQuotationsManager::getInstance()->subscribeInstrument(instrumentID);
+	m_quotation = APMarketDataMgr->subscribeInstrument(instrumentID);
 }
 
 APSingleQuotationDecision::~APSingleQuotationDecision()

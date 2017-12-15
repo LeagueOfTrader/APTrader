@@ -15,3 +15,8 @@ APInstrumentQuotation * APSimMarketQuotations::generateQuotation(APASSETID instr
 {
 	return new APSimFuturesQuotation(instrumentID);
 }
+
+bool APSimMarketQuotations::subscribeInstrumentInfo(APASSETID instrumentID)
+{
+	return true;
+}

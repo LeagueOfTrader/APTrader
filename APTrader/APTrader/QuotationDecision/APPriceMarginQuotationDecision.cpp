@@ -1,11 +1,11 @@
 #include "APPriceMarginQuotationDecision.h"
 #include "../APInstrumentQuotation.h"
-#include "../APMarketQuotationsManager.h"
+#include "../APMarketDataManager.h"
 
 APPriceMarginQuotationDecision::APPriceMarginQuotationDecision(APASSETID srcInstrumentID, APASSETID targetInstrumentID, double priceDiff)
 {
-	m_srcQuotation = APMarketQuotationsManager::getInstance()->subscribeInstrument(srcInstrumentID);
-	m_targetQuotation = APMarketQuotationsManager::getInstance()->subscribeInstrument(targetInstrumentID);
+	m_srcQuotation = APMarketDataMgr->subscribeInstrument(srcInstrumentID);
+	m_targetQuotation = APMarketDataMgr->subscribeInstrument(targetInstrumentID);
 	m_priceDiff = priceDiff;
 }
 

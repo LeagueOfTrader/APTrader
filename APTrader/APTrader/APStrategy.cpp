@@ -49,7 +49,7 @@ void APStrategy::init(std::string strategyInfo)
 	if (jr.hasMember("SubStrategies")) {
 		int subStrategiesCount = jr.getArraySize("SubStrategies");
 		for (int i = 0; i < subStrategiesCount; i++) {
-			std::string subFile = jr.getArrayElement("SubStrategies", i);
+			std::string subFile = jr.getArrayStrValue("SubStrategies", i);
 			APStrategy* subStrategy = APStrategyManager::getInstance()->runStrategy(subFile);
 			this->attach(subStrategy);
 		}

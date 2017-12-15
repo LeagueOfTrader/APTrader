@@ -15,3 +15,8 @@ APIntAccumulator::~APIntAccumulator()
 UINT APIntAccumulator::generateID() {
 	return ++m_id;
 }
+
+void APIntAccumulator::setBase(UINT base)
+{
+	m_id = base;
+}

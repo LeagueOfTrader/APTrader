@@ -9,6 +9,8 @@ public:
 
 	UINT generateID();
 
+	void setBase(UINT base);
+
 private:
 	UINT m_id;
 };

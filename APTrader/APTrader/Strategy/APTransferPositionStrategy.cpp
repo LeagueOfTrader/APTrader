@@ -1,7 +1,7 @@
 #include "APTransferPositionStrategy.h"
 #include "../Utils/APTimeUtility.h"
 #include "../Futures/APFuturesIDSelector.h"
-#include "../APMarketQuotationsManager.h"
+#include "../APMarketDataManager.h"
 #include "../Quotation/APFuturesQuotation.h"
 #include "../PositionCtrl/APFuturesPosCtrlWithTransfer.h"
 #include <algorithm>
@@ -63,8 +63,8 @@ void APTransferPositionStrategy::initWithTransferInfo(std::string transferInfo)
 		m_interpType = IMT_Quad;
 	}
 
-	m_curQuotation = dynamic_cast<APFuturesQuotation*>(APMarketQuotationsManager::getInstance()->subscribeInstrument(m_instrumentID));
-	m_targetQuotation = dynamic_cast<APFuturesQuotation*>(APMarketQuotationsManager::getInstance()->subscribeInstrument(m_targetContractID));
+	m_curQuotation = dynamic_cast<APFuturesQuotation*>(APMarketDataMgr->subscribeInstrument(m_instrumentID));
+	m_targetQuotation = dynamic_cast<APFuturesQuotation*>(APMarketDataMgr->subscribeInstrument(m_targetContractID));
 }
 
 void APTransferPositionStrategy::update()

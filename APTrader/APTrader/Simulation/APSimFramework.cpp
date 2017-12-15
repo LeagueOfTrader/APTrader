@@ -53,8 +53,8 @@ APTrade * APSimFramework::generateSimTradeInstance()
 	return new APSimFuturesTrade();
 }
 
-void APSimFramework::update() {
-	APSimMarketQuotations::getInstance()->update();
+void APSimFramework::update(float deltaTime) {
+	APSimMarketQuotations::getInstance()->update(deltaTime);
 	APPositionManager::getInstance()->update();
 	APStrategyManager::getInstance()->update();
 	APSimTradeSystem::getInstance()->update();
@@ -92,7 +92,7 @@ void APSimFramework::initFromCfg()
 
 	int strategiesCount = jr.getArraySize("SimStrategies");
 	for (int i = 0; i < strategiesCount; i++) {
-		m_simStrategies.push_back(jr.getArrayElement("SimStrategies", i));
+		m_simStrategies.push_back(jr.getArrayStrValue("SimStrategies", i));
 	}
 	
 	m_discreteCount = 0;

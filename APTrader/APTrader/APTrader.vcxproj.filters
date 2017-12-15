@@ -156,13 +156,37 @@
     <ClInclude Include="Simulation\APSimSingleQuotationDecision.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="APMarketQuotationsManager.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="APTypes.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="APInstrumentQuotation.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Futures\APFuturesFramework.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Impl\APFuturesCTPMDResponser.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Impl\APFuturesCTPTraderResponser.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Impl\APFuturesCTPMDAgent.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Impl\APFuturesCTPAgent.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Impl\APFuturesCTPTraderAgent.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Quotation\APFuturesMarketQuotations.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APMarco.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APMarketDataManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -293,10 +317,28 @@
     <ClCompile Include="Simulation\APSimSingleQuotationDecision.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="APMarketQuotationsManager.cpp">
+    <ClCompile Include="APInstrumentQuotation.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="APInstrumentQuotation.cpp">
+    <ClCompile Include="Futures\APFuturesFramework.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Impl\APFuturesCTPMDResponser.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Impl\APFuturesCTPTraderResponser.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Impl\APFuturesCTPMDAgent.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Impl\APFuturesCTPAgent.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Impl\APFuturesCTPTraderAgent.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Quotation\APFuturesMarketQuotations.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
