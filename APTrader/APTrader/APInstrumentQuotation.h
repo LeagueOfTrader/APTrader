@@ -3,7 +3,7 @@
 #include <vector>
 #include "APTypes.h"
 
-struct APOrderInfo {
+struct APBidInfo {
 	double price;
 	long volume;
 };
@@ -32,7 +32,7 @@ protected:
 	double m_hightestPriceHistory;
 	double m_lowestPriceHistory;
 
-	std::vector<APOrderInfo> m_openOrderList;
-	std::vector<APOrderInfo> m_closeOrderList;
+	std::vector<APBidInfo> m_openOrderList;
+	std::vector<APBidInfo> m_closeOrderList;
 };
 

@@ -1,10 +1,14 @@
-#include "APFuturesCTPMDResponser.h"
 #include "APFuturesCTPMDAgent.h"
+
+#ifdef USE_CTP
+
 #include "../Utils/APLog.h"
+#include "APFuturesCTPMDResponser.h"
 
-//test
-#include "../Quotation/APFuturesMarketQuotations.h"
-
+//
+////test
+//#include "../Quotation/APFuturesMarketQuotations.h"
+//
 
 APFuturesCTPMDResponser::APFuturesCTPMDResponser()
 {
@@ -80,7 +84,9 @@ void APFuturesCTPMDResponser::OnRspUnSubForQuoteRsp(CThostFtdcSpecificInstrument
 }
 
 void APFuturesCTPMDResponser::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField * pDepthMarketData)
-{
+{	
+	APFuturesCTPMDAgent::getInstance()->onGetMarketData(pDepthMarketData);
+	
 	APLogger->log("On Get Market Data, Instrument ID: %s, Price: %f. ",
 					pDepthMarketData->InstrumentID, pDepthMarketData->LastPrice);
 }
@@ -88,3 +94,6 @@ void APFuturesCTPMDResponser::OnRtnDepthMarketData(CThostFtdcDepthMarketDataFiel
 void APFuturesCTPMDResponser::OnRtnForQuoteRsp(CThostFtdcForQuoteRspField * pForQuoteRsp)
 {
 }
+
+
+#endif

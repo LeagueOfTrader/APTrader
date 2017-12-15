@@ -11,7 +11,7 @@
 #include "Quotation/APFuturesMarketQuotations.h"
 
 void loop() {
-	return;
+	//return;
 
 	std::string instrumentID = "hc1805";
 	//APFuturesMarketQuotations::getInstance()->init();

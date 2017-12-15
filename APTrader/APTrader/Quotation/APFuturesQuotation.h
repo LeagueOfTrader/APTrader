@@ -1,5 +1,11 @@
 #pragma once
 #include "../APInstrumentQuotation.h"
+#include "../APMarco.h"
+
+#ifdef USE_CTP
+#include "ThostFtdcUserApiStruct.h"
+#endif
+
 class APFuturesQuotation :
 	public APInstrumentQuotation
 {
@@ -8,5 +14,10 @@ public:
 	~APFuturesQuotation();
 
 	virtual void queryQuotation();
+
+private:
+#ifdef USE_CTP
+	void parseCTPData(CThostFtdcDepthMarketDataField *data);
+#endif
 };
 

@@ -43,20 +43,45 @@ bool APFuturesCTPMDAgent::subscribeInstrument(APASSETID instrumentID)
 		return false;
 	}
 
+	if (m_subscribedInstruments.find(instrumentID) != m_subscribedInstruments.end()) {
+		return true;
+	}
+
+	m_subscribedInstruments.insert(instrumentID);
+
 	char** ppSubscribeArr = (char**)malloc(sizeof(char**));
 	std::set<APASSETID>::iterator it;
 
-	//for (it = m_subscribedInstruments.begin(); it != m_subscribedInstruments.end(); it++) {
-	//	APASSETID id = *it;
-	//	*ppSubscribeArr++ = (char*)id.c_str();
-	//}
-	*ppSubscribeArr = (char*)instrumentID.c_str();
+	for (it = m_subscribedInstruments.begin(); it != m_subscribedInstruments.end(); it++) {
+		APASSETID id = *it;
+		*ppSubscribeArr++ = (char*)id.c_str();
+	}
 
-	bool ret = m_mdApi->SubscribeMarketData(ppSubscribeArr, 1);// m_subscribedInstruments.size() + 1);
-	//if (ret) {
-	//	m_subscribedInstruments.insert(instrumentID);
-	//}
+	bool ret = m_mdApi->SubscribeMarketData(ppSubscribeArr, m_subscribedInstruments.size());
 
 	delete ppSubscribeArr;
 	return ret;
+}
+
+CThostFtdcDepthMarketDataField * APFuturesCTPMDAgent::getMarketData(APASSETID instrumentID)
+{
+	if(m_marketData.find(instrumentID) == m_marketData.end()){
+		return NULL;
+	}
+
+	return m_marketData[instrumentID];
+}
+
+void APFuturesCTPMDAgent::onGetMarketData(CThostFtdcDepthMarketDataField * data)
+{
+	if (data == NULL) {
+		return;
+	}
+
+	APASSETID instrumentID = data->InstrumentID;
+	if (m_marketData.find(instrumentID) == m_marketData.end()) {
+		m_marketData[instrumentID] = new CThostFtdcDepthMarketDataField();
+	}
+
+	memcpy(m_marketData[instrumentID], data, sizeof(CThostFtdcDepthMarketDataField));
 }

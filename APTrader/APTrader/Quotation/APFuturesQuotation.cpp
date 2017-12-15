@@ -18,3 +18,10 @@ void APFuturesQuotation::queryQuotation()
 {
 	APFuturesCTPMDAgent::getInstance();
 }
+
+#ifdef USE_CTP
+void APFuturesQuotation::parseCTPData(CThostFtdcDepthMarketDataField * data)
+{
+	//
+}
+#endif
