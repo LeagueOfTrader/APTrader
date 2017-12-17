@@ -166,21 +166,21 @@ void APFuturesPositionCtrl::setContractType(APTrendType type)
 	m_trendType = type;
 }
 
-void APFuturesPositionCtrl::open(APASSETID contractID, APTrendType trend, double price, long volume, APTradeOrderType ot)
+void APFuturesPositionCtrl::open(APASSETID contractID, APTrendType trend, double price, long volume, APOrderTimeCondition ot)
 {
 	if (m_trade != NULL) {
-		APORDERID orderID = m_trade->open(contractID, trend, price, volume, this, ot);
-		if (ot == TOT_GoodForDay && orderID != INVALID_TRADE_ORDER_ID) {
+		APORDERID orderID = m_trade->open(contractID, trend, price, volume, this, OPT_LimitPrice, ot);
+		if (ot == OTC_GoodForDay && orderID != INVALID_TRADE_ORDER_ID) {
 			m_openOrderList.push_back(orderID);
 		}
 	}
 }
 
-void APFuturesPositionCtrl::close(APASSETID contractID, APTrendType trend, double price, long volume, APTradeOrderType ot)
+void APFuturesPositionCtrl::close(APASSETID contractID, APTrendType trend, double price, long volume, APOrderTimeCondition ot)
 {
 	if (m_trade != NULL) {
-		APORDERID orderID = m_trade->close(contractID, trend, price, volume, this, ot);
-		if (ot == TOT_GoodForDay && orderID != INVALID_TRADE_ORDER_ID) {
+		APORDERID orderID = m_trade->close(contractID, trend, price, volume, this, OPT_LimitPrice, ot);
+		if (ot == OTC_GoodForDay && orderID != INVALID_TRADE_ORDER_ID) {
 			m_closeOrderList.push_back(orderID);
 		}
 	}

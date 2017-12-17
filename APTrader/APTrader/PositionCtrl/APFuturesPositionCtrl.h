@@ -35,8 +35,8 @@ public:
 	void setContractType(APTrendType type);
 
 	// api trade futures directly
-	void open(APASSETID contractID, APTrendType trend, double price, long volume, APTradeOrderType ot = TOT_GoodForDay);
-	void close(APASSETID contractID, APTrendType trend, double price, long volume, APTradeOrderType ot = TOT_GoodForDay);
+	void open(APASSETID contractID, APTrendType trend, double price, long volume, APOrderTimeCondition ot = OTC_GoodForDay);
+	void close(APASSETID contractID, APTrendType trend, double price, long volume, APOrderTimeCondition ot = OTC_GoodForDay);
 
 
 

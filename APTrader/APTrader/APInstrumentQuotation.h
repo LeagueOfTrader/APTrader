@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include "APTypes.h"
+#include "Model/APKLine.h"
 
 struct APBidInfo {
 	double price;
@@ -16,7 +17,11 @@ public:
 
 	virtual void queryQuotation() = 0;
 	
-	virtual double getCurPrice();
+	double getCurPrice();
+	double getPreClosePrice();
+	APKLine& getKLineData();
+	double getAveragePrice();
+
 	virtual double getOpenPrice(UINT index = 0);
 	virtual double getClosePrice(UINT index = 0);
 	virtual long getOpenVolume(UINT index = 0);
@@ -26,9 +31,10 @@ protected:
 	APASSETID m_instrumentID;
 
 	double m_curPrice;
-	double m_openingPrice;
-	double m_highestPriceDaily;
-	double m_lowestPriceDaily;
+	double m_preClosePrice;
+	APKLine m_kLineData;
+	double m_averagePrice;
+
 	double m_hightestPriceHistory;
 	double m_lowestPriceHistory;
 

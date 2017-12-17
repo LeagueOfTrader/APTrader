@@ -53,11 +53,18 @@ enum APOpenPositionLimit {
 	OPL_Num
 };
 
-enum APTradeOrderType {
-	TOT_GoodForDay,
-	TOT_FAK,
-	TOT_FOK,
-	TOT_Num,
+enum APOrderTimeCondition {
+	OTC_GoodForDay,
+	OTC_FAK,
+	OTC_FOK,
+	OTC_Num,
+};
+
+enum APOrderPriceType {
+	OPT_LimitPrice,
+	OPT_AnyPrice,
+	OPT_Condition,
+	OPT_Num
 };
 
 enum APTradeState {

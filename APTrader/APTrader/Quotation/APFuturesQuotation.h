@@ -19,5 +19,10 @@ private:
 #ifdef USE_CTP
 	void parseCTPData(CThostFtdcDepthMarketDataField *data);
 #endif
+
+private:
+#ifdef USE_CTP
+	int m_timestamp;
+#endif
 };
 

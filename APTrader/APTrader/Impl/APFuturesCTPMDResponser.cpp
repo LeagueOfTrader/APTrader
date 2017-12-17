@@ -49,7 +49,7 @@ void APFuturesCTPMDResponser::OnRspUserLogin(CThostFtdcRspUserLoginField * pRspU
 	//APLogger->log("Ret: %d", ret);
 	
 	//while (true) {
-		std::string instrumentID0 = "hc1805";
+		std::string instrumentID0 = "i1805";
 		APFuturesCTPMDAgent::getInstance()->subscribeInstrument(instrumentID0);
 	//}
 }
@@ -87,8 +87,8 @@ void APFuturesCTPMDResponser::OnRtnDepthMarketData(CThostFtdcDepthMarketDataFiel
 {	
 	APFuturesCTPMDAgent::getInstance()->onGetMarketData(pDepthMarketData);
 	
-	APLogger->log("On Get Market Data, Instrument ID: %s, Price: %f. ",
-					pDepthMarketData->InstrumentID, pDepthMarketData->LastPrice);
+	//APLogger->log("On Get Market Data, Instrument ID: %s, Price: %f. ",
+	//				pDepthMarketData->InstrumentID, pDepthMarketData->LastPrice);
 }
 
 void APFuturesCTPMDResponser::OnRtnForQuoteRsp(CThostFtdcForQuoteRspField * pForQuoteRsp)

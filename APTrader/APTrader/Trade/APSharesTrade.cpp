@@ -8,14 +8,14 @@ APSharesTrade::~APSharesTrade()
 {
 }
 
-void APSharesTrade::open(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APTradeOrderType ot)
+void APSharesTrade::open(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderPriceType orderPriceType, APOrderTimeCondition ot)
 {
 	if (trend == TT_Long) {
 		//buy(instrumentID, price, volume);
 	}
 }
 
-void APSharesTrade::close(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APTradeOrderType ot)
+void APSharesTrade::close(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderPriceType orderPriceType, APOrderTimeCondition ot)
 {
 	if (trend == TT_Long) {
 		//sell(instrumentID, price, volume);

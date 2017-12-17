@@ -1,5 +1,6 @@
 #include "APFuturesCTPTraderAgent.h"
 
+#ifdef USE_CTP
 const std::string tradeFlowPath = "Data/CTP/tradeflow/";
 
 APFuturesCTPTraderAgent::APFuturesCTPTraderAgent()
@@ -31,3 +32,19 @@ CThostFtdcTraderApi * APFuturesCTPTraderAgent::getTraderApi()
 {
 	return m_traderApi;
 }
+
+void APFuturesCTPTraderAgent::open(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderTimeCondition ot)
+{
+	CThostFtdcInputOrderField order;
+	//m_traderApi->ReqOrderInsert(&order, );
+}
+
+void APFuturesCTPTraderAgent::close(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderTimeCondition ot)
+{
+}
+
+void APFuturesCTPTraderAgent::cancel(APSYSTEMID sysID)
+{
+}
+
+#endif

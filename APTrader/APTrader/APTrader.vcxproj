@@ -163,6 +163,7 @@
     <ClInclude Include="Impl\APFuturesCTPMDAgent.h" />
     <ClInclude Include="Futures\APFuturesFramework.h" />
     <ClInclude Include="APInstrumentQuotation.h" />
+    <ClInclude Include="Model\APKLine.h" />
     <ClInclude Include="Quotation\APFuturesMarketQuotations.h" />
     <ClInclude Include="APTypes.h" />
     <ClInclude Include="Impl\APFuturesCTPTraderResponser.h" />

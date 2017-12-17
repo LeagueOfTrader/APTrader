@@ -49,17 +49,26 @@ bool APFuturesCTPMDAgent::subscribeInstrument(APASSETID instrumentID)
 
 	m_subscribedInstruments.insert(instrumentID);
 
-	char** ppSubscribeArr = (char**)malloc(sizeof(char**));
+	int count = m_subscribedInstruments.size();
+	char** ppSubscribeArr = new char*[count];
+
 	std::set<APASSETID>::iterator it;
 
+	int i = 0;
 	for (it = m_subscribedInstruments.begin(); it != m_subscribedInstruments.end(); it++) {
 		APASSETID id = *it;
-		*ppSubscribeArr++ = (char*)id.c_str();
+		ppSubscribeArr[i] = new char[32];
+		strcpy(ppSubscribeArr[i], id.c_str());
+		i++;
 	}
 
 	bool ret = m_mdApi->SubscribeMarketData(ppSubscribeArr, m_subscribedInstruments.size());
 
-	delete ppSubscribeArr;
+	for (i = 0; i < count; i++) {
+		delete[] ppSubscribeArr[i];
+	}
+	delete[] ppSubscribeArr;
+
 	return ret;
 }
 

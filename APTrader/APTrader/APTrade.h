@@ -78,8 +78,10 @@ public:
 	~APTrade();
 
 public:
-	virtual APORDERID open(APASSETID instrumentID, APTrendType trend, double price, long volume, APPositionCtrl* pc, APTradeOrderType ot = TOT_GoodForDay);
-	virtual APORDERID close(APASSETID instrumentID, APTrendType trend, double price, long volume, APPositionCtrl* pc, APTradeOrderType ot = TOT_GoodForDay);
+	virtual APORDERID open(APASSETID instrumentID, APTrendType trend, double price, long volume, 
+							APPositionCtrl* pc, APOrderPriceType orderPriceType = OPT_LimitPrice, APOrderTimeCondition ot = OTC_GoodForDay);
+	virtual APORDERID close(APASSETID instrumentID, APTrendType trend, double price, long volume, 
+							APPositionCtrl* pc, APOrderPriceType orderPriceType = OPT_LimitPrice, APOrderTimeCondition ot = OTC_GoodForDay);
 
 	virtual void cancel(APASSETID instrumentID, APTradeType type, APTrendType trend, double price, APPositionCtrl* pc);
 	virtual void cancel(APASSETID instrumentID, APTradeType type, APPositionCtrl* pc);
@@ -95,8 +97,8 @@ public:
 	bool getOrderInfo(APORDERID orderID, APTradeOrderInfo& orderInfo);
 
 protected:
-	virtual void open(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APTradeOrderType ot = TOT_GoodForDay) = 0;
-	virtual void close(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APTradeOrderType ot = TOT_GoodForDay) = 0;
+	virtual void open(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderPriceType orderPriceType = OPT_LimitPrice, APOrderTimeCondition ot = OTC_GoodForDay) = 0;
+	virtual void close(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderPriceType orderPriceType = OPT_LimitPrice, APOrderTimeCondition ot = OTC_GoodForDay) = 0;
 
 	virtual void cancel(APSYSTEMID sysID) = 0;
 

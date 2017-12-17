@@ -17,7 +17,7 @@ APSimFuturesTrade::~APSimFuturesTrade()
 	m_orderRecord.clear();
 }
 
-void APSimFuturesTrade::open(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APTradeOrderType ot)
+void APSimFuturesTrade::open(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderTimeCondition ot)
 {
 	APSYSTEMID sysID = APSimTradeSystem::getInstance()->requestOpen(orderID, instrumentID, trend, price, volume);
 	APTradeOrderInfo order = {orderID, TDT_Open, instrumentID, price, volume, trend, TS_Ordered, sysID};
@@ -34,7 +34,7 @@ void APSimFuturesTrade::open(APORDERID orderID, APASSETID instrumentID, APTrendT
 	APLogger->log(">>>> Open %s position price: %f, volume: %d. ", trendStr.c_str(), price, volume);
 }
 
-void APSimFuturesTrade::close(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APTradeOrderType ot)
+void APSimFuturesTrade::close(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderTimeCondition ot)
 {
 	APSYSTEMID sysID = APSimTradeSystem::getInstance()->requestClose(orderID, instrumentID, trend, price, volume);
 	APTradeOrderInfo order = { orderID, TDT_Close, instrumentID, price, volume, trend, TS_Ordered, sysID };

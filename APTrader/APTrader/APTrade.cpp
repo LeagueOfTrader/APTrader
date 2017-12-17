@@ -19,13 +19,13 @@ APTrade::~APTrade()
 	}
 }
 
-APORDERID APTrade::open(APASSETID instrumentID, APTrendType trend, double price, long volume, APPositionCtrl* pc, APTradeOrderType ot) {
+APORDERID APTrade::open(APASSETID instrumentID, APTrendType trend, double price, long volume, APPositionCtrl* pc, APOrderPriceType orderPriceType, APOrderTimeCondition ot) {
 	if (pc == NULL) {
 		return INVALID_TRADE_ORDER_ID;
 	}
 
 	APORDERID orderID = generateOrderID();
-	if (ot == TOT_GoodForDay) {
+	if (ot == OTC_GoodForDay) {
 		APTradeOrderPositionInfo info = { orderID, TDT_Open, instrumentID, price, volume, trend, pc->getID()};
 		m_ordersApplied[orderID] = info;
 	}
@@ -34,17 +34,17 @@ APORDERID APTrade::open(APASSETID instrumentID, APTrendType trend, double price,
 		m_quickDealOrders[orderID] = info;
 	}
 	
-	open(orderID, instrumentID, trend, price, volume, ot);
+	open(orderID, instrumentID, trend, price, volume, orderPriceType, ot);
 	return orderID;
 }
 
-APORDERID APTrade::close(APASSETID instrumentID, APTrendType trend, double price, long volume, APPositionCtrl* pc, APTradeOrderType ot) {
+APORDERID APTrade::close(APASSETID instrumentID, APTrendType trend, double price, long volume, APPositionCtrl* pc, APOrderPriceType orderPriceType, APOrderTimeCondition ot) {
 	if (pc == NULL) {
 		return INVALID_TRADE_ORDER_ID;
 	}
 
 	APORDERID orderID = generateOrderID();
-	if (ot == TOT_GoodForDay) {
+	if (ot == OTC_GoodForDay) {
 		APTradeOrderPositionInfo info = { UNDISTURBED_ORDER_ID, TDT_Close, instrumentID, price, volume, trend, pc->getID() };
 		m_ordersApplied[orderID] = info;
 	}
@@ -53,7 +53,7 @@ APORDERID APTrade::close(APASSETID instrumentID, APTrendType trend, double price
 		m_quickDealOrders[orderID] = info;
 	}	
 	
-	close(orderID, instrumentID, trend, price, volume, ot);
+	close(orderID, instrumentID, trend, price, volume, orderPriceType, ot);
 	return orderID;
 }
 
@@ -165,13 +165,6 @@ void APTrade::cancel(APORDERID orderID, APPositionCtrl * pc)
 void APTrade::onTradeDealt(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, 
 							APTradeState state, APSYSTEMID sysID, APTrendType trend)
 {
-	//if (m_positionData.find(instrumentID) != m_positionData.end()) {
-	//	//std::vector<APTradePositionData>& data = m_positionData[instrumentID];
-	//	//int i = 0;
-	//	//for (; i < data.size(); i++) {
-	//	//	data[i].positionCtrl->onTradeDealt(instrumentID, type, price, volume, trend);
-	//	//}
-	//}
 	if (m_orderPosCtrlRelation.find(orderID) != m_orderPosCtrlRelation.end() &&
 		m_ordersConfirmed.find(orderID) != m_ordersConfirmed.end()) {
 		UINT posCtrlID = m_orderPosCtrlRelation[orderID];
@@ -264,8 +257,3 @@ std::vector<APORDERID> APTrade::getRelatedOrders(APPositionCtrl * pc)
 
 	return orders;
 }
-
-//void APTrade::setPositionCtrl(APPositionCtrl * positionCtrl)
-//{
-//	m_positionCtrl = positionCtrl;
-//}
