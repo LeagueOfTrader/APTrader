@@ -9,10 +9,21 @@ public:
 	~APFuturesTrade();
 
 	virtual void open(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, 
-						APOrderPriceType orderPriceType = OPT_LimitPrice,  APOrderTimeCondition ot = OTC_GoodForDay);
+						APOrderTimeCondition ot = OTC_GoodForDay);
 	virtual void close(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, 
-						APOrderPriceType orderPriceType = OPT_LimitPrice, APOrderTimeCondition ot = OTC_GoodForDay);
+						APOrderTimeCondition ot = OTC_GoodForDay);
 
-	virtual void cancel(APSYSTEMID sysID);
+	virtual void open(APASSETID instrumentID, APORDERID localOrderID, APTrendType trend,
+						APOrderPriceType orderPriceType, double price,
+						APOrderTimeCondition orderTimeCondition = OTC_GoodForDay, std::string date = "",
+						APOrderVolumeCondition orderVolumeCondition = OVC_Any, long volume = 0, long minVolume = 0,
+						APOrderContingentCondition orderContingentCondition = OCC_Immediately, double stopPrice = 0.0);
+	virtual void close(APASSETID instrumentID, APORDERID localOrderID, APTrendType trend,
+						APOrderPriceType orderPriceType, double price,
+						APOrderTimeCondition orderTimeCondition = OTC_GoodForDay, std::string date = "",
+						APOrderVolumeCondition orderVolumeCondition = OVC_Any, long volume = 0, long minVolume = 0,
+						APOrderContingentCondition orderContingentCondition = OCC_Immediately, double stopPrice = 0.0);
+
+	virtual void cancel(APORDERID orderID);
 };
 

@@ -24,7 +24,7 @@ APSimTradeSystem::~APSimTradeSystem()
 APSYSTEMID APSimTradeSystem::requestOpen(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume)
 {
 	APSYSTEMID sysID = m_orderIDAccumulator->generateID();
-	APTradeOrderInfo order = {orderID, TDT_Open, instrumentID, price, volume, trend, TS_Ordered, sysID};
+	APTradeOrderInfo order = {orderID, TDT_Open, instrumentID, price, volume, trend, TS_Ordered, sysID, 0};
 	m_orderList.push_back(order);
 	if (m_trade != NULL) {
 		m_trade->onTradeOrdered(instrumentID, TDT_Open, price, volume, orderID, TS_Ordered, sysID, trend);
@@ -35,7 +35,7 @@ APSYSTEMID APSimTradeSystem::requestOpen(APORDERID orderID, APASSETID instrument
 APSYSTEMID APSimTradeSystem::requestClose(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume)
 {
 	APSYSTEMID sysID = m_orderIDAccumulator->generateID();
-	APTradeOrderInfo order = { orderID, TDT_Close, instrumentID, price, volume, trend, TS_Ordered, sysID };
+	APTradeOrderInfo order = { orderID, TDT_Close, instrumentID, price, volume, trend, TS_Ordered, sysID, 0 };
 	m_orderList.push_back(order);
 	if (m_trade != NULL) {
 		m_trade->onTradeOrdered(instrumentID, TDT_Close, price, volume, orderID, TS_Ordered, sysID, trend);
@@ -51,15 +51,8 @@ void APSimTradeSystem::requestCancel(APSYSTEMID sysID)
 	{
 		APTradeOrderInfo& order = *it;
 		if (order.sysID == sysID) {
-			APTradeType cancelType = TDT_Num;
-			if (order.type == TDT_Open) {
-				cancelType = TDT_CancelOpen;
-			}
-			else if (order.type == TDT_Close) {
-				cancelType = TDT_CancelClose;
-			}
 
-			onTradeDealt(order.orderID, order.instrumentID, cancelType, order.price, order.volume, sysID, order.trend);
+			onTradeCanceled(order.orderID, sysID);
 			m_orderList.erase(it);
 			break;
 		}
@@ -124,14 +117,15 @@ void APSimTradeSystem::onTradeDealt(APORDERID orderID, APASSETID instrumentID, A
 		else if (type == TDT_Close) {
 			tradeTypeStr = "Close";
 		}
-		else if (type == TDT_CancelOpen) {
-			tradeTypeStr = "CancelOpen";
-		}
-		else if (type == TDT_CancelClose) {
-			tradeTypeStr = "CancelClose";
-		}
 		APLogger->log("Sim Trade Finish, %s targetID: %s, contractType:%d, price:%f, volume:%d .", 
 						tradeTypeStr.c_str(), instrumentID.c_str(), trend, price, volume);
+	}
+}
+
+void APSimTradeSystem::onTradeCanceled(APORDERID orderID, APSYSTEMID sysID)
+{
+	if (m_trade != NULL) {
+		m_trade->onTradeCanceled(orderID, sysID);
 	}
 }
 

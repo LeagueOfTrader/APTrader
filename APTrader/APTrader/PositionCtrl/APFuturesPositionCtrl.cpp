@@ -126,9 +126,9 @@ void APFuturesPositionCtrl::cancel(APTradeType type)
 
 void APFuturesPositionCtrl::onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend)
 {
-	if (instrumentID != m_instrumentID || trend != m_trendType) {
-		return;
-	}
+	//if (instrumentID != m_instrumentID || trend != m_trendType) {
+	//	return;
+	//}
 
 	switch (type) {
 	case TDT_Open:
@@ -141,14 +141,22 @@ void APFuturesPositionCtrl::onTradeDealt(APASSETID instrumentID, APTradeType typ
 		m_closeOrdersPosition -= deltaVolume;
 		//changeContractPossession(instrumentID, -volume, trend);
 		break;
-	case TDT_CancelOpen:
-		m_availablePosition += deltaVolume;
-		m_openOrdersPosition -= deltaVolume;
+	default:
+		break;
+	}
+}
+
+void APFuturesPositionCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTrendType trend)
+{
+	switch (type) {
+	case TDT_Open:
+		m_availablePosition += volume;
+		m_openOrdersPosition -= volume;
 		m_openOrderList.remove(orderID);
 		break;
-	case TDT_CancelClose:
-		m_holdPosition += deltaVolume;
-		m_closeOrdersPosition -= deltaVolume;
+	case TDT_Close:
+		m_holdPosition += volume;
+		m_closeOrdersPosition -= volume;
 		m_closeOrderList.remove(orderID);
 		break;
 	default:
@@ -169,8 +177,8 @@ void APFuturesPositionCtrl::setContractType(APTrendType type)
 void APFuturesPositionCtrl::open(APASSETID contractID, APTrendType trend, double price, long volume, APOrderTimeCondition ot)
 {
 	if (m_trade != NULL) {
-		APORDERID orderID = m_trade->open(contractID, trend, price, volume, this, OPT_LimitPrice, ot);
-		if (ot == OTC_GoodForDay && orderID != INVALID_TRADE_ORDER_ID) {
+		APORDERID orderID = m_trade->open(contractID, trend, price, volume, this, ot);
+		if (ot == OTC_GoodForDay) {
 			m_openOrderList.push_back(orderID);
 		}
 	}
@@ -179,8 +187,8 @@ void APFuturesPositionCtrl::open(APASSETID contractID, APTrendType trend, double
 void APFuturesPositionCtrl::close(APASSETID contractID, APTrendType trend, double price, long volume, APOrderTimeCondition ot)
 {
 	if (m_trade != NULL) {
-		APORDERID orderID = m_trade->close(contractID, trend, price, volume, this, OPT_LimitPrice, ot);
-		if (ot == OTC_GoodForDay && orderID != INVALID_TRADE_ORDER_ID) {
+		APORDERID orderID = m_trade->close(contractID, trend, price, volume, this, ot);
+		if (ot == OTC_GoodForDay) {
 			m_closeOrderList.push_back(orderID);
 		}
 	}

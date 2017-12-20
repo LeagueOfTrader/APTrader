@@ -265,17 +265,17 @@ void APPositionCtrl::onSyncPositionStatus(const APPositionData & pd)
 
 void APPositionCtrl::syncPositionStatus()
 {
-	APPositionData pd;
-	if (APAccountAssets::getInstance()->getPositionData(m_instrumentID, m_trendType, pd)) {
-		onSyncPositionStatus(pd);
-	}
-	else {
-		m_availablePosition = m_maxPosition;
-		m_frozenPosition = 0;
-		m_holdPosition = 0;
-		m_openOrdersPosition = 0;
-		m_closeOrdersPosition = 0;
-	}
+	//APPositionData pd;
+	//if (APAccountAssets::getInstance()->getPositionData(m_instrumentID, m_trendType, pd)) {
+	//	onSyncPositionStatus(pd);
+	//}
+	//else {
+	//	m_availablePosition = m_maxPosition;
+	//	m_frozenPosition = 0;
+	//	m_holdPosition = 0;
+	//	m_openOrdersPosition = 0;
+	//	m_closeOrdersPosition = 0;
+	//}
 }
 
 void APPositionCtrl::setBaseParam(std::string positionInfo)
@@ -317,5 +317,12 @@ void APPositionCtrl::cancelAll()
 		for (it = m_closeOrderList.begin(); it != m_closeOrderList.end(); it++) {
 			m_trade->cancel(*it, this);
 		}
+	}
+}
+
+void APPositionCtrl::cancel(APORDERID orderID)
+{
+	if (m_trade != NULL) {
+		m_trade->cancel(orderID, this);
 	}
 }

@@ -36,22 +36,6 @@ void APFuturesCTPMDResponser::OnHeartBeatWarning(int nTimeLapse)
 void APFuturesCTPMDResponser::OnRspUserLogin(CThostFtdcRspUserLoginField * pRspUserLogin, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
 	APFuturesCTPMDAgent::getInstance()->onLogin();
-
-	//test
-	//std::string instrumentID0 = "hc1805";
-	//std::string instrumentID1 = "i1805";
-	//APFuturesMarketQuotations::getInstance()->init();
-	//APFuturesMarketQuotations::getInstance()->subscribeInstrument(instrumentID0);
-	//APFuturesMarketQuotations::getInstance()->subscribeInstrument(instrumentID1);
-	//CThostFtdcMdApi* mdApi = APFuturesCTPMDAgent::getInstance()->getMDApi();
-	//char* ppInstrumentsID[] = {"hc1805"};
-	//bool ret = mdApi->SubscribeMarketData(ppInstrumentsID, 1);
-	//APLogger->log("Ret: %d", ret);
-	
-	//while (true) {
-		std::string instrumentID0 = "i1805";
-		APFuturesCTPMDAgent::getInstance()->subscribeInstrument(instrumentID0);
-	//}
 }
 
 void APFuturesCTPMDResponser::OnRspUserLogout(CThostFtdcUserLogoutField * pUserLogout, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
@@ -93,6 +77,16 @@ void APFuturesCTPMDResponser::OnRtnDepthMarketData(CThostFtdcDepthMarketDataFiel
 
 void APFuturesCTPMDResponser::OnRtnForQuoteRsp(CThostFtdcForQuoteRspField * pForQuoteRsp)
 {
+}
+
+bool APFuturesCTPMDResponser::isErrorRspInfo(CThostFtdcRspInfoField * pRspInfo)
+{
+	bool bResult = ((pRspInfo) && (pRspInfo->ErrorID != 0));
+	if (bResult) {
+		APLogger->log("Rsp Info Error, ErrorID: %d, ErrorMsg: %s. ", pRspInfo->ErrorID, pRspInfo->ErrorMsg);
+	}
+
+	return bResult;
 }
 
 

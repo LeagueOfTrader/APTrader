@@ -14,11 +14,11 @@
 class APPositionCtrl;
 class APIntAccumulator;
 
-struct APTradePositionData {
-	APASSETID instrumentID;
-	APTrendType trend;
-	UINT positionCtrlID;
-};
+//struct APTradePositionData {
+//	APASSETID instrumentID;
+//	APTrendType trend;
+//	UINT positionCtrlID;
+//};
 
 struct APTradeOrderInfo {
 	APORDERID orderID;
@@ -29,12 +29,13 @@ struct APTradeOrderInfo {
 	APTrendType trend;
 	APTradeState state;
 	APSYSTEMID sysID;
+	UINT positionCtrlID;
 
 	APTradeOrderInfo() {
 	}
 
 	APTradeOrderInfo(APORDERID theOrderID, APTradeType theType, APASSETID theInstrumentID, double thePrice, long theVolume, 
-					APTrendType theTrend, APTradeState theState, APSYSTEMID theSysID) {
+					APTrendType theTrend, APTradeState theState, APSYSTEMID theSysID, UINT thePositionCtrlID) {
 		orderID = theOrderID;
 		type = theType;
 		instrumentID = theInstrumentID;
@@ -43,6 +44,7 @@ struct APTradeOrderInfo {
 		trend = theTrend;
 		state = theState;
 		sysID = theSysID;
+		positionCtrlID = thePositionCtrlID;
 	}
 
 	APTradeOrderInfo(const APTradeOrderInfo& info) {
@@ -54,20 +56,7 @@ struct APTradeOrderInfo {
 		trend = info.trend;
 		state = info.state;
 		sysID = info.sysID;
-	}
-};
-
-struct APTradeOrderPositionInfo{
-	APTradeOrderInfo orderInfo;
-	UINT positionCtrlID;
-
-	APTradeOrderPositionInfo() {
-
-	}
-
-	APTradeOrderPositionInfo(UINT orderID, APTradeType type, APASSETID instrumentID, double price, long volume, APTrendType trend, UINT posCtrlID) {
-		orderInfo = { orderID, type, instrumentID, price, volume, trend, TS_Apply, 0 };
-		positionCtrlID = posCtrlID;
+		positionCtrlID = info.positionCtrlID;
 	}
 };
 
@@ -79,40 +68,59 @@ public:
 
 public:
 	virtual APORDERID open(APASSETID instrumentID, APTrendType trend, double price, long volume, 
-							APPositionCtrl* pc, APOrderPriceType orderPriceType = OPT_LimitPrice, APOrderTimeCondition ot = OTC_GoodForDay);
+							APPositionCtrl* pc, APOrderTimeCondition ot = OTC_GoodForDay);
 	virtual APORDERID close(APASSETID instrumentID, APTrendType trend, double price, long volume, 
-							APPositionCtrl* pc, APOrderPriceType orderPriceType = OPT_LimitPrice, APOrderTimeCondition ot = OTC_GoodForDay);
+							APPositionCtrl* pc, APOrderTimeCondition ot = OTC_GoodForDay);
 
 	virtual void cancel(APASSETID instrumentID, APTradeType type, APTrendType trend, double price, APPositionCtrl* pc);
 	virtual void cancel(APASSETID instrumentID, APTradeType type, APPositionCtrl* pc);
 	virtual void cancelAll(APASSETID instrumentID, APPositionCtrl* pc);
-	virtual void cancel(APORDERID sysID, APPositionCtrl* pc);
+	virtual void cancel(APORDERID orderID, APPositionCtrl* pc);
 	
 	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, 
 								APTradeState state, APSYSTEMID sysID, APTrendType trend = TT_Long);
 	virtual void onTradeOrdered(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, 
 								APTradeState state, APSYSTEMID sysID, APTrendType trend = TT_Long);
+	
+	virtual void onTradeCanceled(APORDERID orderID, APSYSTEMID sysID = 0);
+
 	virtual void onFundChanged(APASSETID instrumentID, APTradeType type, double variableFund, APORDERID orderID, APTrendType trend = TT_Long);
 
 	bool getOrderInfo(APORDERID orderID, APTradeOrderInfo& orderInfo);
 
-protected:
-	virtual void open(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderPriceType orderPriceType = OPT_LimitPrice, APOrderTimeCondition ot = OTC_GoodForDay) = 0;
-	virtual void close(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderPriceType orderPriceType = OPT_LimitPrice, APOrderTimeCondition ot = OTC_GoodForDay) = 0;
+	void setOrderIDBase(APORDERID base);
 
-	virtual void cancel(APSYSTEMID sysID) = 0;
+protected:
+	virtual void open(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, 
+						APOrderTimeCondition ot = OTC_GoodForDay) = 0;
+	virtual void close(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume,
+						APOrderTimeCondition ot = OTC_GoodForDay) = 0;
+	virtual void cancel(APORDERID orderID) = 0;
+
+	virtual void open(APASSETID instrumentID, APORDERID localOrderID, APTrendType trend,
+						APOrderPriceType orderPriceType, double price,
+						APOrderTimeCondition orderTimeCondition = OTC_GoodForDay, std::string date = "",
+						APOrderVolumeCondition orderVolumeCondition = OVC_Any, long volume = 0, long minVolume = 0,
+						APOrderContingentCondition orderContingentCondition = OCC_Immediately, double stopPrice = 0.0) = 0;
+	virtual void close(APASSETID instrumentID, APORDERID localOrderID, APTrendType trend,
+						APOrderPriceType orderPriceType, double price,
+						APOrderTimeCondition orderTimeCondition = OTC_GoodForDay, std::string date = "",
+						APOrderVolumeCondition orderVolumeCondition = OVC_Any, long volume = 0, long minVolume = 0,
+						APOrderContingentCondition orderContingentCondition = OCC_Immediately, double stopPrice = 0.0) = 0;
+	
 
 	APORDERID generateOrderID();
+	void removeLocalOrder(APORDERID orderID);
+	APSYSTEMID getSysIDByOrder(APORDERID orderID);
 
 private:
 	std::vector<UINT> getRelatedOrders(APPositionCtrl* pc);
+	APPositionCtrl* getPositionCtrlByOrder(APORDERID orderID);
 
 protected:
-	std::map<APORDERID, APTradeOrderPositionInfo> m_ordersApplied;
-	std::map<APORDERID, APTradeOrderPositionInfo> m_quickDealOrders;
-	std::map<APORDERID, APTradeOrderInfo> m_ordersConfirmed;
+	std::map<APORDERID, APTradeOrderInfo> m_localOrders;
 
-	std::map<APORDERID, UINT> m_orderPosCtrlRelation;
+	//std::map<APORDERID, UINT> m_orderPosCtrlRelation;
 	//std::map <UINT, std::set<UINT>> m_posCtrlOrders;
 	APIntAccumulator* m_idAccumulator;
 };

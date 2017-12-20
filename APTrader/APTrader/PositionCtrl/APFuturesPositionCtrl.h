@@ -30,6 +30,7 @@ public:
 	//virtual void cancelAll();
 
 	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend = TT_Long);
+	virtual void onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTrendType trend = TT_Long);
 
 	void setContractID(APASSETID contractID);
 	void setContractType(APTrendType type);

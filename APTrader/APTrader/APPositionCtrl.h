@@ -57,6 +57,7 @@ public:
 	void cancelAllTrade();
 
 	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend = TT_Long) = 0;
+	virtual void onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTrendType trend = TT_Long) = 0;
 
 	virtual void update();
 
@@ -73,6 +74,7 @@ protected:
 	virtual void cancel(APTradeType type, double price, APTrendType trend = TT_Long);
 	virtual void cancel(APTradeType type) = 0;
 	virtual void cancelAll();
+	void cancel(APORDERID orderID);
 	
 	virtual void onSyncPositionStatus(const APPositionData& data);
 

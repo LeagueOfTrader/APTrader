@@ -17,8 +17,8 @@ enum APFinancialInstrumentType {
 enum APTradeType {
 	TDT_Open,
 	TDT_Close,
-	TDT_CancelOpen,
-	TDT_CancelClose,
+	//TDT_CancelOpen,
+	//TDT_CancelClose,
 	TDT_Lock, // lock position, only for futures
 	TDT_Num
 };
@@ -57,13 +57,30 @@ enum APOrderTimeCondition {
 	OTC_GoodForDay,
 	OTC_FAK,
 	OTC_FOK,
+	OTC_GoodTillDate,
+	OTC_GoodForSection, // only for futures
+	OTC_GoodForAuction,
+	OTC_GoodTillCancel,
 	OTC_Num,
 };
 
 enum APOrderPriceType {
 	OPT_LimitPrice,
 	OPT_AnyPrice,
-	OPT_Condition,
+	OPT_BestPrice,
+	OPT_LastPrice,
+	OPT_LastPricePlusOneTicks,
+	OPT_LastPricePlusTwoTicks,
+	OPT_LastPricePlusThreeTicks,
+	OPT_AskPrice1,
+	OPT_AskPrice1PlusOneTicks,
+	OPT_AskPrice1PlusTwoTicks,
+	OPT_AskPrice1PlusThreeTicks,
+	OPT_BidPrice1,
+	OPT_BidPrice1PlusOneTicks,
+	OPT_BidPrice1PlusTwoTicks,
+	OPT_BidPrice1PlusThreeTicks,
+	OPT_FiveLevelPrice,
 	OPT_Num
 };
 
@@ -73,8 +90,36 @@ enum APTradeState {
 	TS_New,
 	TS_PartiallyFilled,
 	TS_Filled,
+	TS_Canceled,
 	TS_None,
 	TS_Num
+};
+
+enum APOrderVolumeCondition {
+	OVC_Any,
+	OVC_Min,
+	OVC_All,
+	OVC_Num
+};
+
+enum APOrderContingentCondition {
+	OCC_Immediately,
+	OCC_Touch,
+	OCC_TouchProfit,
+	OCC_ParkedOrder,
+	OCC_LastPriceGreaterThanStopPrice,
+	OCC_LastPriceGreaterEqualStopPrice,
+	OCC_LastPriceLesserThanStopPrice,
+	OCC_LastPriceLesserEqualStopPrice,
+	OCC_AskPriceGreaterThanStopPrice,
+	OCC_AskPriceGreaterEqualStopPrice,
+	OCC_AskPriceLesserThanStopPrice,
+	OCC_AskPriceLesserEqualStopPrice,
+	OCC_BidPriceGreaterThanStopPrice,
+	OCC_BidPriceGreaterEqualStopPrice,
+	OCC_BidPriceLesserThanStopPrice,
+	OCC_BidPriceLesserEqualStopPrice,
+	OCC_Num
 };
 
 const unsigned int INVALID_TRADE_ORDER_ID = 0;

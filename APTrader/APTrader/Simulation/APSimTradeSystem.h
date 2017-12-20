@@ -36,6 +36,7 @@ public:
 
 protected:
 	void onTradeDealt(APORDERID orderID, APASSETID instrumentID, APTradeType type, double price, long volume, APSYSTEMID sysID, APTrendType trend);
+	void onTradeCanceled(APORDERID orderID, APSYSTEMID sysID);
 	bool arrangeTrade(APTradeOrderInfo& order);
 	void closeTheDeal(APORDERID orderID, APASSETID instrumentID, APTradeType type, double price, long volume, APSYSTEMID sysID, APTrendType trend);
 	double calcProfitAndLoss(double costPrice, double currentPrice, long volume, APTrendType trend);

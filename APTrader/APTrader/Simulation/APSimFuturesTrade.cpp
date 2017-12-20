@@ -20,7 +20,7 @@ APSimFuturesTrade::~APSimFuturesTrade()
 void APSimFuturesTrade::open(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderTimeCondition ot)
 {
 	APSYSTEMID sysID = APSimTradeSystem::getInstance()->requestOpen(orderID, instrumentID, trend, price, volume);
-	APTradeOrderInfo order = {orderID, TDT_Open, instrumentID, price, volume, trend, TS_Ordered, sysID};
+	APTradeOrderInfo order = {orderID, TDT_Open, instrumentID, price, volume, trend, TS_Ordered, sysID, 0};
 
 	m_orderRecord[orderID] = order;
 
@@ -37,7 +37,7 @@ void APSimFuturesTrade::open(APORDERID orderID, APASSETID instrumentID, APTrendT
 void APSimFuturesTrade::close(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderTimeCondition ot)
 {
 	APSYSTEMID sysID = APSimTradeSystem::getInstance()->requestClose(orderID, instrumentID, trend, price, volume);
-	APTradeOrderInfo order = { orderID, TDT_Close, instrumentID, price, volume, trend, TS_Ordered, sysID };
+	APTradeOrderInfo order = { orderID, TDT_Close, instrumentID, price, volume, trend, TS_Ordered, sysID, 0 };
 
 	m_orderRecord[orderID] = order;
 
@@ -51,9 +51,12 @@ void APSimFuturesTrade::close(APORDERID orderID, APASSETID instrumentID, APTrend
 	APLogger->log("<<<< Close %s position price: %f, volume: %d. ", trendStr.c_str(), price, volume);
 }
 
-void APSimFuturesTrade::cancel(APSYSTEMID sysID)
+void APSimFuturesTrade::cancel(APORDERID orderID)
 {
-	APSimTradeSystem::getInstance()->requestCancel(sysID);
+	APSYSTEMID sysID = getSysIDByOrder(orderID);
+	if (sysID > 0) {
+		APSimTradeSystem::getInstance()->requestCancel(sysID);
+	}
 }
 
 void APSimFuturesTrade::onFundChanged(APASSETID instrumentID, APTradeType type, double variableFund, APORDERID orderID, APTrendType trend)

@@ -50,5 +50,8 @@ public:
 
 	///Ñ¯¼ÛÍ¨Öª
 	virtual void OnRtnForQuoteRsp(CThostFtdcForQuoteRspField *pForQuoteRsp);
+
+protected:
+	bool isErrorRspInfo(CThostFtdcRspInfoField * pRspInfo);
 };
 

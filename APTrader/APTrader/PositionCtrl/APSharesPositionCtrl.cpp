@@ -102,17 +102,26 @@ void APSharesPositionCtrl::onTradeDealt(APASSETID instrumentID, APTradeType type
 			m_availablePosition += deltaVolume;
 			m_closeOrdersPosition -= deltaVolume;
 			break;
-		case TDT_CancelOpen:
-			m_availablePosition += deltaVolume;
-			m_openOrdersPosition -= deltaVolume;
-			m_openOrderList.remove(orderID);
-			break;
-		case TDT_CancelClose:
-			m_holdPosition += deltaVolume;
-			m_closeOrdersPosition -= deltaVolume;
-			m_closeOrderList.remove(orderID);
-			break;
+
 		default:
 			break;
+	}
+}
+
+void APSharesPositionCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTrendType trend)
+{
+	switch (type) {
+	case TDT_Open:
+		m_availablePosition += volume;
+		m_openOrdersPosition -= volume;
+		m_openOrderList.remove(orderID);
+		break;
+	case TDT_Close:
+		m_holdPosition += volume;
+		m_closeOrdersPosition -= volume;
+		m_closeOrderList.remove(orderID);
+		break;
+	default:
+		break;
 	}
 }

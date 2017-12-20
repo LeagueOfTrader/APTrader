@@ -1,4 +1,7 @@
 #pragma once
+#include "../APMarco.h"
+
+#ifdef USE_CTP
 #include "ThostFtdcTraderApi.h"
 //#include "../Futures/APFuturesFramework.h"
 
@@ -378,5 +381,18 @@ public:
 
 	///银行发起变更银行账号通知
 	virtual void OnRtnChangeAccountByBank(CThostFtdcChangeAccountField *pChangeAccount);
+
+protected:
+	bool isErrorRspInfo(CThostFtdcRspInfoField * pRspInfo);
+
+	void onOrderRejected(CThostFtdcOrderField * pOrder);
+	void onOrderAccepted(CThostFtdcOrderField * pOrder);
+	void onOrderQueued(CThostFtdcOrderField * pOrder);
+	void onOrderAllTraded(CThostFtdcOrderField * pOrder);
+	void onOrderPartiallyTraded(CThostFtdcOrderField * pOrder);
+	void onOrderIOCTraded(CThostFtdcOrderField * pOrder);
+	void onOrderCanceled(CThostFtdcOrderField * pOrder);
+	void onOrderFailed(CThostFtdcOrderField * pOrder);
 };
 
+#endif

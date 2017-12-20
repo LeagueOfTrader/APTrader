@@ -1,5 +1,10 @@
 #include "APFuturesCTPTraderResponser.h"
-#include "APFuturesCTPMDAgent.h"
+
+#ifdef USE_CTP
+#include "APFuturesCTPTraderAgent.h"
+#include "../APTradeManager.h"
+#include "../APTrade.h"
+#include "../Utils/APLog.h"
 
 APFuturesCTPTraderResponser::APFuturesCTPTraderResponser()
 {
@@ -12,9 +17,8 @@ APFuturesCTPTraderResponser::~APFuturesCTPTraderResponser()
 
 void APFuturesCTPTraderResponser::OnFrontConnected()
 {
-	// todo: trader system inited
 	// login
-	APFuturesCTPMDAgent::getInstance()->login();
+	APFuturesCTPTraderAgent::getInstance()->login();
 }
 
 void APFuturesCTPTraderResponser::OnFrontDisconnected(int nReason)
@@ -33,12 +37,29 @@ void APFuturesCTPTraderResponser::OnRspAuthenticate(CThostFtdcRspAuthenticateFie
 
 void APFuturesCTPTraderResponser::OnRspUserLogin(CThostFtdcRspUserLoginField * pRspUserLogin, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
+	if (isErrorRspInfo(pRspInfo)) {
+		APLogger->log("Login Error! ");
+		return;
+	}
+
 	// on login
-	APFuturesCTPMDAgent::getInstance()->onLogin();
+	APFuturesCTPTraderAgent::getInstance()->setFrontID(pRspUserLogin->FrontID);
+	APFuturesCTPTraderAgent::getInstance()->setSessionID(pRspUserLogin->SessionID);
+
+	APFuturesCTPTraderAgent::getInstance()->reqSettlementInfoConfirm();
+	APFuturesCTPTraderAgent::getInstance()->reqQryTradingAccount();
+
+	APFuturesCTPTraderAgent::getInstance()->onLogin();
+	APTrade* trade = APTradeManager::getInstance()->getTradeInstance();
+	if (trade != NULL) {
+		int maxOrderID = atoi(pRspUserLogin->MaxOrderRef);
+		trade->setOrderIDBase(maxOrderID);
+	}
 }
 
 void APFuturesCTPTraderResponser::OnRspUserLogout(CThostFtdcUserLogoutField * pUserLogout, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
+	//
 }
 
 void APFuturesCTPTraderResponser::OnRspUserPasswordUpdate(CThostFtdcUserPasswordUpdateField * pUserPasswordUpdate, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
@@ -51,7 +72,9 @@ void APFuturesCTPTraderResponser::OnRspTradingAccountPasswordUpdate(CThostFtdcTr
 
 void APFuturesCTPTraderResponser::OnRspOrderInsert(CThostFtdcInputOrderField * pInputOrder, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
-	//
+	if (pRspInfo != NULL) {
+		// on trade error
+	}
 }
 
 void APFuturesCTPTraderResponser::OnRspParkedOrderInsert(CThostFtdcParkedOrderField * pParkedOrder, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
@@ -64,6 +87,7 @@ void APFuturesCTPTraderResponser::OnRspParkedOrderAction(CThostFtdcParkedOrderAc
 
 void APFuturesCTPTraderResponser::OnRspOrderAction(CThostFtdcInputOrderActionField * pInputOrderAction, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
+	//
 }
 
 void APFuturesCTPTraderResponser::OnRspQueryMaxOrderVolume(CThostFtdcQueryMaxOrderVolumeField * pQueryMaxOrderVolume, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
@@ -128,10 +152,12 @@ void APFuturesCTPTraderResponser::OnRspQryTrade(CThostFtdcTradeField * pTrade, C
 
 void APFuturesCTPTraderResponser::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField * pInvestorPosition, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
+	//
 }
 
 void APFuturesCTPTraderResponser::OnRspQryTradingAccount(CThostFtdcTradingAccountField * pTradingAccount, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
+	//
 }
 
 void APFuturesCTPTraderResponser::OnRspQryInvestor(CThostFtdcInvestorField * pInvestor, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
@@ -299,14 +325,59 @@ void APFuturesCTPTraderResponser::OnRspError(CThostFtdcRspInfoField * pRspInfo, 
 
 void APFuturesCTPTraderResponser::OnRtnOrder(CThostFtdcOrderField * pOrder)
 {
+	// 每次报单状态发生变化时被调用
+	// 一次报单过程中会被触发多次: 1. CTP将报单向交易所提交时; 
+	//                             2. 交易所撤销或接受报单时; 
+	//                             3. 该报单成交时;
+	if (pOrder == NULL) {
+		return;
+	}
+
+	TThostFtdcOrderStatusType orderStatus = pOrder->OrderStatus;
+	switch (orderStatus) {
+	case THOST_FTDC_OST_AllTraded:
+		onOrderAllTraded(pOrder);
+		break;
+	case THOST_FTDC_OST_PartTradedQueueing:
+		onOrderPartiallyTraded(pOrder);
+		break;
+	case THOST_FTDC_OST_PartTradedNotQueueing:
+		onOrderIOCTraded(pOrder);
+		break;
+	case THOST_FTDC_OST_NoTradeQueueing:
+		onOrderQueued(pOrder);
+		break;
+	case THOST_FTDC_OST_NoTradeNotQueueing:
+		// ioc not traded
+		onOrderFailed(pOrder);
+		break;
+	case THOST_FTDC_OST_Canceled:
+		onOrderCanceled(pOrder);
+		break;
+	case THOST_FTDC_OST_Unknown:
+		//
+		break;
+	case THOST_FTDC_OST_NotTouched:
+		onOrderRejected(pOrder);
+		break;
+	case THOST_FTDC_OST_Touched:
+		onOrderAccepted(pOrder);
+		break;
+	default:
+		break;
+	}
 }
 
 void APFuturesCTPTraderResponser::OnRtnTrade(CThostFtdcTradeField * pTrade)
 {
+	//
 }
 
 void APFuturesCTPTraderResponser::OnErrRtnOrderInsert(CThostFtdcInputOrderField * pInputOrder, CThostFtdcRspInfoField * pRspInfo)
 {
+	const char* strOrderID = pInputOrder->OrderRef;
+	APORDERID localID = atoi(strOrderID);
+	//
 }
 
 void APFuturesCTPTraderResponser::OnErrRtnOrderAction(CThostFtdcOrderActionField * pOrderAction, CThostFtdcRspInfoField * pRspInfo)
@@ -504,3 +575,51 @@ void APFuturesCTPTraderResponser::OnRtnCancelAccountByBank(CThostFtdcCancelAccou
 void APFuturesCTPTraderResponser::OnRtnChangeAccountByBank(CThostFtdcChangeAccountField * pChangeAccount)
 {
 }
+
+bool APFuturesCTPTraderResponser::isErrorRspInfo(CThostFtdcRspInfoField * pRspInfo)
+{
+	bool bResult = ((pRspInfo) && (pRspInfo->ErrorID != 0));
+	if (bResult){
+		APLogger->log("Rsp Info Error, ErrorID: %d, ErrorMsg: %s. ", pRspInfo->ErrorID, pRspInfo->ErrorMsg);
+	}
+
+	return bResult;
+}
+
+void APFuturesCTPTraderResponser::onOrderRejected(CThostFtdcOrderField * pOrder)
+{
+	APTrade* trade = APTradeManager::getInstance()->getTradeInstance();
+	if (trade != NULL) {
+		//
+	}
+}
+
+void APFuturesCTPTraderResponser::onOrderAccepted(CThostFtdcOrderField * pOrder)
+{
+}
+
+void APFuturesCTPTraderResponser::onOrderQueued(CThostFtdcOrderField * pOrder)
+{
+}
+
+void APFuturesCTPTraderResponser::onOrderAllTraded(CThostFtdcOrderField * pOrder)
+{
+}
+
+void APFuturesCTPTraderResponser::onOrderPartiallyTraded(CThostFtdcOrderField * pOrder)
+{
+}
+
+void APFuturesCTPTraderResponser::onOrderIOCTraded(CThostFtdcOrderField * pOrder)
+{
+}
+
+void APFuturesCTPTraderResponser::onOrderCanceled(CThostFtdcOrderField * pOrder)
+{
+}
+
+void APFuturesCTPTraderResponser::onOrderFailed(CThostFtdcOrderField * pOrder)
+{
+}
+
+#endif
