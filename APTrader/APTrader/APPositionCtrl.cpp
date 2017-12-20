@@ -153,7 +153,7 @@ long APPositionCtrl::getCloseOrderedPosition()
 	return m_closeOrdersPosition;
 }
 
-void APPositionCtrl::openTrade(APTrendType type, double price, long volume)
+void APPositionCtrl::openPosition(APTrendType type, double price, long volume)
 {	
 	if (volume > m_availablePosition) {
 		volume = m_availablePosition;
@@ -177,7 +177,7 @@ void APPositionCtrl::openTrade(APTrendType type, double price, long volume)
 	open(type, quotePrice, volume);
 }
 
-void APPositionCtrl::closeTrade(APTrendType type, double price, long volume)
+void APPositionCtrl::closePosition(APTrendType type, double price, long volume)
 {
 	if (volume > m_holdPosition) {
 		volume = m_holdPosition;
@@ -201,14 +201,14 @@ void APPositionCtrl::closeTrade(APTrendType type, double price, long volume)
 	close(type, quotePrice, volume);
 }
 
-void APPositionCtrl::openAllTrade(APTrendType type, double price)
+void APPositionCtrl::openFullPosition(APTrendType type, double price)
 {
 	openAll(type, price);
 	m_openOrdersPosition += m_availablePosition;
 	m_availablePosition = 0;	
 }
 
-void APPositionCtrl::closeAllTrade(APTrendType type, double price)
+void APPositionCtrl::closeOffPosition(APTrendType type, double price)
 {
 	closeAll(type, price);
 	m_closeOrdersPosition += m_holdPosition;

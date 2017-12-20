@@ -16,9 +16,9 @@ void APFuturesPosCtrlWithTransfer::init(std::string positionInfo)
 	APFuturesPositionCtrl::init(positionInfo);
 }
 
-void APFuturesPosCtrlWithTransfer::setTargetContractID(APASSETID contractID)
+void APFuturesPosCtrlWithTransfer::setTargetContractID(APASSETID instrumentID)
 {
-	m_targetContractID = contractID;
+	m_targetContractID = instrumentID;
 }
 
 void APFuturesPosCtrlWithTransfer::onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend)

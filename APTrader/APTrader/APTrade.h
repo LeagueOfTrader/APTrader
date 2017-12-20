@@ -72,6 +72,17 @@ public:
 	virtual APORDERID close(APASSETID instrumentID, APTrendType trend, double price, long volume, 
 							APPositionCtrl* pc, APOrderTimeCondition ot = OTC_GoodForDay);
 
+	virtual APORDERID open(APASSETID instrumentID, APTrendType trend,
+							APOrderPriceType orderPriceType, double price, APPositionCtrl* pc,
+							APOrderTimeCondition orderTimeCondition = OTC_GoodForDay, std::string date = "",
+							APOrderVolumeCondition orderVolumeCondition = OVC_Any, long volume = 0, long minVolume = 0,
+							APOrderContingentCondition orderContingentCondition = OCC_Immediately, double stopPrice = 0.0);
+	virtual APORDERID close(APASSETID instrumentID, APTrendType trend,
+							APOrderPriceType orderPriceType, double price, APPositionCtrl* pc,
+							APOrderTimeCondition orderTimeCondition = OTC_GoodForDay, std::string date = "",
+							APOrderVolumeCondition orderVolumeCondition = OVC_Any, long volume = 0, long minVolume = 0,
+							APOrderContingentCondition orderContingentCondition = OCC_Immediately, double stopPrice = 0.0);
+
 	virtual void cancel(APASSETID instrumentID, APTradeType type, APTrendType trend, double price, APPositionCtrl* pc);
 	virtual void cancel(APASSETID instrumentID, APTradeType type, APPositionCtrl* pc);
 	virtual void cancelAll(APASSETID instrumentID, APPositionCtrl* pc);

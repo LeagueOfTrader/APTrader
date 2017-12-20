@@ -5,7 +5,7 @@
 #include "../Trade/APFuturesTrade.h"
 
 //struct APFutureContract {
-//	APASSETID contractID;
+//	APASSETID instrumentID;
 //	APTrendType type;
 //	long position;
 //};
@@ -32,12 +32,23 @@ public:
 	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend = TT_Long);
 	virtual void onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTrendType trend = TT_Long);
 
-	void setContractID(APASSETID contractID);
+	void setContractID(APASSETID instrumentID);
 	void setContractType(APTrendType type);
 
-	// api trade futures directly
-	void open(APASSETID contractID, APTrendType trend, double price, long volume, APOrderTimeCondition ot = OTC_GoodForDay);
-	void close(APASSETID contractID, APTrendType trend, double price, long volume, APOrderTimeCondition ot = OTC_GoodForDay);
+protected:
+	void open(APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderTimeCondition ot = OTC_GoodForDay);
+	void close(APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderTimeCondition ot = OTC_GoodForDay);
+	// advanced open/close
+	void open(APASSETID instrumentID, APTrendType trend,
+		APOrderPriceType orderPriceType, double price,
+		APOrderTimeCondition orderTimeCondition = OTC_GoodForDay, std::string date = "",
+		APOrderVolumeCondition orderVolumeCondition = OVC_Any, long volume = 0, long minVolume = 0,
+		APOrderContingentCondition orderContingentCondition = OCC_Immediately, double stopPrice = 0.0);
+	void close(APASSETID instrumentID, APTrendType trend,
+		APOrderPriceType orderPriceType, double price,
+		APOrderTimeCondition orderTimeCondition = OTC_GoodForDay, std::string date = "",
+		APOrderVolumeCondition orderVolumeCondition = OVC_Any, long volume = 0, long minVolume = 0,
+		APOrderContingentCondition orderContingentCondition = OCC_Immediately, double stopPrice = 0.0);
 
 
 

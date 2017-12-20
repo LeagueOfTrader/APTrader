@@ -47,10 +47,10 @@ public:
 	long getOpenOrderedPosition();
 	long getCloseOrderedPosition();
 
-	void openTrade(APTrendType type, double price, long volume);
-	void closeTrade(APTrendType type, double price, long volume);
-	void openAllTrade(APTrendType type, double price);
-	void closeAllTrade(APTrendType type, double price);
+	void openPosition(APTrendType type, double price, long volume);
+	void closePosition(APTrendType type, double price, long volume);
+	void openFullPosition(APTrendType type, double price);
+	void closeOffPosition(APTrendType type, double price);
 	//void cancelTrade(APTradeType type, double price, long volume); // may implement later
 	void cancelTrade(APTradeType type, double price, APTrendType trend);
 	void cancelTrade(APTradeType type);

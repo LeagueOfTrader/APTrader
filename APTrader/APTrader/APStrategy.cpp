@@ -12,6 +12,7 @@ APStrategy::APStrategy()
 	m_priority = 0;
 	m_positionCtrl = NULL;
 	m_quotationDecision = NULL;
+	m_closeOnly = false;
 }
 
 APStrategy::~APStrategy()
@@ -91,34 +92,6 @@ void APStrategy::setID(UINT id)
 	m_id = id;
 }
 
-void APStrategy::open(APTrendType type, double price, long volume)
-{
-	if (m_positionCtrl != NULL) {
-		m_positionCtrl->openTrade(type, price, volume);
-	}
-}
-
-void APStrategy::close(APTrendType type, double price, long volume)
-{
-	if (m_positionCtrl != NULL) {
-		m_positionCtrl->closeTrade(type, price, volume);
-	}
-}
-
-void APStrategy::openAll(APTrendType type, double price)
-{
-	if (m_positionCtrl != NULL) {
-		m_positionCtrl->openAllTrade(type, price);
-	}
-}
-
-void APStrategy::closeAll(APTrendType type, double price)
-{
-	if (m_positionCtrl != NULL) {
-		m_positionCtrl->closeAllTrade(type, price);
-	}
-}
-
 void APStrategy::initQuotationDecision(std::string quotationInfo)
 {
 	APJsonReader jr;
@@ -137,6 +110,11 @@ void APStrategy::initQuotationDecision(std::string quotationInfo)
 void APStrategy::setInstrumentID(APASSETID instrumentID)
 {
 	m_instrumentID = instrumentID;
+}
+
+void APStrategy::setCloseOnly(bool closeOnly)
+{
+	m_closeOnly = closeOnly;
 }
 
 

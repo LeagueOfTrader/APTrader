@@ -29,12 +29,9 @@ public:
 
 	void setInstrumentID(APASSETID instrumentID);
 
-protected:
-	void open(APTrendType type, double price, long volume);
-	void close(APTrendType type, double price, long volume);
-	void openAll(APTrendType type, double price);
-	void closeAll(APTrendType type, double price);
+	void setCloseOnly(bool closeOnly);
 
+protected:
 	void initQuotationDecision(std::string quotationInfo);	
 
 protected:
@@ -46,5 +43,7 @@ protected:
 	UINT m_priority;
 	bool m_isSubStrategy;
 	UINT m_id;
+
+	bool m_closeOnly;
 };
 

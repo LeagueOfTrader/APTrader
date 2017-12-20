@@ -54,8 +54,7 @@ void APFuturesPositionCtrl::cancel(APTradeType type, double price, APTrendType t
 		std::list<APORDERID>::iterator it;
 		APTradeOrderInfo info;
 		if (type == TDT_Open) {
-			for (it = m_openOrderList.begin(); it != m_openOrderList.end(); ) {
-				//m_trade->cancel(*it, this);				
+			for (it = m_openOrderList.begin(); it != m_openOrderList.end(); ) {			
 				if (m_trade->getOrderInfo(*it, info)) {
 					if (info.trend == trend) {
 						if (fabs(info.price - price) < DBL_EPSILON ||
@@ -174,20 +173,54 @@ void APFuturesPositionCtrl::setContractType(APTrendType type)
 	m_trendType = type;
 }
 
-void APFuturesPositionCtrl::open(APASSETID contractID, APTrendType trend, double price, long volume, APOrderTimeCondition ot)
+void APFuturesPositionCtrl::open(APASSETID instrumentID, APTrendType trend, 
+									APOrderPriceType orderPriceType, double price, 
+									APOrderTimeCondition orderTimeCondition, std::string date, 
+									APOrderVolumeCondition orderVolumeCondition, long volume, long minVolume, 
+									APOrderContingentCondition orderContingentCondition, double stopPrice)
 {
 	if (m_trade != NULL) {
-		APORDERID orderID = m_trade->open(contractID, trend, price, volume, this, ot);
+		APORDERID orderID = m_trade->open(instrumentID, trend,
+			orderPriceType, price, this,
+			orderTimeCondition, date,
+			orderVolumeCondition, volume, minVolume,
+			orderContingentCondition, stopPrice);
+		m_openOrderList.push_back(orderID);
+	}
+}
+
+void APFuturesPositionCtrl::close(APASSETID instrumentID, APTrendType trend, 
+									APOrderPriceType orderPriceType, double price, 
+									APOrderTimeCondition orderTimeCondition, std::string date, 
+									APOrderVolumeCondition orderVolumeCondition, long volume, long minVolume, 
+									APOrderContingentCondition orderContingentCondition, double stopPrice)
+{
+	if (m_trade != NULL) {
+		APORDERID orderID = m_trade->close(instrumentID, trend,
+			orderPriceType, price, this,
+			orderTimeCondition, date,
+			orderVolumeCondition, volume, minVolume,
+			orderContingentCondition, stopPrice);
+
+		m_closeOrderList.push_back(orderID);
+
+	}
+}
+
+void APFuturesPositionCtrl::open(APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderTimeCondition ot)
+{
+	if (m_trade != NULL) {
+		APORDERID orderID = m_trade->open(instrumentID, trend, price, volume, this, ot);
 		if (ot == OTC_GoodForDay) {
 			m_openOrderList.push_back(orderID);
 		}
 	}
 }
 
-void APFuturesPositionCtrl::close(APASSETID contractID, APTrendType trend, double price, long volume, APOrderTimeCondition ot)
+void APFuturesPositionCtrl::close(APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderTimeCondition ot)
 {
 	if (m_trade != NULL) {
-		APORDERID orderID = m_trade->close(contractID, trend, price, volume, this, ot);
+		APORDERID orderID = m_trade->close(instrumentID, trend, price, volume, this, ot);
 		if (ot == OTC_GoodForDay) {
 			m_closeOrderList.push_back(orderID);
 		}

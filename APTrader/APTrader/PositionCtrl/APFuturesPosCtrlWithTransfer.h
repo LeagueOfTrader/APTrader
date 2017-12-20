@@ -9,7 +9,7 @@ public:
 
 	virtual void init(std::string positionInfo);
 
-	void setTargetContractID(APASSETID contractID);
+	void setTargetContractID(APASSETID instrumentID);
 	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long volume, APORDERID orderID, APTrendType trend = TT_Long);
 
 	virtual void open(APTrendType type, double price, long volume);

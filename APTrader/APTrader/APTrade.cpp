@@ -47,6 +47,42 @@ APORDERID APTrade::close(APASSETID instrumentID, APTrendType trend, double price
 	return orderID;
 }
 
+APORDERID APTrade::open(APASSETID instrumentID, APTrendType trend, APOrderPriceType orderPriceType, double price, APPositionCtrl * pc, APOrderTimeCondition orderTimeCondition, std::string date, APOrderVolumeCondition orderVolumeCondition, long volume, long minVolume, APOrderContingentCondition orderContingentCondition, double stopPrice)
+{
+	if (pc == NULL) {
+		return INVALID_TRADE_ORDER_ID;
+	}
+
+	APORDERID orderID = generateOrderID();
+	APTradeOrderInfo info = { orderID, TDT_Open, instrumentID, price, volume, trend, TS_New, 0, pc->getID() };
+	m_localOrders[orderID] = info;
+
+	open(instrumentID, orderID, trend, 
+		orderPriceType, price,
+		orderTimeCondition, date,
+		orderVolumeCondition, volume, minVolume,
+		orderContingentCondition, stopPrice);
+	return orderID;
+}
+
+APORDERID APTrade::close(APASSETID instrumentID, APTrendType trend, APOrderPriceType orderPriceType, double price, APPositionCtrl * pc, APOrderTimeCondition orderTimeCondition, std::string date, APOrderVolumeCondition orderVolumeCondition, long volume, long minVolume, APOrderContingentCondition orderContingentCondition, double stopPrice)
+{
+	if (pc == NULL) {
+		return INVALID_TRADE_ORDER_ID;
+	}
+
+	APORDERID orderID = generateOrderID();
+	APTradeOrderInfo info = { orderID, TDT_Close, instrumentID, price, volume, trend, TS_New, 0, pc->getID() };
+	m_localOrders[orderID] = info;
+
+	close(instrumentID, orderID, trend,
+		orderPriceType, price,
+		orderTimeCondition, date,
+		orderVolumeCondition, volume, minVolume,
+		orderContingentCondition, stopPrice);
+	return orderID;
+}
+
 void APTrade::cancel(APASSETID instrumentID, APTradeType type, APTrendType trend, double price, APPositionCtrl* pc) {
 	if (pc == NULL) {
 		return;
