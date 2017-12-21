@@ -15,7 +15,10 @@ APSingleQuotationDecision::APSingleQuotationDecision(APASSETID instrumentID)
 
 APSingleQuotationDecision::~APSingleQuotationDecision()
 {
-	m_quotation = NULL;
+	if (m_quotation != NULL) {
+		APMarketDataMgr->unSubscribeInstrument(m_quotation->getInstrumentID());
+		m_quotation = NULL;
+	}
 }
 
 double APSingleQuotationDecision::getValueReference()

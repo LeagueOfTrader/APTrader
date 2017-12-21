@@ -18,7 +18,7 @@ APSharesPositionCtrl::~APSharesPositionCtrl()
 
 void APSharesPositionCtrl::init(std::string positionInfo)
 {
-	setBaseParam(positionInfo);
+	initWithData(positionInfo);
 	//APTradeManager::getInstance()->registerPositionCtrl(m_instrumentID, TT_Long, this);
 	m_trade = dynamic_cast<APSharesTrade*>(APTradeManager::getInstance()->getTradeInstance());
 }

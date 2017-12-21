@@ -4,3 +4,6 @@
 #define USE_CTP
 #endif // !USE_CTP
 
+//#ifndef SIM
+//#define SIM
+//#endif

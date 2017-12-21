@@ -3,13 +3,14 @@
 #include <vector>
 #include "APTypes.h"
 #include "Model/APKLine.h"
+#include "Common/RefCountObject.h"
 
 struct APBidInfo {
 	double price;
 	long volume;
 };
 
-class APInstrumentQuotation
+class APInstrumentQuotation : public RefCountObject
 {
 public:
 	APInstrumentQuotation(APASSETID instrumentID);
@@ -21,6 +22,7 @@ public:
 	double getPreClosePrice();
 	APKLine& getKLineData();
 	double getAveragePrice();
+	APASSETID getInstrumentID();
 
 	virtual double getOpenPrice(UINT index = 0);
 	virtual double getClosePrice(UINT index = 0);

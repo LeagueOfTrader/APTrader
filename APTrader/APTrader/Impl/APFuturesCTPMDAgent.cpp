@@ -47,27 +47,58 @@ bool APFuturesCTPMDAgent::subscribeInstrument(APASSETID instrumentID)
 		return true;
 	}
 
-	m_subscribedInstruments.insert(instrumentID);
+	char** ppArr = new char*[1];
+	strcpy(ppArr[0], instrumentID.c_str());
+	int ret = m_mdApi->SubscribeMarketData(ppArr, 1);
+	delete[] ppArr[0];
+	delete[] ppArr;
 
-	int count = m_subscribedInstruments.size();
-	char** ppSubscribeArr = new char*[count];
-
-	std::set<APASSETID>::iterator it;
-
-	int i = 0;
-	for (it = m_subscribedInstruments.begin(); it != m_subscribedInstruments.end(); it++) {
-		APASSETID id = *it;
-		ppSubscribeArr[i] = new char[32];
-		strcpy(ppSubscribeArr[i], id.c_str());
-		i++;
+	if (ret) {
+		m_subscribedInstruments.insert(instrumentID);
 	}
 
-	bool ret = m_mdApi->SubscribeMarketData(ppSubscribeArr, m_subscribedInstruments.size());
+	//int count = m_subscribedInstruments.size();
+	//char** ppSubscribeArr = new char*[count];
 
-	for (i = 0; i < count; i++) {
-		delete[] ppSubscribeArr[i];
+	//std::set<APASSETID>::iterator it;
+
+	//int i = 0;
+	//for (it = m_subscribedInstruments.begin(); it != m_subscribedInstruments.end(); it++) {
+	//	APASSETID id = *it;
+	//	ppSubscribeArr[i] = new char[32];
+	//	strcpy(ppSubscribeArr[i], id.c_str());
+	//	i++;
+	//}
+
+	//bool ret = m_mdApi->SubscribeMarketData(ppSubscribeArr, m_subscribedInstruments.size());
+
+	//for (i = 0; i < count; i++) {
+	//	delete[] ppSubscribeArr[i];
+	//}
+	//delete[] ppSubscribeArr;
+
+	return ret;
+}
+
+bool APFuturesCTPMDAgent::unSubscribeInstrument(APASSETID instrumentID)
+{
+	if (m_mdApi == NULL) {
+		return false;
 	}
-	delete[] ppSubscribeArr;
+
+	if (m_subscribedInstruments.find(instrumentID) == m_subscribedInstruments.end()) {
+		return false;
+	}
+	
+	char** ppArr = new char*[1];
+	strcpy(ppArr[0], instrumentID.c_str());
+	int ret = m_mdApi->UnSubscribeMarketData(ppArr, 1);
+	delete[] ppArr[0];
+	delete[] ppArr;
+
+	if (ret) {
+		m_subscribedInstruments.erase(instrumentID);
+	}
 
 	return ret;
 }

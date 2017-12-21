@@ -11,5 +11,6 @@ public:
 protected:
 	virtual APInstrumentQuotation* generateQuotation(APASSETID instrumentID);
 	virtual bool subscribeInstrumentInfo(APASSETID instrumentID);
+	virtual void unSubscribeInstrumentInfo(APASSETID instrumentID);
 };
 

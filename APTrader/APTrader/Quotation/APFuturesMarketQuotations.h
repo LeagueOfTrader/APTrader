@@ -12,5 +12,6 @@ public:
 
 protected:
 	virtual bool subscribeInstrumentInfo(APASSETID instrumentID);
+	virtual void unSubscribeInstrumentInfo(APASSETID instrumentID);
 };
 

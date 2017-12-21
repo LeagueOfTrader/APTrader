@@ -10,15 +10,14 @@ APFuturesPositionCtrl::APFuturesPositionCtrl()
 APFuturesPositionCtrl::~APFuturesPositionCtrl()
 {
 	if (m_trade != NULL) {
-		//APTradeManager::getInstance()->unregisterPositionCtrl(this);
+		// trade instance will be destroyed by trade manager
 		m_trade = NULL;
 	}	
 }
 
 void APFuturesPositionCtrl::init(std::string positionInfo)
 {
-	setBaseParam(positionInfo);
-	//APTradeManager::getInstance()->registerPositionCtrl(m_instrumentID, m_trendType, this);
+	initWithData(positionInfo);
 	m_trade = dynamic_cast<APFuturesTrade*>(APTradeManager::getInstance()->getTradeInstance());
 }
 
@@ -50,7 +49,6 @@ void APFuturesPositionCtrl::closeAll(APTrendType type, double price)
 void APFuturesPositionCtrl::cancel(APTradeType type, double price, APTrendType trend)
 {
 	if (m_trade != NULL) {
-		//m_trade->cancel(m_instrumentID, type, trend, price, this);
 		std::list<APORDERID>::iterator it;
 		APTradeOrderInfo info;
 		if (type == TDT_Open) {
@@ -125,20 +123,14 @@ void APFuturesPositionCtrl::cancel(APTradeType type)
 
 void APFuturesPositionCtrl::onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend)
 {
-	//if (instrumentID != m_instrumentID || trend != m_trendType) {
-	//	return;
-	//}
-
 	switch (type) {
 	case TDT_Open:
 		m_holdPosition += deltaVolume;
 		m_openOrdersPosition -= deltaVolume;
-		//changeContractPossession(instrumentID, volume, trend);
 		break;
 	case TDT_Close:
 		m_availablePosition += deltaVolume;
 		m_closeOrdersPosition -= deltaVolume;
-		//changeContractPossession(instrumentID, -volume, trend);
 		break;
 	default:
 		break;
@@ -163,9 +155,9 @@ void APFuturesPositionCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType 
 	}
 }
 
-void APFuturesPositionCtrl::setContractID(APASSETID contractID)
+void APFuturesPositionCtrl::setInstrumentID(APASSETID instrumentID)
 {
-	m_instrumentID = contractID;
+	m_instrumentID = instrumentID;
 }
 
 void APFuturesPositionCtrl::setContractType(APTrendType type)
@@ -201,9 +193,7 @@ void APFuturesPositionCtrl::close(APASSETID instrumentID, APTrendType trend,
 			orderTimeCondition, date,
 			orderVolumeCondition, volume, minVolume,
 			orderContingentCondition, stopPrice);
-
 		m_closeOrderList.push_back(orderID);
-
 	}
 }
 
@@ -211,9 +201,7 @@ void APFuturesPositionCtrl::open(APASSETID instrumentID, APTrendType trend, doub
 {
 	if (m_trade != NULL) {
 		APORDERID orderID = m_trade->open(instrumentID, trend, price, volume, this, ot);
-		if (ot == OTC_GoodForDay) {
-			m_openOrderList.push_back(orderID);
-		}
+		m_openOrderList.push_back(orderID);		
 	}
 }
 
@@ -221,9 +209,7 @@ void APFuturesPositionCtrl::close(APASSETID instrumentID, APTrendType trend, dou
 {
 	if (m_trade != NULL) {
 		APORDERID orderID = m_trade->close(instrumentID, trend, price, volume, this, ot);
-		if (ot == OTC_GoodForDay) {
-			m_closeOrderList.push_back(orderID);
-		}
+		m_closeOrderList.push_back(orderID);		
 	}
 }
 

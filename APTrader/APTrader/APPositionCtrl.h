@@ -78,7 +78,7 @@ protected:
 	
 	virtual void onSyncPositionStatus(const APPositionData& data);
 
-	void setBaseParam(std::string positionInfo);
+	virtual void initWithData(std::string positionInfo);
 
 protected:
 	long m_openOrdersPosition;

@@ -12,6 +12,13 @@ APPriceMarginQuotationDecision::APPriceMarginQuotationDecision(APASSETID srcInst
 
 APPriceMarginQuotationDecision::~APPriceMarginQuotationDecision()
 {
+	if (m_srcQuotation != NULL) {
+		APMarketDataMgr->unSubscribeInstrument(m_srcQuotation->getInstrumentID());
+	}
+
+	if (m_targetQuotation != NULL) {
+		APMarketDataMgr->unSubscribeInstrument(m_targetQuotation->getInstrumentID());
+	}
 }
 
 double APPriceMarginQuotationDecision::getValueReference()

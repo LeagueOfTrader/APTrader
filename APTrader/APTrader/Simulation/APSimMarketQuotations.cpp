@@ -20,3 +20,7 @@ bool APSimMarketQuotations::subscribeInstrumentInfo(APASSETID instrumentID)
 {
 	return true;
 }
+
+void APSimMarketQuotations::unSubscribeInstrumentInfo(APASSETID instrumentID)
+{
+}

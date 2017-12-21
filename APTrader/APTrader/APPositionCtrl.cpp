@@ -1,9 +1,10 @@
+#include "APMarco.h"
 #include "APPositionCtrl.h"
 #include "APTradeManager.h"
 #include "APGlobalConfig.h"
 #include "Utils\APJsonReader.h"
 #include "APInstrumentQuotation.h"
-//#include "APMarketQuotationsManager.h"
+#include "APMarketDataManager.h"
 #include "APPositionManager.h"
 #include "APTrade.h"
 
@@ -15,7 +16,10 @@ APPositionCtrl::APPositionCtrl()
 
 APPositionCtrl::~APPositionCtrl()
 {
-	m_quotation = NULL;
+	if (m_quotation != NULL) {
+		APMarketDataMgr->unSubscribeInstrument(m_quotation->getInstrumentID());
+		m_quotation = NULL;
+	}
 	//APTradeManager::getInstance()->unregisterPositionCtrl(this);
 	APPositionManager::getInstance()->removePositionCtrl(this);
 }
@@ -278,7 +282,7 @@ void APPositionCtrl::syncPositionStatus()
 	//}
 }
 
-void APPositionCtrl::setBaseParam(std::string positionInfo)
+void APPositionCtrl::initWithData(std::string positionInfo)
 {
 	APJsonReader jr;
 	jr.initWithString(positionInfo);
@@ -292,8 +296,8 @@ void APPositionCtrl::setBaseParam(std::string positionInfo)
 		m_trendType = TT_Short;
 	}
 
-#ifndef _DEBUG
-	m_quotation = APMarketQuotationsManager::getInstance()->subscribeInstrument(m_instrumentID);
+#ifndef SIM
+	m_quotation = APMarketDataMgr->subscribeInstrument(m_instrumentID);
 #else 
 	m_quotation = NULL;
 #endif // !_DEBUG

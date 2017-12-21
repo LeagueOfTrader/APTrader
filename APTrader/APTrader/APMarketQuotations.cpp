@@ -16,9 +16,13 @@ APMarketQuotations::~APMarketQuotations()
 
 APInstrumentQuotation* APMarketQuotations::subscribeInstrument(APASSETID instrumentID)
 {
-	std::map<std::string, APInstrumentQuotation*>::iterator it = m_instrumentQuotations.find(instrumentID);
+	std::map<APASSETID, APInstrumentQuotation*>::iterator it = m_instrumentQuotations.find(instrumentID);
 	if (it != m_instrumentQuotations.end()) {
-		return  it->second;
+		APInstrumentQuotation* quotation = it->second;
+		if (quotation != NULL) {
+			quotation->incRef();
+		}
+		return quotation;
 	}
 
 	subscribeInstrumentInfo(instrumentID);
@@ -26,6 +30,17 @@ APInstrumentQuotation* APMarketQuotations::subscribeInstrument(APASSETID instrum
 	APInstrumentQuotation* instrumentQuotation = this->generateQuotation(instrumentID);//APObjectFactory::newInstrumentQuotation(m_marketType, instrumentID);
 	m_instrumentQuotations[instrumentID] = instrumentQuotation;
 	return instrumentQuotation;
+}
+
+void APMarketQuotations::unSubscribeInstrument(APASSETID instrumentID)
+{
+	std::map<APASSETID, APInstrumentQuotation*>::iterator it = m_instrumentQuotations.find(instrumentID);
+	if (it != m_instrumentQuotations.end()) {
+		APInstrumentQuotation* quotation = it->second;
+		if (quotation != NULL) {
+			quotation->decRef();
+		}
+	}
 }
 
 void APMarketQuotations::init()
@@ -36,8 +51,17 @@ void APMarketQuotations::init()
 void APMarketQuotations::update(float deltaTime)
 {
 	std::map<std::string, APInstrumentQuotation*>::iterator it = m_instrumentQuotations.begin();
-	for (; it != m_instrumentQuotations.end(); it++) {
-		it->second->queryQuotation();
+	while (it != m_instrumentQuotations.end()) {
+		APInstrumentQuotation* quotation = it->second;
+		if (quotation != NULL) {
+			if (quotation->getRefCount() <= 0) {
+				unSubscribeInstrumentInfo(quotation->getInstrumentID());
+				m_instrumentQuotations.erase(it++);
+				continue;
+			}
+			quotation->queryQuotation();
+		}
+		it++;
 	}
 }
 

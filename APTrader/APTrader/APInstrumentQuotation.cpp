@@ -34,6 +34,11 @@ double APInstrumentQuotation::getAveragePrice()
 	return m_averagePrice;
 }
 
+APASSETID APInstrumentQuotation::getInstrumentID()
+{
+	return m_instrumentID;
+}
+
 double APInstrumentQuotation::getOpenPrice(UINT index)
 {
 	if (index >= m_openOrderList.size()) {

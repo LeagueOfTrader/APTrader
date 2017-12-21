@@ -195,6 +195,9 @@
     <ClInclude Include="PositionCtrl\APFuturesCombinationPosCtrl.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Common\RefCountObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APPositionCtrl.cpp">

@@ -22,3 +22,10 @@ bool APFuturesMarketQuotations::subscribeInstrumentInfo(APASSETID instrumentID)
 	return true;
 #endif
 }
+
+void APFuturesMarketQuotations::unSubscribeInstrumentInfo(APASSETID instrumentID)
+{
+#ifdef USE_CTP
+	APFuturesCTPMDAgent::getInstance()->unSubscribeInstrument(instrumentID);
+#endif
+}

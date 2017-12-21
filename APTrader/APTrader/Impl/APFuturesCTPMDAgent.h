@@ -24,6 +24,7 @@ public:
 	CThostFtdcMdApi* getMDApi();
 
 	bool subscribeInstrument(APASSETID instrumentID);
+	bool unSubscribeInstrument(APASSETID instrumentID);
 
 	CThostFtdcDepthMarketDataField* getMarketData(APASSETID instrumentID);
 

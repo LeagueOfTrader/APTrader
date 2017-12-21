@@ -155,6 +155,7 @@
     <ClInclude Include="APDef.h" />
     <ClInclude Include="APFramework.h" />
     <ClInclude Include="APFundPool.h" />
+    <ClInclude Include="Common\RefCountObject.h" />
     <ClInclude Include="PositionCtrl\APFuturesCombinationPosCtrl.h" />
     <ClInclude Include="APMarco.h" />
     <ClInclude Include="APMarketDataManager.h" />

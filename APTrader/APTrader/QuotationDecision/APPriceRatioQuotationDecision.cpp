@@ -12,6 +12,15 @@ APPriceRatioQuotationDecision::APPriceRatioQuotationDecision(APASSETID srcInstru
 
 APPriceRatioQuotationDecision::~APPriceRatioQuotationDecision()
 {
+	if (m_srcQuotation != NULL) {
+		APMarketDataMgr->unSubscribeInstrument(m_srcQuotation->getInstrumentID());
+		m_srcQuotation = NULL;
+	}
+
+	if (m_targetQuotation != NULL) {
+		APMarketDataMgr->unSubscribeInstrument(m_targetQuotation->getInstrumentID());
+		m_targetQuotation = NULL;
+	}
 }
 
 double APPriceRatioQuotationDecision::getValueReference()
