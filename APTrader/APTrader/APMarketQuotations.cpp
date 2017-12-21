@@ -39,6 +39,10 @@ void APMarketQuotations::unSubscribeInstrument(APASSETID instrumentID)
 		APInstrumentQuotation* quotation = it->second;
 		if (quotation != NULL) {
 			quotation->decRef();
+			if (quotation->getRefCount() <= 0) {
+				unSubscribeInstrumentInfo(instrumentID);
+				m_instrumentQuotations.erase(instrumentID);
+			}
 		}
 	}
 }

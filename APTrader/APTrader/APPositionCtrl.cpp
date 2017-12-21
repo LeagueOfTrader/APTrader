@@ -2,7 +2,7 @@
 #include "APPositionCtrl.h"
 #include "APTradeManager.h"
 #include "APGlobalConfig.h"
-#include "Utils\APJsonReader.h"
+#include "Utils/APJsonReader.h"
 #include "APInstrumentQuotation.h"
 #include "APMarketDataManager.h"
 #include "APPositionManager.h"

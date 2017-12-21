@@ -47,14 +47,14 @@ public:
 	long getOpenOrderedPosition();
 	long getCloseOrderedPosition();
 
-	void openPosition(APTrendType type, double price, long volume);
-	void closePosition(APTrendType type, double price, long volume);
-	void openFullPosition(APTrendType type, double price);
-	void closeOffPosition(APTrendType type, double price);
+	virtual void openPosition(APTrendType type, double price, long volume);
+	virtual void closePosition(APTrendType type, double price, long volume);
+	virtual void openFullPosition(APTrendType type, double price);
+	virtual void closeOffPosition(APTrendType type, double price);
 	//void cancelTrade(APTradeType type, double price, long volume); // may implement later
-	void cancelTrade(APTradeType type, double price, APTrendType trend);
-	void cancelTrade(APTradeType type);
-	void cancelAllTrade();
+	virtual void cancelTrade(APTradeType type, double price, APTrendType trend);
+	virtual void cancelTrade(APTradeType type);
+	virtual void cancelAllTrade();
 
 	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend = TT_Long) = 0;
 	virtual void onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTrendType trend = TT_Long) = 0;
