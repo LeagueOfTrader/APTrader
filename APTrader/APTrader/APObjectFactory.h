@@ -15,7 +15,7 @@ public:
 	~APObjectFactory();
 
 	static APInstrumentQuotation* newInstrumentQuotation(APFinancialInstrumentType marketType, APASSETID instrumentID);
-	static APPositionCtrl* newPositionCtrl(APFinancialInstrumentType marketType);
+	static APPositionCtrl* newPositionCtrl(APFinancialInstrumentType marketType, std::string pcType = "");
 	static APTrade* newTrade(APFinancialInstrumentType marketType);
 	static APQuotationDecision* newQuotationDecision(APQuotationDecisionType type, APASSETID srcID, APASSETID targetID = "", double param = 0.0f);
 };

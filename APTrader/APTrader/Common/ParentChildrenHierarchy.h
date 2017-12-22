@@ -55,6 +55,20 @@ public:
 
 	virtual bool equals(T* obj) = 0;
 
+//	typedef void(*TraverseCallback)(T* obj);	
+//	void traverseDo(TraverseCallback callback) {
+//		traverse(this, callback);
+//	}
+//
+//protected:
+//	void traverse(T* node, TraverseCallback callback) {
+//		for (int i = 0; i < m_children.size(); i++) {
+//			traverse(m_children[i], callback);
+//		}
+//
+//		callback(node);
+//	}
+
 protected:
 	T* m_parent;
 	std::vector<T*> m_children;

@@ -130,17 +130,6 @@ void APGridStrategy::goTrendGrid(double value) // , std::vector<APGridData>& ope
 	}
 }
 
-bool APGridStrategy::inCloseSection(double value)
-{
-	if (m_trend == TT_Long) {
-		return value >= m_waitCeil;
-	}
-	else if (m_trend == TT_Short) {
-		return value <= m_waitFloor;
-	}
-
-	return false;
-}
 
 void APGridStrategy::goThroughGrids()
 {
@@ -183,6 +172,18 @@ bool APGridStrategy::inOpenSection(double value)
 	}
 	else if (m_trend == TT_Short) {
 		return value > m_waitCeil;
+	}
+
+	return false;
+}
+
+bool APGridStrategy::inCloseSection(double value)
+{
+	if (m_trend == TT_Long) {
+		return value >= m_waitCeil;
+	}
+	else if (m_trend == TT_Short) {
+		return value <= m_waitFloor;
 	}
 
 	return false;

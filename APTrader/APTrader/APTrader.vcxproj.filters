@@ -54,9 +54,6 @@
     <ClInclude Include="APTrade.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Common\Singleton.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Trade\APSharesTrade.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -123,9 +120,6 @@
     <ClInclude Include="Strategy\APTransferPositionStrategy.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Common\ParentChildrenHierarchy.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="APAccountAssets.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -139,9 +133,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Simulation\APSimFramework.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\Cyclebuffer.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Simulation\APSimAccount.h">
@@ -195,7 +186,28 @@
     <ClInclude Include="PositionCtrl\APFuturesCombinationPosCtrl.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Common\Cyclebuffer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\ParentChildrenHierarchy.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
     <ClInclude Include="Common\RefCountObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Singleton.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\SerializedObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Monitor\APQuotationMonitor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Monitor\APQuotationMonitorManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Monitor\APMonitorFramework.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -351,6 +363,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="PositionCtrl\APFuturesCombinationPosCtrl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Monitor\APQuotationMonitor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Monitor\APQuotationMonitorManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Monitor\APMonitorFramework.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

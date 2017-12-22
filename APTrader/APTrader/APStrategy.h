@@ -20,6 +20,7 @@ public:
 	void setPriority(UINT priority);
 	UINT getPriority();
 
+	void setPositionCtrl(APPositionCtrl* posCtrl);
 	APPositionCtrl* getPositionCtrl();
 
 	virtual bool equals(APStrategy* strategy);

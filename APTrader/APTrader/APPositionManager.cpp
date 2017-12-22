@@ -2,7 +2,7 @@
 #include "APObjectFactory.h"
 #include "APGlobalConfig.h"
 #include "APPositionCtrl.h"
-//#include "APTradeManager.h"
+#include "Utils/APJsonReader.h"
 
 APPositionManager::APPositionManager()
 {
@@ -17,7 +17,14 @@ APPositionManager::~APPositionManager()
 
 APPositionCtrl * APPositionManager::createPositionCtrl(std::string positionInfo)
 {
-	APPositionCtrl* pc = APObjectFactory::newPositionCtrl(APGlobalConfig::getInstance()->getInstrumentType());
+	APJsonReader jr;
+	jr.initWithString(positionInfo);
+	std::string pcType = "";
+	if (jr.hasMember("Type")) {
+		pcType = jr.getStrValue("Type");
+	}
+
+	APPositionCtrl* pc = APObjectFactory::newPositionCtrl(APGlobalConfig::getInstance()->getInstrumentType(), pcType);
 	pc->m_id = m_idAccumulator->generateID();
 	pc->init(positionInfo);
 	m_positionCtrls[pc->m_id] = pc;

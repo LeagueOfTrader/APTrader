@@ -6,24 +6,10 @@
 #include <windows.h>
 #include "APGlobalConfig.h"
 #include "Utils/APJsonReader.h"
-#include "Simulation/APSimFramework.h"
+//#include "Simulation/APSimFramework.h"
 #include "Impl/APFuturesCTPMDAgent.h"
 #include "Quotation/APFuturesMarketQuotations.h"
-
-void loop() {
-	return;
-
-	std::string instrumentID = "hc1805";
-	//APFuturesMarketQuotations::getInstance()->init();
-	
-	DWORD lastTickCount = GetTickCount();
-	while (true) {
-		DWORD curTickCount = GetTickCount();
-		float deltaTime = (float)(curTickCount - lastTickCount) / 1000.0f;
-		lastTickCount = curTickCount;
-		APFuturesCTPMDAgent::getInstance()->subscribeInstrument(instrumentID);
-	}
-}
+#include "Monitor/APMonitorFramework.h"
 
 void main() {
 
@@ -42,21 +28,18 @@ void main() {
 	//}
 	//framework->exit();
 	//delete framework;
-	APFuturesCTPMDAgent::getInstance()->registerInitCallback(loop);
-	APFuturesCTPMDAgent::getInstance()->init();
 	
-	//DWORD lastTickCount = GetTickCount();
-	//while (1) {
-	//	// wait
-	//	//Sleep(100);
-	//	DWORD curTickCount = GetTickCount();
-	//	float deltaTime = (float)(curTickCount - lastTickCount) / 1000.0f;
-	//	// update(deltaTime);
-	//}
-	//
-	//std::string instrumentID = "hc1805";
-	//APFuturesMarketQuotations::getInstance()->init();
-	//APFuturesMarketQuotations::getInstance()->subscribeInstrument(instrumentID);
+	// ---- monitor ----
+	APMonitorFramework* framework = APMonitorFramework::getInstance();
+	framework->init();
+
+	while (!framework->inited());
+
+	while (!framework->finished()) {
+		framework->update(0.0);
+	}
+
+	framework->exit();
 
 	printf("0");
 }

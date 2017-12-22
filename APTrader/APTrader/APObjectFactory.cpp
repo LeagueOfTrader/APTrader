@@ -2,6 +2,7 @@
 #include "./Quotation/APFuturesQuotation.h"
 #include "./Quotation/APSharesQuotation.h"
 #include "./PositionCtrl/APFuturesPositionCtrl.h"
+#include "./PositionCtrl/APFuturesCombinationPosCtrl.h"
 #include "./PositionCtrl/APSharesPositionCtrl.h"
 #include "./QuotationDecision/APSingleQuotationDecision.h"
 #include "./QuotationDecision/APPriceMarginQuotationDecision.h"
@@ -38,7 +39,7 @@ APInstrumentQuotation * APObjectFactory::newInstrumentQuotation(APFinancialInstr
 	return cq;
 }
 
-APPositionCtrl * APObjectFactory::newPositionCtrl(APFinancialInstrumentType marketType)
+APPositionCtrl * APObjectFactory::newPositionCtrl(APFinancialInstrumentType marketType, std::string pcType)
 {
 	APPositionCtrl* pc = NULL;
 	switch (marketType) {
@@ -46,7 +47,12 @@ APPositionCtrl * APObjectFactory::newPositionCtrl(APFinancialInstrumentType mark
 		pc = new APSharesPositionCtrl();
 		break;
 	case FCT_Futrues:
-		pc = new APFuturesPositionCtrl(); // todo: add type
+		if(pcType == "" || pcType == "Single"){
+			pc = new APFuturesPositionCtrl();
+		}
+		else if (pcType == "Combine") {
+			pc = new APFuturesCombinationPosCtrl();
+		}
 		break;
 	case FCT_Options:
 		break;

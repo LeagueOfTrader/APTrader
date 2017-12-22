@@ -5,6 +5,7 @@
 #include "Utils/APJsonReader.h"
 #include "APPositionManager.h"
 #include "APStrategyManager.h"
+#include "APQuotationDecision.h"
 
 APStrategy::APStrategy()
 {
@@ -70,6 +71,11 @@ void APStrategy::setPriority(UINT priority)
 UINT APStrategy::getPriority()
 {
 	return m_priority;
+}
+
+void APStrategy::setPositionCtrl(APPositionCtrl * posCtrl)
+{
+	m_positionCtrl = posCtrl;
 }
 
 APPositionCtrl * APStrategy::getPositionCtrl()
