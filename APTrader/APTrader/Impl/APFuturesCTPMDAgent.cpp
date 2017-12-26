@@ -48,6 +48,7 @@ bool APFuturesCTPMDAgent::subscribeInstrument(APASSETID instrumentID)
 	}
 
 	char** ppArr = new char*[1];
+	ppArr[0] = new char[32];
 	strcpy(ppArr[0], instrumentID.c_str());
 	int ret = m_mdApi->SubscribeMarketData(ppArr, 1);
 	delete[] ppArr[0];
@@ -91,6 +92,7 @@ bool APFuturesCTPMDAgent::unSubscribeInstrument(APASSETID instrumentID)
 	}
 	
 	char** ppArr = new char*[1];
+	ppArr[0] = new char[32];
 	strcpy(ppArr[0], instrumentID.c_str());
 	int ret = m_mdApi->UnSubscribeMarketData(ppArr, 1);
 	delete[] ppArr[0];
