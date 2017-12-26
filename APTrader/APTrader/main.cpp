@@ -10,6 +10,20 @@
 #include "Impl/APFuturesCTPMDAgent.h"
 #include "Quotation/APFuturesMarketQuotations.h"
 #include "Monitor/APMonitorFramework.h"
+#include <thread>
+
+void frameworkLoop() {
+	APMonitorFramework* framework = APMonitorFramework::getInstance();
+
+	while (!framework->inited()) {
+		Sleep(100);
+	}
+
+	while (!framework->finished()) {
+		framework->update(0.0);
+		Sleep(10);
+	}
+}
 
 void main() {
 
@@ -31,9 +45,15 @@ void main() {
 	
 	// ---- monitor ----
 	APMonitorFramework* framework = APMonitorFramework::getInstance();
+	std::thread frameworkThread(frameworkLoop);
 	framework->init();
+	
+	//frameworkThread.join();
+	
 
-	while (!framework->inited());
+	while (!framework->inited()) {
+		//int a = 0;
+	}
 
 	while (!framework->finished()) {
 		framework->update(0.0);

@@ -19,7 +19,7 @@ void APFuturesCTPMDAgent::initCTP()
 	m_mdApi->RegisterSpi(m_mdResponser);
 	m_mdApi->RegisterFront((char*)m_marketFront.c_str());
 	m_mdApi->Init();
-	m_mdApi->Join();
+	//m_mdApi->Join();
 }
 
 void APFuturesCTPMDAgent::login() 

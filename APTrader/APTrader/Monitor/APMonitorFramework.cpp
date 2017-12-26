@@ -8,6 +8,7 @@
 
 #include "../APMarketDataManager.h"
 #include "APQuotationMonitorManager.h"
+#include "../APGlobalConfig.h"
 
 void onRemoteSystemInited() {
 	APMonitorFramework::getInstance()->onRemoteInited();
@@ -15,6 +16,7 @@ void onRemoteSystemInited() {
 
 APMonitorFramework::APMonitorFramework()
 {
+	m_inited = false;
 }
 
 
@@ -68,8 +70,10 @@ void APMonitorFramework::onRemoteInited()
 
 void APMonitorFramework::initLocalSystem()
 {
+	APGlobalConfig::getInstance()->init();
 	APMarketDataMgr->init();
 	APQuotationMonitorManager::getInstance()->init();
+	onLocalInited();
 }
 
 void APMonitorFramework::onLocalInited()

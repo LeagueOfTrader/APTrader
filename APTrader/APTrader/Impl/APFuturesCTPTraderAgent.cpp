@@ -189,7 +189,7 @@ void APFuturesCTPTraderAgent::initCTP()
 	m_traderApi->SubscribePrivateTopic(THOST_TERT_QUICK);
 	m_traderApi->SubscribePublicTopic(THOST_TERT_QUICK);
 	m_traderApi->Init();
-	m_traderApi->Join();
+	//m_traderApi->Join();
 }
 
 void APFuturesCTPTraderAgent::login()

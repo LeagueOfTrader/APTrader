@@ -7,7 +7,6 @@ class Singleton
 public:
 	static T* getInstance()
 	{
-
 		if (NULL == m_pInstance)
 		{
 			m_pInstance = new T();

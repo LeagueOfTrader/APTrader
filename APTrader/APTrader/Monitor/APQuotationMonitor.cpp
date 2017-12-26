@@ -28,6 +28,7 @@ void buildEqualDiffArray(std::vector<double>& arr, double baseVal, double diff, 
 
 APQuotationMonitor::APQuotationMonitor()
 {
+	m_quotationDecision = NULL;
 }
 
 
@@ -47,6 +48,9 @@ void APQuotationMonitor::init(std::string filename)
 
 	APMonitorGridType gt = (APMonitorGridType)jr.getIntValue("Type");
 	std::string gridsInfo = jr.getObjValue("Grids");
+	if (jr.hasMember("TargetName")) {
+		m_targetName = jr.getStrValue("TargetName");
+	}
 	switch (gt) {
 	case MGT_Fix:
 		initFixGrids(gridsInfo);
