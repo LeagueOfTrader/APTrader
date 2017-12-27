@@ -7,6 +7,7 @@
 #include "../APObjectFactory.h"
 
 const double MONITOR_IGNORE_VAL = 0.001;
+const double MONITOR_MIN_CRITICAL_VAL = 0.01;
 
 void buildEqualRatioArray(std::vector<double>& arr, double baseVal, double ratio, int count) {
 	arr.clear();
@@ -29,6 +30,7 @@ void buildEqualDiffArray(std::vector<double>& arr, double baseVal, double diff, 
 APQuotationMonitor::APQuotationMonitor()
 {
 	m_quotationDecision = NULL;
+	m_lastIndex = INT_MAX;
 }
 
 
@@ -76,6 +78,13 @@ void APQuotationMonitor::update()
 
 		m_curIndex = 0;
 		goGrids(curValue);
+
+		if (m_curIndex == 0 && m_lastIndex == INT_MAX) {
+			std::stringstream ss;
+			ss << "[" << m_targetName << "], INIT: " << curValue;
+			APLogger->log(ss.str().c_str());
+		}
+
 		m_lastIndex = m_curIndex;
 	}
 }
@@ -182,7 +191,12 @@ void APQuotationMonitor::payAttention(std::string content, double value, APMonit
 	else if (m_curIndex != m_lastIndex) {
 		bOutput = true;
 	}
-	else if(fabs(value - m_lastValue) < MONITOR_IGNORE_VAL){
+	else if (fabs(value - m_lastValue) > MONITOR_MIN_CRITICAL_VAL) //MONITOR_IGNORE_VAL) 
+	{
+		bOutput = true;
+	}
+	else if(fabs(value - m_lastValue) > MONITOR_IGNORE_VAL)
+	{
 		if (lv == MPL_Important) {
 			bOutput = true;
 		}

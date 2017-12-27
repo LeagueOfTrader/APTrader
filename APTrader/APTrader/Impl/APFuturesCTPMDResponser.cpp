@@ -49,13 +49,13 @@ void APFuturesCTPMDResponser::OnRspError(CThostFtdcRspInfoField * pRspInfo, int 
 
 void APFuturesCTPMDResponser::OnRspSubMarketData(CThostFtdcSpecificInstrumentField * pSpecificInstrument, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
-	APLogger->log("On Subscribe Market Data, Instrument ID: %s, ErrorID: %d, ErrorMsg: %s", 
+	APLogger->log("On Subscribe Market Data, Instrument ID: %s, ErrorID: %d, ErrorMsg: %s\n", 
 				pSpecificInstrument->InstrumentID, pRspInfo->ErrorID, pRspInfo->ErrorMsg);
 }
 
 void APFuturesCTPMDResponser::OnRspUnSubMarketData(CThostFtdcSpecificInstrumentField * pSpecificInstrument, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
-	APLogger->log("On UnSubscribe Market Data, Instrument ID: %s, ErrorID: %d, ErrorMsg: %s",
+	APLogger->log("On UnSubscribe Market Data, Instrument ID: %s, ErrorID: %d, ErrorMsg: %s\n",
 		pSpecificInstrument->InstrumentID, pRspInfo->ErrorID, pRspInfo->ErrorMsg);
 }
 
