@@ -29,6 +29,8 @@ public:
 	virtual long getOpenVolume(UINT index = 0);
 	virtual long getCloseVolume(UINT index = 0);
 
+	bool isValid();
+
 protected:
 	APASSETID m_instrumentID;
 
@@ -42,5 +44,7 @@ protected:
 
 	std::vector<APBidInfo> m_openOrderList;
 	std::vector<APBidInfo> m_closeOrderList;
+
+	bool m_valid;
 };
 

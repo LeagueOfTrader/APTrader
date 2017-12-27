@@ -23,6 +23,7 @@ void APFuturesQuotation::queryQuotation()
 	CThostFtdcDepthMarketDataField* data = APFuturesCTPMDAgent::getInstance()->getMarketData(m_instrumentID);
 	if (data != NULL) {
 		parseCTPData(data);
+		m_valid = true;
 	}
 #endif
 }

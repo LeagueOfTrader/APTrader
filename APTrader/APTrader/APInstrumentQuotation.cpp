@@ -7,6 +7,7 @@ APInstrumentQuotation::APInstrumentQuotation(APASSETID instrumentID)
 	memset(&m_kLineData, 0, sizeof(m_kLineData));
 	m_openOrderList.resize(5);
 	m_closeOrderList.resize(5);
+	m_valid = false;
 }
 
 
@@ -73,4 +74,9 @@ long APInstrumentQuotation::getCloseVolume(UINT index)
 	}
 
 	return m_closeOrderList[index].volume;
+}
+
+bool APInstrumentQuotation::isValid()
+{
+	return m_valid;
 }

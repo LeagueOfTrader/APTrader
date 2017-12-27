@@ -63,7 +63,7 @@ void APMonitorFramework::initRemoteSystem()
 void APMonitorFramework::onRemoteInited()
 {
 #ifdef USE_CTP
-	APLogger->log("CTP inited ----");
+	APLogger->log("---- CTP inited ----");
 #endif
 	initLocalSystem();
 }
@@ -78,5 +78,6 @@ void APMonitorFramework::initLocalSystem()
 
 void APMonitorFramework::onLocalInited()
 {
+	APLogger->log("---- Local system inited ----");
 	m_inited = true;
 }

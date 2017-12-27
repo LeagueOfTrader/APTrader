@@ -12,18 +12,18 @@
 #include "Monitor/APMonitorFramework.h"
 #include <thread>
 
-void frameworkLoop() {
-	APMonitorFramework* framework = APMonitorFramework::getInstance();
-
-	while (!framework->inited()) {
-		Sleep(100);
-	}
-
-	while (!framework->finished()) {
-		framework->update(0.0);
-		Sleep(10);
-	}
-}
+//void frameworkLoop() {
+//	APMonitorFramework* framework = APMonitorFramework::getInstance();
+//
+//	while (!framework->inited()) {
+//		Sleep(100);
+//	}
+//
+//	while (!framework->finished()) {
+//		framework->update(0.0);
+//		Sleep(10);
+//	}
+//}
 
 void main() {
 
@@ -45,14 +45,13 @@ void main() {
 	
 	// ---- monitor ----
 	APMonitorFramework* framework = APMonitorFramework::getInstance();
-	std::thread frameworkThread(frameworkLoop);
+	//std::thread frameworkThread(frameworkLoop);
 	framework->init();
 	
 	//frameworkThread.join();
 	
 
 	while (!framework->inited()) {
-		//int a = 0;
 	}
 
 	while (!framework->finished()) {
@@ -60,6 +59,4 @@ void main() {
 	}
 
 	framework->exit();
-
-	printf("0");
 }

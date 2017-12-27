@@ -70,6 +70,9 @@ void APQuotationMonitor::update()
 {
 	if (m_quotationDecision != NULL) {
 		double curValue = m_quotationDecision->getValueReference();
+		if (curValue < 0.0) {
+			return;
+		}
 
 		m_curIndex = 0;
 		goGrids(curValue);
@@ -107,6 +110,9 @@ void APQuotationMonitor::goGrids(double value)
 		ss << "[" << m_targetName << "], OPEN: ";
 		payAttention(ss.str(), value, m_openPriorities[i]);
 	}
+	//else {
+	//	m_curIndex = 0;
+	//}
 }
 
 bool APQuotationMonitor::inOpenSection(double value)
@@ -186,6 +192,8 @@ void APQuotationMonitor::payAttention(std::string content, double value, APMonit
 		std::stringstream ss;
 		ss << " " << value;
 		APLogger->log((content + ss.str()).c_str());
+
+		m_lastValue = value;
 	}
 }
 
@@ -250,12 +258,12 @@ void APQuotationMonitor::initRatioGrids(std::string info)
 	double shortVal = jr.getDoubleValue("ShortVal");
 
 	if (m_trend == TT_Long) {
-		buildEqualRatioArray(m_openValues, longVal, 1.0 + percent, count);
-		buildEqualRatioArray(m_closeValues, shortVal, 1.0 - percent, count);
-	}
-	else if (m_trend == TT_Short) {
 		buildEqualRatioArray(m_closeValues, longVal, 1.0 + percent, count);
 		buildEqualRatioArray(m_openValues, shortVal, 1.0 - percent, count);
+	}
+	else if (m_trend == TT_Short) {
+		buildEqualRatioArray(m_openValues, longVal, 1.0 + percent, count);
+		buildEqualRatioArray(m_closeValues, shortVal, 1.0 - percent, count);
 	}
 
 	int imptIdx = jr.getIntValue("ImportantIndex");
@@ -289,12 +297,12 @@ void APQuotationMonitor::initDiffGrids(std::string info)
 	double shortVal = jr.getDoubleValue("ShortVal");
 
 	if (m_trend == TT_Long) {
-		buildEqualDiffArray(m_openValues, longVal, diff, count);
-		buildEqualDiffArray(m_closeValues, shortVal, -diff, count);
+		buildEqualDiffArray(m_openValues, shortVal, -diff, count);
+		buildEqualDiffArray(m_closeValues, longVal, diff, count);
 	}
 	else if (m_trend == TT_Short) {
-		buildEqualDiffArray(m_closeValues, longVal, diff, count);
-		buildEqualDiffArray(m_openValues, shortVal, -diff, count);
+		buildEqualDiffArray(m_closeValues, shortVal, -diff, count);
+		buildEqualDiffArray(m_openValues, longVal, diff, count);
 	}
 
 	int imptIdx = jr.getIntValue("ImportantIndex");
