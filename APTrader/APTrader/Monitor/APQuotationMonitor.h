@@ -56,6 +56,9 @@ protected:
 	int m_curIndex;
 	int m_lastIndex;
 
+	double m_concernedDelta;
+	double m_ignoredDelta;
+
 	std::vector<double> m_openValues;
 	std::vector<double> m_closeValues;
 

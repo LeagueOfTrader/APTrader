@@ -7,7 +7,7 @@
 #include "../APObjectFactory.h"
 
 const double MONITOR_IGNORE_VAL = 0.001;
-const double MONITOR_MIN_CRITICAL_VAL = 0.01;
+const double MONITOR_SINGLE_INST_UNIT_PRICE = 1.0;
 
 void buildEqualRatioArray(std::vector<double>& arr, double baseVal, double ratio, int count) {
 	arr.clear();
@@ -31,6 +31,9 @@ APQuotationMonitor::APQuotationMonitor()
 {
 	m_quotationDecision = NULL;
 	m_lastIndex = INT_MAX;
+
+	m_concernedDelta = MONITOR_SINGLE_INST_UNIT_PRICE;
+	m_ignoredDelta = MONITOR_IGNORE_VAL;
 }
 
 
@@ -53,6 +56,15 @@ void APQuotationMonitor::init(std::string filename)
 	if (jr.hasMember("TargetName")) {
 		m_targetName = jr.getStrValue("TargetName");
 	}
+
+	if (jr.hasMember("ConcernedDelta")) {
+		m_concernedDelta = jr.getDoubleValue("ConcernedDelta");
+	}
+
+	if (jr.hasMember("IgnoredDelta")) {
+		m_ignoredDelta = jr.getDoubleValue("IgnoredDelta");
+	}
+
 	switch (gt) {
 	case MGT_Fix:
 		initFixGrids(gridsInfo);
@@ -191,11 +203,11 @@ void APQuotationMonitor::payAttention(std::string content, double value, APMonit
 	else if (m_curIndex != m_lastIndex) {
 		bOutput = true;
 	}
-	else if (fabs(value - m_lastValue) > MONITOR_MIN_CRITICAL_VAL) //MONITOR_IGNORE_VAL) 
+	else if (fabs(value - m_lastValue) > m_concernedDelta - DBL_EPSILON) //MONITOR_IGNORE_VAL) 
 	{
 		bOutput = true;
 	}
-	else if(fabs(value - m_lastValue) > MONITOR_IGNORE_VAL)
+	else if(fabs(value - m_lastValue) > m_ignoredDelta)
 	{
 		if (lv == MPL_Important) {
 			bOutput = true;
