@@ -14,6 +14,7 @@ APStrategy::APStrategy()
 	m_positionCtrl = NULL;
 	m_quotationDecision = NULL;
 	m_closeOnly = false;
+	m_tag = "";
 }
 
 APStrategy::~APStrategy()
@@ -33,6 +34,11 @@ void APStrategy::init(std::string strategyInfo)
 {
 	APJsonReader jr;
 	jr.initWithString(strategyInfo);
+
+	if (jr.hasMember("Tag")) {
+		m_tag = jr.getStrValue("Tag");
+	}
+
 	if (jr.hasMember("Subsidiary")) {
 		m_isSubStrategy = jr.getBoolValue("Subsidiary");
 	}
@@ -40,6 +46,7 @@ void APStrategy::init(std::string strategyInfo)
 	if (jr.hasMember("Position")) {
 		std::string positionInfo = jr.getObjValue("Position");
 		m_positionCtrl = APPositionManager::getInstance()->createPositionCtrl(positionInfo);
+		m_positionCtrl->setTag(m_tag);
 		//m_positionCtrl->init(positionInfo);
 	}
 	

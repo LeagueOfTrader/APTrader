@@ -7,10 +7,12 @@
 #include "APMarketDataManager.h"
 #include "APPositionManager.h"
 #include "APTrade.h"
+#include "3rdParty/jsoncpp/include/json/writer.h"
 
 APPositionCtrl::APPositionCtrl()
 {
 	m_quotation = NULL;
+	m_tag = "";
 }
 
 
@@ -28,6 +30,9 @@ APPositionCtrl::~APPositionCtrl()
 //{
 //}
 
+void APPositionCtrl::setTag(std::string tag) {
+	m_tag = tag;
+}
 
 void APPositionCtrl::setInstrumentID(APASSETID instrumentID)
 {
@@ -305,6 +310,26 @@ void APPositionCtrl::initWithData(std::string positionInfo)
 	
 
 	syncPositionStatus();
+}
+
+std::string APPositionCtrl::serialize()
+{
+	Json::Value v;
+	v["OpenOrdersPosition"] = Json::Value(m_openOrdersPosition);
+	v["CloseOrdersPosition"] = Json::Value(m_closeOrdersPosition);
+	v["HoldPosition"] = Json::Value(m_holdPosition);
+	v["AvailablePosition"] = Json::Value(m_availablePosition);
+	v["FrozenPosition"] = Json::Value(m_frozenPosition);
+
+	// array process
+
+	Json::FastWriter fw;
+	return fw.write(v);
+}
+
+void APPositionCtrl::deserialize(std::string str)
+{
+	//
 }
 
 void APPositionCtrl::cancel(APTradeType type, double price, APTrendType trend)

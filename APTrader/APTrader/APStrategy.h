@@ -46,5 +46,7 @@ protected:
 	UINT m_id;
 
 	bool m_closeOnly;
+
+	std::string m_tag;
 };
 

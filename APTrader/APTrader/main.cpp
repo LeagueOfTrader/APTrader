@@ -42,21 +42,19 @@ void main() {
 	//}
 	//framework->exit();
 	//delete framework;
+	//---------------------------------------------------------------------------------
 	
-	// ---- monitor ----
-	APMonitorFramework* framework = APMonitorFramework::getInstance();
-	//std::thread frameworkThread(frameworkLoop);
-	framework->init();
-	
-	//frameworkThread.join();
-	
+	//// ---- monitor ----
+	//APMonitorFramework* framework = APMonitorFramework::getInstance();
+	////std::thread frameworkThread(frameworkLoop);
+	//framework->init();
 
-	while (!framework->inited()) {
-	}
+	//while (!framework->inited()) {
+	//}
 
-	while (!framework->finished()) {
-		framework->update(0.0);
-	}
+	//while (!framework->finished()) {
+	//	framework->update(0.0);
+	//}
 
-	framework->exit();
+	//framework->exit();
 }

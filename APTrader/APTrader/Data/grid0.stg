@@ -1,15 +1,16 @@
 {
+	"Tag":"rb1805sell",
     "StrategyType": "Grid",
     "Priority": 10,
     "StrategyInfo": {
         "Position": {
-            "InstrumentID": "rb1801",
+            "InstrumentID": "rb1805",
             "TotalPosition": 600,
             "Trend": "Long"
         },
         "Quotation": {
             "QuotationDecisionType": 101,
-            "SrcID": "rb1801",
+            "SrcID": "rb1805",
             "TargetID": "0",
             "Param": 0
         },

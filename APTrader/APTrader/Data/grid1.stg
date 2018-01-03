@@ -1,15 +1,16 @@
 {
+	"Tag":"rb1809sellwithtransfer",
     "StrategyType": "Grid",
     "Priority": 10,
     "StrategyInfo": {
         "Position": {
-            "InstrumentID": "rb1801",
+            "InstrumentID": "rb1809",
             "TotalPosition": 500,
             "Trend": "Long"
         },
         "Quotation": {
             "QuotationDecisionType": 1,
-            "SrcID": "rb1801",
+            "SrcID": "rb1809",
             "TargetID": "0",
             "Param": 0
         },

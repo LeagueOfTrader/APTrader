@@ -4,11 +4,12 @@
 #include "APAccountAssets.h"
 #include "APTypes.h"
 #include <list>
+#include "Common/SerializedObject.h"
 
 class APTrade;
 class APInstrumentQuotation;
 
-class APPositionCtrl
+class APPositionCtrl : public SerializedObject
 {
 public:
 	APPositionCtrl();
@@ -22,6 +23,8 @@ public:
 	APTrendType getTrendType();
 	const APASSETID& getInstrumentID();
 	UINT getID();
+
+	void setTag(std::string tag);
 
 	//void subscribeGoodsInfo();
 	void setAvailableFund(double fund);
@@ -80,6 +83,9 @@ protected:
 
 	virtual void initWithData(std::string positionInfo);
 
+	virtual std::string serialize();
+	virtual void deserialize(std::string str);
+
 protected:
 	long m_openOrdersPosition;
 	long m_closeOrdersPosition;
@@ -88,6 +94,7 @@ protected:
 	long m_availablePosition; // position available to open
 	long m_frozenPosition; // freezed position, cannot close until t+n
 
+	// process later, fund
 	double m_availableFund;
 	double m_freeFund;
 	double m_frozenFund;
@@ -103,6 +110,8 @@ protected:
 
 	std::list<APORDERID> m_openOrderList;
 	std::list<APORDERID> m_closeOrderList;
+
+	std::string m_tag;
 
 public:
 	friend class APPositionManager;
