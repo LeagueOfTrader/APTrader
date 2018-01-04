@@ -106,7 +106,7 @@ void APGridStrategy::goTrendGrid(double value) // , std::vector<APGridData>& ope
 			if (i == m_closeGrids.size() - 1) {
 				volume = m_positionCtrl->getTradablePosition();
 			}
-			m_positionCtrl->closePosition(m_trend, m_closeGrids[i].price, volume);
+			m_positionCtrl->closePosition(m_direction, m_closeGrids[i].price, volume);
 		}
 	}
 	else if (inOpenSection(value)) {
@@ -117,7 +117,7 @@ void APGridStrategy::goTrendGrid(double value) // , std::vector<APGridData>& ope
 		int i = getCurTrendGridIndex(m_openGrids, value, true);
 
 		if (i >= m_openGrids.size()) {
-			m_positionCtrl->openFullPosition(m_trend, m_openGrids[m_openGrids.size() - 1].price);
+			m_positionCtrl->openFullPosition(m_direction, m_openGrids[m_openGrids.size() - 1].price);
 			return;
 		}
 
@@ -125,7 +125,7 @@ void APGridStrategy::goTrendGrid(double value) // , std::vector<APGridData>& ope
 
 		if (m_positionCtrl->getCurPosition() + m_positionCtrl->getOpenOrderedPosition() < m_openGrids[i].position) {
 			long volume = m_openGrids[i].position - (m_positionCtrl->getCurPosition() + m_positionCtrl->getOpenOrderedPosition());
-			m_positionCtrl->openPosition(m_trend, m_openGrids[i].price, volume);
+			m_positionCtrl->openPosition(m_direction, m_openGrids[i].price, volume);
 		}
 	}
 }
@@ -137,12 +137,12 @@ void APGridStrategy::goThroughGrids()
 		return;
 	}	
 
-	APTradeType type = TDT_Num;
+	APTradeType type = TT_Num;
 	if(m_lastIndex < 0){
-		type = TDT_Open;
+		type = TT_Open;
 	}
 	else {
-		type = TDT_Close;
+		type = TT_Close;
 	}
 
 	int gridIndex = m_lastIndex;
@@ -161,16 +161,16 @@ void APGridStrategy::goThroughGrids()
 	}
 
 	if (m_positionCtrl != NULL) {
-		m_positionCtrl->cancelTrade(type, refPrice, m_trend);
+		m_positionCtrl->cancelTrade(type, refPrice, m_direction);
 	}
 }
 
 bool APGridStrategy::inOpenSection(double value)
 {
-	if (m_trend == TT_Long) {
+	if (m_direction == TD_Buy) {
 		return value < m_waitFloor;
 	}
-	else if (m_trend == TT_Short) {
+	else if (m_direction == TD_Sell) {
 		return value > m_waitCeil;
 	}
 
@@ -179,10 +179,10 @@ bool APGridStrategy::inOpenSection(double value)
 
 bool APGridStrategy::inCloseSection(double value)
 {
-	if (m_trend == TT_Long) {
+	if (m_direction == TD_Buy) {
 		return value >= m_waitCeil;
 	}
-	else if (m_trend == TT_Short) {
+	else if (m_direction == TD_Sell) {
 		return value <= m_waitFloor;
 	}
 
@@ -220,8 +220,8 @@ int APGridStrategy::getGridIndex(std::vector<APGridData>& grids, double value, b
 int APGridStrategy::getCurTrendGridIndex(std::vector<APGridData>& grids, double value, bool open)
 {
 	bool reverse = false;
-	if ((m_trend == TT_Long && open == false)
-		|| (m_trend == TT_Short && open == true)) {
+	if ((m_direction == TD_Buy && open == false)
+		|| (m_direction == TD_Sell && open == true)) {
 		reverse = true;
 	}
 

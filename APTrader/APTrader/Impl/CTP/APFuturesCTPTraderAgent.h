@@ -1,15 +1,15 @@
 #pragma once
-#include "../APMarco.h"
+#include "../../APMarco.h"
 
 #ifdef USE_CTP
 
 #include <string>
-#include "../Common/Singleton.h"
+#include "../../Common/Singleton.h"
 #include "ThostFtdcTraderApi.h"
 #include "APFuturesCTPTraderResponser.h"
 #include "APFuturesCTPAgent.h"
-#include "../APDef.h"
-#include "../APTypes.h"
+#include "../../APDef.h"
+#include "../../APTypes.h"
 
 class APFuturesCTPTraderAgent : public APFuturesCTPAgent, public Singleton<APFuturesCTPTraderAgent>
 {
@@ -23,8 +23,8 @@ public:
 
 	CThostFtdcTraderApi* getTraderApi();
 
-	void applyOrder(APTradeType tradeType, APASSETID instrumentID, double price, long volume, APORDERID localOrderID, APTrendType trend);
-	void applyOrder(APTradeType tradeType, APASSETID instrumentID, double price, long volume, APORDERID localOrderID, APTrendType trend,
+	void applyOrder(APTradeType tradeType, APASSETID instrumentID, double price, long volume, APORDERID localOrderID, APTradeDirection direction);
+	void applyOrder(APTradeType tradeType, APASSETID instrumentID, double price, long volume, APORDERID localOrderID, APTradeDirection direction,
 		APOrderPriceType orderPriceType,
 		APOrderTimeCondition orderTimeCondition = OTC_GoodForDay, std::string date = "",
 		APOrderVolumeCondition orderVolumeCondition = OVC_Any, long minVolume = 0,
@@ -43,6 +43,8 @@ public:
 	// «Î«Û≤È—Ø≤÷Œª
 	int reqQryInvestorPosition(APASSETID instrumentID);
 
+	// response
+	void onQryInstrumentPosition(CThostFtdcInvestorPositionField* pInvestorPosition);
 
 private:
 	CThostFtdcTraderApi* m_traderApi;

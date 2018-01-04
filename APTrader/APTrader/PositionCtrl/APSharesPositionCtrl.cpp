@@ -19,47 +19,47 @@ APSharesPositionCtrl::~APSharesPositionCtrl()
 void APSharesPositionCtrl::init(std::string positionInfo)
 {
 	initWithData(positionInfo);
-	//APTradeManager::getInstance()->registerPositionCtrl(m_instrumentID, TT_Long, this);
+	//APTradeManager::getInstance()->registerPositionCtrl(m_instrumentID, TD_Buy, this);
 	m_trade = dynamic_cast<APSharesTrade*>(APTradeManager::getInstance()->getTradeInstance());
 }
 
-void APSharesPositionCtrl::open(APTrendType type, double price, long volume)
+void APSharesPositionCtrl::open(APTradeDirection direction, double price, long volume)
 {
-	APORDERID orderID = m_trade->open(m_instrumentID, type, price, volume, this);
+	APORDERID orderID = m_trade->open(m_instrumentID, direction, price, volume, this);
 	if (orderID != INVALID_TRADE_ORDER_ID) {
 		m_openOrderList.push_back(orderID);
 	}
 }
 
-void APSharesPositionCtrl::close(APTrendType type, double price, long volume)
+void APSharesPositionCtrl::close(APTradeDirection direction, double price, long volume)
 {
-	APORDERID orderID = m_trade->close(m_instrumentID, type, price, volume, this);
+	APORDERID orderID = m_trade->close(m_instrumentID, direction, price, volume, this);
 	if (orderID != INVALID_TRADE_ORDER_ID) {
 		m_closeOrderList.push_back(orderID);
 	}
 }
 
-void APSharesPositionCtrl::openAll(APTrendType type, double price)
+void APSharesPositionCtrl::openAll(APTradeDirection direction, double price)
 {
 	//
 }
 
-void APSharesPositionCtrl::closeAll(APTrendType type, double price)
+void APSharesPositionCtrl::closeAll(APTradeDirection direction, double price)
 {
 	//
 }
 
-void APSharesPositionCtrl::cancel(APTradeType type, double price, APTrendType trend)
+void APSharesPositionCtrl::cancel(APTradeType type, double price, APTradeDirection direction)
 {
-	if (trend != TT_Long) {
+	if (direction != TD_Buy) {
 		return;
 	}
 
 	if (m_trade != NULL) {
-		//m_trade->cancel(m_instrumentID, type, trend, price, this);
+		//m_trade->cancel(m_instrumentID, type, direction, price, this);
 		std::list<APORDERID>::iterator it;
 		APTradeOrderInfo info;
-		if (type == TDT_Open) {
+		if (type == TT_Open) {
 			for (it = m_openOrderList.begin(); it != m_openOrderList.end(); it++) {
 				//m_trade->cancel(*it, this);				
 				if (m_trade->getOrderInfo(*it, info)) {					
@@ -70,7 +70,7 @@ void APSharesPositionCtrl::cancel(APTradeType type, double price, APTrendType tr
 				}
 			}
 		}
-		else if (type == TDT_Close) {
+		else if (type == TT_Close) {
 			for (it = m_closeOrderList.begin(); it != m_closeOrderList.end(); it++) {
 				if (m_trade->getOrderInfo(*it, info)) {
 					if (fabs(info.price - price) < DBL_EPSILON ||
@@ -91,14 +91,14 @@ void APSharesPositionCtrl::cancel(APTradeType type)
 //{
 //}
 
-void APSharesPositionCtrl::onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend)
+void APSharesPositionCtrl::onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTradeDirection direction)
 {
 	switch (type) {
-		case TDT_Open:
+		case TT_Open:
 			m_frozenPosition += deltaVolume;
 			m_openOrdersPosition -= deltaVolume;
 			break;
-		case TDT_Close:
+		case TT_Close:
 			m_availablePosition += deltaVolume;
 			m_closeOrdersPosition -= deltaVolume;
 			break;
@@ -108,15 +108,15 @@ void APSharesPositionCtrl::onTradeDealt(APASSETID instrumentID, APTradeType type
 	}
 }
 
-void APSharesPositionCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTrendType trend)
+void APSharesPositionCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction)
 {
 	switch (type) {
-	case TDT_Open:
+	case TT_Open:
 		m_availablePosition += volume;
 		m_openOrdersPosition -= volume;
 		m_openOrderList.remove(orderID);
 		break;
-	case TDT_Close:
+	case TT_Close:
 		m_holdPosition += volume;
 		m_closeOrdersPosition -= volume;
 		m_closeOrderList.remove(orderID);

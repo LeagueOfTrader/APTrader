@@ -8,6 +8,7 @@ APFuturesCombinationPosCtrl::APFuturesCombinationPosCtrl()
 {
 	m_coQuotation = NULL;
 
+	m_priority = 2;
 	m_curOpenOperation.reset();
 	m_curCloseOperation.reset();
 }
@@ -32,11 +33,11 @@ void APFuturesCombinationPosCtrl::initWithData(std::string positionInfo)
 	m_prUnitVol = jr.getIntValue("PrUnit");
 	m_coUnitVol = jr.getIntValue("CoUnit");
 	std::string strCoTrend = jr.getStrValue("CoTrend");
-	if (strCoTrend == "Long") {
-		m_coTrend = TT_Long;
+	if (strCoTrend == "Buy") {
+		m_coTrend = TD_Buy;
 	}
-	else if (strCoTrend == "Short") {
-		m_coTrend = TT_Short;
+	else if (strCoTrend == "Sell") {
+		m_coTrend = TD_Sell;
 	}
 
 #ifndef SIM
@@ -46,7 +47,7 @@ void APFuturesCombinationPosCtrl::initWithData(std::string positionInfo)
 #endif
 }
 
-void APFuturesCombinationPosCtrl::openPosition(APTrendType type, double price, long volume)
+void APFuturesCombinationPosCtrl::openPosition(APTradeDirection direction, double price, long volume)
 {
 	if (m_curOpenOperation.hasTarget()) {
 		return;
@@ -59,7 +60,7 @@ void APFuturesCombinationPosCtrl::openPosition(APTrendType type, double price, l
 	m_openOrdersPosition += volume;
 }
 
-void APFuturesCombinationPosCtrl::closePosition(APTrendType type, double price, long volume)
+void APFuturesCombinationPosCtrl::closePosition(APTradeDirection direction, double price, long volume)
 {
 	if (m_curCloseOperation.hasTarget()) {
 		return;
@@ -72,21 +73,21 @@ void APFuturesCombinationPosCtrl::closePosition(APTrendType type, double price, 
 	m_closeOrdersPosition += volume;
 }
 
-void APFuturesCombinationPosCtrl::openFullPosition(APTrendType type, double price)
+void APFuturesCombinationPosCtrl::openFullPosition(APTradeDirection direction, double price)
 {
-	openPosition(type, price, m_availablePosition);
+	openPosition(direction, price, m_availablePosition);
 }
 
-void APFuturesCombinationPosCtrl::closeOffPosition(APTrendType type, double price)
+void APFuturesCombinationPosCtrl::closeOffPosition(APTradeDirection direction, double price)
 {
-	closePosition(type, price, m_holdPosition);
+	closePosition(direction, price, m_holdPosition);
 }
 
 void APFuturesCombinationPosCtrl::cancel(APTradeType type)
 {
 	bool canCancel = false;
 
-	if (type == TDT_Open) {
+	if (type == TT_Open) {
 		if (m_curOpenOperation.hasTarget() && !m_curOpenOperation.isFinishTarget()) {
 			if (m_curOpenOperation.prVolume == 0) {
 				//m_curOpenOperation.reset();
@@ -94,7 +95,7 @@ void APFuturesCombinationPosCtrl::cancel(APTradeType type)
 			}
 		}
 	}
-	else if (type == TDT_Close) {
+	else if (type == TT_Close) {
 		if (m_curCloseOperation.hasTarget() && !m_curCloseOperation.isFinishTarget()) {
 			if (m_curCloseOperation.prVolume == 0) {
 				//m_curCloseOperation.reset();
@@ -108,10 +109,10 @@ void APFuturesCombinationPosCtrl::cancel(APTradeType type)
 	}
 }
 
-void APFuturesCombinationPosCtrl::onTradeDealt(APASSETID instrumentID, APTradeType type, double price, long deltaVolume, APORDERID orderID, APTrendType trend)
+void APFuturesCombinationPosCtrl::onTradeDealt(APASSETID instrumentID, APTradeType type, double price, long deltaVolume, APORDERID orderID, APTradeDirection direction)
 {
 	switch (type) {
-	case TDT_Open:
+	case TT_Open:
 		if (instrumentID == m_instrumentID) {
 			// pr traded
 			m_curOpenOperation.prVolume += deltaVolume;
@@ -132,7 +133,7 @@ void APFuturesCombinationPosCtrl::onTradeDealt(APASSETID instrumentID, APTradeTy
 		}
 		
 		break;
-	case TDT_Close:
+	case TT_Close:
 		if (instrumentID == m_instrumentID) {
 			// pr traded
 			m_curCloseOperation.prVolume += deltaVolume;
@@ -158,10 +159,10 @@ void APFuturesCombinationPosCtrl::onTradeDealt(APASSETID instrumentID, APTradeTy
 	}
 }
 
-void APFuturesCombinationPosCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTrendType trend)
+void APFuturesCombinationPosCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction)
 {
 	switch (type) {
-	case TDT_Open:
+	case TT_Open:
 		if (instrumentID == m_instrumentID) {
 			m_availablePosition += m_curOpenOperation.groupCount;
 			m_openOrdersPosition -= m_curOpenOperation.groupCount;
@@ -169,7 +170,7 @@ void APFuturesCombinationPosCtrl::onTradeCanceled(APASSETID instrumentID, APTrad
 			m_curOpenOperation.reset();
 		}
 		break;
-	case TDT_Close:
+	case TT_Close:
 		if (instrumentID == m_instrumentID) {
 			m_holdPosition += m_curCloseOperation.groupCount;
 			m_closeOrdersPosition -= m_curCloseOperation.groupCount;
@@ -187,7 +188,7 @@ void APFuturesCombinationPosCtrl::openPrPosition()
 {
 	long vol = m_curOpenOperation.prTarget;
 	double price = m_quotation->getCurPrice();
-	open(m_instrumentID, m_trendType, OPT_AnyPrice, price);
+	open(m_instrumentID, m_directionType, OPT_AnyPrice, price);
 }
 
 void APFuturesCombinationPosCtrl::openCoPosition()
@@ -201,7 +202,7 @@ void APFuturesCombinationPosCtrl::closePrPosition()
 {
 	long vol = m_curCloseOperation.prTarget;
 	double price = m_quotation->getCurPrice();
-	close(m_instrumentID, m_trendType, OPT_AnyPrice, price);
+	close(m_instrumentID, m_directionType, OPT_AnyPrice, price);
 }
 
 void APFuturesCombinationPosCtrl::closeCoPosition()

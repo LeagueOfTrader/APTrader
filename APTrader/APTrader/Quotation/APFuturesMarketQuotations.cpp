@@ -2,7 +2,7 @@
 #include "APFuturesMarketQuotations.h"
 
 #ifdef USE_CTP
-#include "../Impl/APFuturesCTPMDAgent.h"
+#include "../Impl/CTP/APFuturesCTPMDAgent.h"
 #endif
 
 APFuturesMarketQuotations::APFuturesMarketQuotations()

@@ -156,21 +156,6 @@
     <ClInclude Include="Futures\APFuturesFramework.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Impl\APFuturesCTPMDResponser.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Impl\APFuturesCTPTraderResponser.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Impl\APFuturesCTPMDAgent.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Impl\APFuturesCTPAgent.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Impl\APFuturesCTPTraderAgent.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Quotation\APFuturesMarketQuotations.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -208,6 +193,21 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Monitor\APMonitorFramework.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Impl\CTP\APFuturesCTPAgent.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Impl\CTP\APFuturesCTPMDAgent.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Impl\CTP\APFuturesCTPMDResponser.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Impl\CTP\APFuturesCTPTraderAgent.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Impl\CTP\APFuturesCTPTraderResponser.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -311,9 +311,6 @@
     <ClCompile Include="Strategy\APTransferPositionStrategy.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="APAccountAssests.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Simulation\APSimTradeSystem.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -344,21 +341,6 @@
     <ClCompile Include="Futures\APFuturesFramework.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Impl\APFuturesCTPMDResponser.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Impl\APFuturesCTPTraderResponser.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Impl\APFuturesCTPMDAgent.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Impl\APFuturesCTPAgent.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Impl\APFuturesCTPTraderAgent.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Quotation\APFuturesMarketQuotations.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -372,6 +354,24 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Monitor\APMonitorFramework.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Impl\CTP\APFuturesCTPAgent.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Impl\CTP\APFuturesCTPMDAgent.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Impl\CTP\APFuturesCTPMDResponser.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Impl\CTP\APFuturesCTPTraderAgent.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Impl\CTP\APFuturesCTPTraderResponser.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APAccountAssets.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

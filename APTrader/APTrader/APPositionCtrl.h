@@ -20,11 +20,12 @@ public:
 	virtual void syncPositionStatus();	
 
 	void setInstrumentID(APASSETID instrumentID);
-	APTrendType getTrendType();
+	APTradeDirection getTrendType();
 	const APASSETID& getInstrumentID();
 	UINT getID();
 
 	void setTag(std::string tag);
+	int getPriority();
 
 	//void subscribeGoodsInfo();
 	void setAvailableFund(double fund);
@@ -50,17 +51,17 @@ public:
 	long getOpenOrderedPosition();
 	long getCloseOrderedPosition();
 
-	virtual void openPosition(APTrendType type, double price, long volume);
-	virtual void closePosition(APTrendType type, double price, long volume);
-	virtual void openFullPosition(APTrendType type, double price);
-	virtual void closeOffPosition(APTrendType type, double price);
+	virtual void openPosition(APTradeDirection direction, double price, long volume);
+	virtual void closePosition(APTradeDirection direction, double price, long volume);
+	virtual void openFullPosition(APTradeDirection direction, double price);
+	virtual void closeOffPosition(APTradeDirection direction, double price);
 	//void cancelTrade(APTradeType type, double price, long volume); // may implement later
-	virtual void cancelTrade(APTradeType type, double price, APTrendType trend);
+	virtual void cancelTrade(APTradeType type, double price, APTradeDirection direction);
 	virtual void cancelTrade(APTradeType type);
 	virtual void cancelAllTrade();
 
-	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend = TT_Long) = 0;
-	virtual void onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTrendType trend = TT_Long) = 0;
+	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTradeDirection direction = TD_Buy) = 0;
+	virtual void onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy) = 0;
 
 	virtual void update();
 
@@ -69,12 +70,12 @@ public:
 	void onCompleteOrder(APORDERID orderID, APTradeType type);
 
 protected:
-	virtual void open(APTrendType type, double price, long volume) = 0;
-	virtual void close(APTrendType type, double price, long volume) = 0;
-	virtual void openAll(APTrendType type, double price) = 0;
-	virtual void closeAll(APTrendType type, double price) = 0;
+	virtual void open(APTradeDirection direction, double price, long volume) = 0;
+	virtual void close(APTradeDirection direction, double price, long volume) = 0;
+	virtual void openAll(APTradeDirection direction, double price) = 0;
+	virtual void closeAll(APTradeDirection direction, double price) = 0;
 	//virtual void cancel(APTradeType type, double price, long volume) = 0;
-	virtual void cancel(APTradeType type, double price, APTrendType trend = TT_Long);
+	virtual void cancel(APTradeType type, double price, APTradeDirection direction = TD_Buy);
 	virtual void cancel(APTradeType type) = 0;
 	virtual void cancelAll();
 	void cancel(APORDERID orderID);
@@ -102,7 +103,7 @@ protected:
 	APTrade* m_trade;
 	bool m_isRecyclingFund;
 	APASSETID m_instrumentID;
-	APTrendType m_trendType;
+	APTradeDirection m_directionType;
 
 	UINT m_id;
 
@@ -112,6 +113,8 @@ protected:
 	std::list<APORDERID> m_closeOrderList;
 
 	std::string m_tag;
+
+	int m_priority;
 
 public:
 	friend class APPositionManager;

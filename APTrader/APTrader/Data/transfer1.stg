@@ -5,7 +5,7 @@
     "StrategyInfo": {
         "Subsidiary": true,
         "Transfer": {
-            "Trend": "Long",
+            "Direction": "Buy",
             "SrcID": "rb1809",
             "TargetID": "rb1812",
             "CriticalDays": 30,

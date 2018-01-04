@@ -20,12 +20,12 @@ void APStandardGridStrategy::buildGrids(std::string gridsInfo)
 {
 	APJsonReader jr;
 	jr.initWithString(gridsInfo);
-	std::string strTrend = jr.getStrValue("Trend");
-	if (strTrend == "Long") {
-		m_trend = TT_Long;
+	std::string strDirection = jr.getStrValue("Direction");
+	if (strDirection == "Buy") {
+		m_direction = TD_Buy;
 	}
-	else if (strTrend == "Short") {
-		m_trend = TT_Short;
+	else if (strDirection == "Sell") {
+		m_direction = TD_Sell;
 	}
 
 	m_waitCeil = jr.getDoubleValue("Ceil");
@@ -46,15 +46,15 @@ void APStandardGridStrategy::resetGrids()
 	m_openGrids.clear();
 	m_closeGrids.clear();
 
-	if (m_trend == TT_Long) {
-		buildLongGrids();
+	if (m_direction == TD_Buy) {
+		buildBuyGrids();
 	}
-	else if (m_trend == TT_Short) {
-		buildShortGrids();
+	else if (m_direction == TD_Sell) {
+		buildSellGrids();
 	}
 }
 
-void APStandardGridStrategy::buildLongGrids()
+void APStandardGridStrategy::buildBuyGrids()
 {
 	APGridData data = {m_waitFloor, m_shortPrice, m_basePosition};
 	m_openGrids.push_back(data);
@@ -75,7 +75,7 @@ void APStandardGridStrategy::buildLongGrids()
 	}
 }
 
-void APStandardGridStrategy::buildShortGrids()
+void APStandardGridStrategy::buildSellGrids()
 {
 	APGridData data = { m_waitFloor, m_shortPrice, m_gridPosition };
 	m_closeGrids.push_back(data);

@@ -13,6 +13,7 @@ APPositionCtrl::APPositionCtrl()
 {
 	m_quotation = NULL;
 	m_tag = "";
+	m_priority = 1;
 }
 
 
@@ -34,6 +35,11 @@ void APPositionCtrl::setTag(std::string tag) {
 	m_tag = tag;
 }
 
+int APPositionCtrl::getPriority()
+{
+	return m_priority;
+}
+
 void APPositionCtrl::setInstrumentID(APASSETID instrumentID)
 {
 	m_instrumentID = instrumentID;
@@ -44,8 +50,8 @@ const APASSETID& APPositionCtrl::getInstrumentID()
 	return m_instrumentID;
 }
 
-APTrendType APPositionCtrl::getTrendType() {
-	return m_trendType;
+APTradeDirection APPositionCtrl::getTrendType() {
+	return m_directionType;
 }
 
 UINT APPositionCtrl::getID()
@@ -162,7 +168,7 @@ long APPositionCtrl::getCloseOrderedPosition()
 	return m_closeOrdersPosition;
 }
 
-void APPositionCtrl::openPosition(APTrendType type, double price, long volume)
+void APPositionCtrl::openPosition(APTradeDirection direction, double price, long volume)
 {	
 	if (volume > m_availablePosition) {
 		volume = m_availablePosition;
@@ -173,20 +179,20 @@ void APPositionCtrl::openPosition(APTrendType type, double price, long volume)
 	if (m_quotation != NULL)
 	{
 		double marketPrice = m_quotation->getCurPrice();
-		if (type == TT_Long && price > marketPrice) {
+		if (direction == TD_Buy && price > marketPrice) {
 			quotePrice = marketPrice;
 		}
-		else if (type == TT_Short && marketPrice > price) {
+		else if (direction == TD_Sell && marketPrice > price) {
 			quotePrice = marketPrice;
 		}
 	}
 
 	m_availablePosition -= volume;
 	m_openOrdersPosition += volume;
-	open(type, quotePrice, volume);
+	open(direction, quotePrice, volume);
 }
 
-void APPositionCtrl::closePosition(APTrendType type, double price, long volume)
+void APPositionCtrl::closePosition(APTradeDirection direction, double price, long volume)
 {
 	if (volume > m_holdPosition) {
 		volume = m_holdPosition;
@@ -197,29 +203,29 @@ void APPositionCtrl::closePosition(APTrendType type, double price, long volume)
 	if (m_quotation != NULL)
 	{
 		double marketPrice = m_quotation->getCurPrice();
-		if (type == TT_Long && price < marketPrice) {
+		if (direction == TD_Buy && price < marketPrice) {
 			quotePrice = marketPrice;
 		}
-		else if (type == TT_Short && marketPrice > price) {
+		else if (direction == TD_Sell && marketPrice > price) {
 			quotePrice = marketPrice;
 		}
 	}
 
 	m_holdPosition -= volume;
 	m_closeOrdersPosition += volume;
-	close(type, quotePrice, volume);
+	close(direction, quotePrice, volume);
 }
 
-void APPositionCtrl::openFullPosition(APTrendType type, double price)
+void APPositionCtrl::openFullPosition(APTradeDirection direction, double price)
 {
-	openAll(type, price);
+	openAll(direction, price);
 	m_openOrdersPosition += m_availablePosition;
 	m_availablePosition = 0;	
 }
 
-void APPositionCtrl::closeOffPosition(APTrendType type, double price)
+void APPositionCtrl::closeOffPosition(APTradeDirection direction, double price)
 {
-	closeAll(type, price);
+	closeAll(direction, price);
 	m_closeOrdersPosition += m_holdPosition;
 	m_holdPosition = 0;	
 }
@@ -229,9 +235,9 @@ void APPositionCtrl::closeOffPosition(APTrendType type, double price)
 //	cancel(type, price, volume);
 //}
 
-void APPositionCtrl::cancelTrade(APTradeType type, double price, APTrendType trend)
+void APPositionCtrl::cancelTrade(APTradeType type, double price, APTradeDirection direction)
 {
-	cancel(type, price, trend);
+	cancel(type, price, direction);
 }
 
 void APPositionCtrl::cancelTrade(APTradeType type)
@@ -255,27 +261,27 @@ void APPositionCtrl::bindTrade(APTrade * trade)
 
 void APPositionCtrl::onCompleteOrder(APORDERID orderID, APTradeType type)
 {
-	if (type == TDT_Open) {
+	if (type == TT_Open) {
 		m_openOrderList.remove(orderID);
 	}
-	else if (type == TDT_Close) {
+	else if (type == TT_Close) {
 		m_closeOrderList.remove(orderID);
 	}
 }
 
 void APPositionCtrl::onSyncPositionStatus(const APPositionData & pd)
 {
-	m_availablePosition = m_maxPosition - pd.holdPosition;
-	m_frozenPosition = pd.frozenPosition;
-	m_holdPosition = pd.holdPosition;
-	m_openOrdersPosition = pd.openOrdersPosition;
-	m_closeOrdersPosition = pd.closeOrdersPosition;
+	//m_availablePosition = m_maxPosition - pd.holdPosition;
+	//m_frozenPosition = pd.frozenPosition;
+	//m_holdPosition = pd.holdPosition;
+	//m_openOrdersPosition = pd.openOrdersPosition;
+	//m_closeOrdersPosition = pd.closeOrdersPosition;
 }
 
 void APPositionCtrl::syncPositionStatus()
 {
 	//APPositionData pd;
-	//if (APAccountAssets::getInstance()->getPositionData(m_instrumentID, m_trendType, pd)) {
+	//if (APAccountAssets::getInstance()->getPositionData(m_instrumentID, m_directionType, pd)) {
 	//	onSyncPositionStatus(pd);
 	//}
 	//else {
@@ -293,12 +299,12 @@ void APPositionCtrl::initWithData(std::string positionInfo)
 	jr.initWithString(positionInfo);
 	m_instrumentID = jr.getStrValue("InstrumentID");
 	m_maxPosition = jr.getIntValue("TotalPosition");
-	std::string strTrend = jr.getStrValue("Trend");
-	if (strTrend == "Long") {
-		m_trendType = TT_Long;
+	std::string strDirection = jr.getStrValue("Direction");
+	if (strDirection == "Buy") {
+		m_directionType = TD_Buy;
 	}
-	else if (strTrend == "Short") {
-		m_trendType = TT_Short;
+	else if (strDirection == "Sell") {
+		m_directionType = TD_Sell;
 	}
 
 #ifndef SIM
@@ -332,7 +338,7 @@ void APPositionCtrl::deserialize(std::string str)
 	//
 }
 
-void APPositionCtrl::cancel(APTradeType type, double price, APTrendType trend)
+void APPositionCtrl::cancel(APTradeType type, double price, APTradeDirection direction)
 {
 }
 

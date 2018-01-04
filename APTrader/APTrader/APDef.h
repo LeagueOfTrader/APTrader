@@ -1,10 +1,10 @@
 #pragma once
-enum APTrendType {
-	TT_Long,
-	TT_Short,
-	TT_Sideway,
+enum APTradeDirection {
+	TD_Buy,
+	TD_Sell,
+	//TT_Sideway,
 	//TT_Suspend,
-	TT_Num
+	TD_Num
 };
 
 enum APFinancialInstrumentType {
@@ -15,12 +15,12 @@ enum APFinancialInstrumentType {
 };
 
 enum APTradeType {
-	TDT_Open,
-	TDT_Close,
-	//TDT_CancelOpen,
-	//TDT_CancelClose,
-	TDT_Lock, // lock position, only for futures
-	TDT_Num
+	TT_Open,
+	TT_Close,
+	//TT_CancelOpen,
+	//TT_CancelClose,
+	TT_Lock, // lock position, only for futures
+	TT_Num
 };
 
 enum APRecycleFundLevel {

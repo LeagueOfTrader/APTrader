@@ -47,7 +47,7 @@ protected:
 	void goThroughGrids();
 
 protected:
-	APTrendType m_trend;
+	APTradeDirection m_direction;
 	
 	//APASSETID m_instrumentID;
 

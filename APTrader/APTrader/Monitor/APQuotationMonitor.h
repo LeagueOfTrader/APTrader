@@ -48,7 +48,7 @@ protected:
 	APQuotationDecision* m_quotationDecision;
 
 protected:
-	APTrendType m_trend;
+	APTradeDirection m_direction;
 
 	double m_waitFloor;
 	double m_waitCeil;

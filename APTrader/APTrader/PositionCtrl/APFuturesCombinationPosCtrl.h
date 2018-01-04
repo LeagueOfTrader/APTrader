@@ -52,15 +52,15 @@ public:
 
 	virtual void initWithData(std::string positionInfo);
 
-	virtual void openPosition(APTrendType type, double price, long volume); // ignore price in this class
-	virtual void closePosition(APTrendType type, double price, long volume);
-	virtual void openFullPosition(APTrendType type, double price);
-	virtual void closeOffPosition(APTrendType type, double price);
+	virtual void openPosition(APTradeDirection direction, double price, long volume); // ignore price in this class
+	virtual void closePosition(APTradeDirection direction, double price, long volume);
+	virtual void openFullPosition(APTradeDirection direction, double price);
+	virtual void closeOffPosition(APTradeDirection direction, double price);
 
 	virtual void cancel(APTradeType type);
 
-	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type, double price, long deltaVolume, APORDERID orderID, APTrendType trend = TT_Long);
-	virtual void onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTrendType trend = TT_Long);
+	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type, double price, long deltaVolume, APORDERID orderID, APTradeDirection direction = TD_Buy);
+	virtual void onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
 
 private:
 	void openPrPosition();
@@ -73,7 +73,7 @@ private:
 
 protected:
 	APASSETID m_coInstrumentID;
-	APTrendType m_coTrend;
+	APTradeDirection m_coTrend;
 
 	APInstrumentQuotation* m_coQuotation;
 

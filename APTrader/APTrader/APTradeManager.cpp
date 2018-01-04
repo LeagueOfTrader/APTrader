@@ -16,10 +16,10 @@ APTradeManager::~APTradeManager()
 	}
 }
 
-//void APTradeManager::registerPositionCtrl(APASSETID instrumentID, APTrendType trend, APPositionCtrl * positionCtrl)
+//void APTradeManager::registerPositionCtrl(APASSETID instrumentID, APTradeDirection direction, APPositionCtrl * positionCtrl)
 //{
 //	if (m_trader != NULL) {
-//		m_trader->registerPositionCtrl(instrumentID, trend, positionCtrl);
+//		m_trader->registerPositionCtrl(instrumentID, direction, positionCtrl);
 //	}
 //}
 //

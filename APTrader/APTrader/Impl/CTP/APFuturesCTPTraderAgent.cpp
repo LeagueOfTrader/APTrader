@@ -1,5 +1,6 @@
 #include "APFuturesCTPTraderAgent.h"
-#include "../Utils/APLog.h"
+#include "../../Utils/APLog.h"
+#include "../../APAccountAssets.h"
 
 #ifdef USE_CTP
 
@@ -230,7 +231,7 @@ CThostFtdcTraderApi * APFuturesCTPTraderAgent::getTraderApi()
 	return m_traderApi;
 }
 
-void APFuturesCTPTraderAgent::applyOrder(APTradeType tradeType, APASSETID instrumentID, double price, long volume, APORDERID localOrderID, APTrendType trend)
+void APFuturesCTPTraderAgent::applyOrder(APTradeType tradeType, APASSETID instrumentID, double price, long volume, APORDERID localOrderID, APTradeDirection direction)
 {
 	if (m_traderApi == NULL) {
 		return;
@@ -244,10 +245,10 @@ void APFuturesCTPTraderAgent::applyOrder(APTradeType tradeType, APASSETID instru
 	itoa(localOrderID, localID, 10);
 	strcpy(order.OrderRef, localID);
 	
-	if (trend == TT_Long) {
+	if (direction == TD_Buy) {
 		order.Direction = THOST_FTDC_D_Buy;
 	}
-	else if (trend == TT_Short) {
+	else if (direction == TD_Sell) {
 		order.Direction = THOST_FTDC_D_Sell;
 	}
 	else
@@ -256,11 +257,11 @@ void APFuturesCTPTraderAgent::applyOrder(APTradeType tradeType, APASSETID instru
 		return;
 	}
 
-	if (tradeType == TDT_Open) {
+	if (tradeType == TT_Open) {
 		
 		order.CombOffsetFlag[0] = THOST_FTDC_OF_Open;
 	}
-	else if (tradeType == TDT_Close) {
+	else if (tradeType == TT_Close) {
 		order.Direction = THOST_FTDC_D_Sell;
 		order.CombOffsetFlag[0] = THOST_FTDC_OF_Close;
 	}
@@ -289,7 +290,7 @@ void APFuturesCTPTraderAgent::applyOrder(APTradeType tradeType, APASSETID instru
 	}
 }
 
-void APFuturesCTPTraderAgent::applyOrder(APTradeType tradeType, APASSETID instrumentID, double price, long volume, APORDERID localOrderID, APTrendType trend,
+void APFuturesCTPTraderAgent::applyOrder(APTradeType tradeType, APASSETID instrumentID, double price, long volume, APORDERID localOrderID, APTradeDirection direction,
 										APOrderPriceType orderPriceType, APOrderTimeCondition orderTimeCondition, std::string date, 
 										APOrderVolumeCondition orderVolumeCondition, long minVolume, 
 										APOrderContingentCondition orderContingentCondition, double stopPrice)
@@ -306,10 +307,10 @@ void APFuturesCTPTraderAgent::applyOrder(APTradeType tradeType, APASSETID instru
 	itoa(localOrderID, localID, 10);
 	strcpy(order.OrderRef, localID);
 
-	if (trend == TT_Long) {
+	if (direction == TD_Buy) {
 		order.Direction = THOST_FTDC_D_Buy;
 	}
-	else if (trend == TT_Short) {
+	else if (direction == TD_Sell) {
 		order.Direction = THOST_FTDC_D_Sell;
 	}
 	else
@@ -318,10 +319,10 @@ void APFuturesCTPTraderAgent::applyOrder(APTradeType tradeType, APASSETID instru
 		return;
 	}
 
-	if (tradeType == TDT_Open) {
+	if (tradeType == TT_Open) {
 		order.CombOffsetFlag[0] = THOST_FTDC_OF_Open;
 	}
-	else if (tradeType == TDT_Close) {
+	else if (tradeType == TT_Close) {
 		order.CombOffsetFlag[0] = THOST_FTDC_OF_Close;
 	}
 	else {
@@ -468,5 +469,11 @@ int APFuturesCTPTraderAgent::reqQryInvestorPosition(APASSETID instrumentID)
 	int ret = m_traderApi->ReqQryInvestorPosition(&req, genReqID());
 	return ret;
 }
+
+void APFuturesCTPTraderAgent::onQryInstrumentPosition(CThostFtdcInvestorPositionField * pInvestorPosition)
+{
+	APAccountAssets::getInstance()->onGetPositionData(pInvestorPosition);
+}
+
 
 #endif

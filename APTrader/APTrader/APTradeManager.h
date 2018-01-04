@@ -12,7 +12,7 @@ public:
 	APTradeManager();
 	~APTradeManager();
 
-	//void registerPositionCtrl(APASSETID instrumentID, APTrendType trend, APPositionCtrl* positionCtrl);
+	//void registerPositionCtrl(APASSETID instrumentID, APTradeDirection direction, APPositionCtrl* positionCtrl);
 	//void unregisterPositionCtrl(APPositionCtrl* positionCtrl);
 
 	void init();

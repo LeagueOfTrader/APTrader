@@ -21,13 +21,13 @@ void APFuturesPosCtrlWithTransfer::setTargetContractID(APASSETID instrumentID)
 	m_targetContractID = instrumentID;
 }
 
-void APFuturesPosCtrlWithTransfer::onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend)
+void APFuturesPosCtrlWithTransfer::onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTradeDirection direction)
 {
-	if (instrumentID != m_instrumentID || instrumentID != m_targetContractID || type != m_trendType) {
+	if (instrumentID != m_instrumentID || instrumentID != m_targetContractID || type != m_directionType) {
 		return;
 	}	
 
-	if (m_isTransferring && !m_finishTransferring && type == TDT_Open) {
+	if (m_isTransferring && !m_finishTransferring && type == TT_Open) {
 		if (instrumentID == m_instrumentID) {
 			m_holdPosition += deltaVolume;
 		}
@@ -37,7 +37,7 @@ void APFuturesPosCtrlWithTransfer::onTradeDealt(APASSETID instrumentID, APTradeT
 		m_openOrdersPosition -= deltaVolume;
 	}
 	else {
-		APFuturesPositionCtrl::onTradeDealt(instrumentID, type, price, deltaVolume, orderID, trend);
+		APFuturesPositionCtrl::onTradeDealt(instrumentID, type, price, deltaVolume, orderID, direction);
 	}
 
 	if (!m_finishTransferring) {
@@ -45,29 +45,29 @@ void APFuturesPosCtrlWithTransfer::onTradeDealt(APASSETID instrumentID, APTradeT
 	}
 }
 
-void APFuturesPosCtrlWithTransfer::open(APTrendType type, double price, long volume)
+void APFuturesPosCtrlWithTransfer::open(APTradeDirection direction, double price, long volume)
 {
 	if (m_isTransferring) {
-		APFuturesPositionCtrl::open(m_targetContractID, type, price, volume);
+		APFuturesPositionCtrl::open(m_targetContractID, direction, price, volume);
 		return;
 	}
 
-	APFuturesPositionCtrl::open(type, price, volume);
+	APFuturesPositionCtrl::open(direction, price, volume);
 }
 
-void APFuturesPosCtrlWithTransfer::close(APTrendType type, double price, long volume)
+void APFuturesPosCtrlWithTransfer::close(APTradeDirection direction, double price, long volume)
 {
 	if (m_isTransferring) {
 		long srcContractVolume = std::min(volume, m_holdPosition - m_closeOrdersPosition);
-		APFuturesPositionCtrl::close(type, price, srcContractVolume);
+		APFuturesPositionCtrl::close(direction, price, srcContractVolume);
 		if (volume > m_holdPosition - m_closeOrdersPosition) {
 			long volumeSurplus = volume - (m_holdPosition - m_closeOrdersPosition);
-			APFuturesPositionCtrl::close(m_targetContractID, type, price, volumeSurplus);
+			APFuturesPositionCtrl::close(m_targetContractID, direction, price, volumeSurplus);
 		}
 		return;
 	}
 
-	APFuturesPositionCtrl::close(type, price, volume);
+	APFuturesPositionCtrl::close(direction, price, volume);
 }
 
 void APFuturesPosCtrlWithTransfer::beginTransfer()
@@ -90,10 +90,10 @@ void APFuturesPosCtrlWithTransfer::transferContracts(double droppedContractPrice
 {
 	long realVolume = std::min(volume, m_holdPosition - m_closeOrdersPosition);
 	//fak may has mistakes
-	APFuturesPositionCtrl::close(m_instrumentID, m_trendType, droppedContractPrice, realVolume);
+	APFuturesPositionCtrl::close(m_instrumentID, m_directionType, droppedContractPrice, realVolume);
 	realVolume = std::min(realVolume, m_positonNeedTransfer - m_targetContractHoldPosition);
 	if (realVolume > 0) {
-		APFuturesPositionCtrl::open(m_targetContractID, m_trendType, targetContractPrice, realVolume);
+		APFuturesPositionCtrl::open(m_targetContractID, m_directionType, targetContractPrice, realVolume);
 	}
 }
 

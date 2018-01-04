@@ -3,7 +3,7 @@
 #include "../Utils/APLog.h"
 
 #ifdef USE_CTP
-#include "../Impl/APFuturesCTPMDAgent.h"
+#include "../Impl/CTP/APFuturesCTPMDAgent.h"
 #endif
 
 #include "../APMarketDataManager.h"

@@ -8,25 +8,25 @@ APSharesTrade::~APSharesTrade()
 {
 }
 
-void APSharesTrade::open(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderTimeCondition ot)
+void APSharesTrade::open(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot)
 {
-	if (trend == TT_Long) {
+	if (direction == TD_Buy) {
 		//buy(instrumentID, price, volume);
 	}
 }
 
-void APSharesTrade::close(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderTimeCondition ot)
+void APSharesTrade::close(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot)
 {
-	if (trend == TT_Long) {
+	if (direction == TD_Buy) {
 		//sell(instrumentID, price, volume);
 	}
 }
 
-void APSharesTrade::open(APASSETID instrumentID, APORDERID localOrderID, APTrendType trend, APOrderPriceType orderPriceType, double price, APOrderTimeCondition orderTimeCondition, std::string date, APOrderVolumeCondition orderVolumeCondition, long volume, long minVolume, APOrderContingentCondition orderContingentCondition, double stopPrice)
+void APSharesTrade::open(APASSETID instrumentID, APORDERID localOrderID, APTradeDirection direction, APOrderPriceType orderPriceType, double price, APOrderTimeCondition orderTimeCondition, std::string date, APOrderVolumeCondition orderVolumeCondition, long volume, long minVolume, APOrderContingentCondition orderContingentCondition, double stopPrice)
 {
 }
 
-void APSharesTrade::close(APASSETID instrumentID, APORDERID localOrderID, APTrendType trend, APOrderPriceType orderPriceType, double price, APOrderTimeCondition orderTimeCondition, std::string date, APOrderVolumeCondition orderVolumeCondition, long volume, long minVolume, APOrderContingentCondition orderContingentCondition, double stopPrice)
+void APSharesTrade::close(APASSETID instrumentID, APORDERID localOrderID, APTradeDirection direction, APOrderPriceType orderPriceType, double price, APOrderTimeCondition orderTimeCondition, std::string date, APOrderVolumeCondition orderVolumeCondition, long volume, long minVolume, APOrderContingentCondition orderContingentCondition, double stopPrice)
 {
 }
 

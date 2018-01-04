@@ -7,7 +7,7 @@
 #include "APGlobalConfig.h"
 #include "Utils/APJsonReader.h"
 //#include "Simulation/APSimFramework.h"
-#include "Impl/APFuturesCTPMDAgent.h"
+#include "Impl/CTP/APFuturesCTPMDAgent.h"
 #include "Quotation/APFuturesMarketQuotations.h"
 #include "Monitor/APMonitorFramework.h"
 #include <thread>

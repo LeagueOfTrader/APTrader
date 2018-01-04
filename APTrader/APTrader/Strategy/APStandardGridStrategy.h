@@ -14,8 +14,8 @@ public:
 
 private:
 	//void buildGrids();
-	void buildLongGrids();
-	void buildShortGrids();
+	void buildBuyGrids();
+	void buildSellGrids();
 
 private:
 	double m_gridPercent;

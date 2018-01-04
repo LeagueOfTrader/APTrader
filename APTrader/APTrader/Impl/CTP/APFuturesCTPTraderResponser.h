@@ -1,5 +1,5 @@
 #pragma once
-#include "../APMarco.h"
+#include "../../APMarco.h"
 
 #ifdef USE_CTP
 #include "ThostFtdcTraderApi.h"

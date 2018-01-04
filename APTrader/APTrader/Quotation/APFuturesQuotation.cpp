@@ -2,7 +2,7 @@
 #include "APFuturesQuotation.h"
 
 #ifdef USE_CTP
-#include "../Impl/APFuturesCTPMDAgent.h"
+#include "../Impl/CTP/APFuturesCTPMDAgent.h"
 #endif
 
 APFuturesQuotation::APFuturesQuotation(APASSETID instrumentID) : APInstrumentQuotation(instrumentID)

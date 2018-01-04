@@ -37,12 +37,12 @@ void APTransferPositionStrategy::initWithTransferInfo(std::string transferInfo)
 {
 	APJsonReader jr;
 	jr.initWithString(transferInfo);
-	std::string trendType = jr.getStrValue("Trend");
-	if (trendType == "Long") {
-		m_trendType = TT_Long;
+	std::string directionType = jr.getStrValue("Direction");
+	if (directionType == "Buy") {
+		m_directionType = TD_Buy;
 	}
-	else if (trendType == "Short") {
-		m_trendType = TT_Short;
+	else if (directionType == "Sell") {
+		m_directionType = TD_Sell;
 	}
 
 	m_instrumentID = jr.getStrValue("SrcID");
@@ -125,12 +125,12 @@ void APTransferPositionStrategy::transferContracts()
 bool APTransferPositionStrategy::canArbitage()
 {
 	if (m_curQuotation != NULL && m_targetQuotation != NULL) {
-		if (m_trendType == TT_Long) {
+		if (m_directionType == TD_Buy) {
 			if (m_targetQuotation->getCurPrice() <= m_curQuotation->getCurPrice()) {
 				return true;
 			}
 		}
-		else if (m_trendType == TT_Short) {
+		else if (m_directionType == TD_Sell) {
 			if (m_targetQuotation->getCurPrice() >= m_curQuotation->getCurPrice()) {
 				return true;
 			}
@@ -153,18 +153,18 @@ bool APTransferPositionStrategy::canTransferWithCurrentPrice()
 {
 	if (m_curQuotation != NULL && m_targetQuotation != NULL) {
 		double curTargetPrice = m_targetQuotation->getCurPrice();
-		if ((m_trendType == TT_Long && curTargetPrice > m_safePrice) ||
-			(m_trendType == TT_Short && curTargetPrice < m_safePrice)){
+		if ((m_directionType == TD_Buy && curTargetPrice > m_safePrice) ||
+			(m_directionType == TD_Sell && curTargetPrice < m_safePrice)){
 			return false;
 		}
 
 		double priceMargin = getCurPriceMargin();
-		if (m_trendType == TT_Long) {
+		if (m_directionType == TD_Buy) {
 			if (m_targetQuotation->getClosePrice() - m_curQuotation->getOpenPrice() <= priceMargin) {
 				return true;
 			}
 		}
-		else if (m_trendType == TT_Short) {
+		else if (m_directionType == TD_Sell) {
 			if (m_curQuotation->getOpenPrice() - m_targetQuotation->getClosePrice() >= priceMargin) {
 				return true;
 			}

@@ -6,7 +6,7 @@
 
 //struct APFutureContract {
 //	APASSETID instrumentID;
-//	APTrendType type;
+//	APTradeDirection direction;
 //	long position;
 //};
 
@@ -19,30 +19,30 @@ public:
 
 	virtual void init(std::string positionInfo);
 
-	virtual void open(APTrendType type, double price, long volume);
-	virtual void close(APTrendType type, double price, long volume);
-	virtual void openAll(APTrendType type, double price);
-	virtual void closeAll(APTrendType type, double price);
+	virtual void open(APTradeDirection direction, double price, long volume);
+	virtual void close(APTradeDirection direction, double price, long volume);
+	virtual void openAll(APTradeDirection direction, double price);
+	virtual void closeAll(APTradeDirection direction, double price);
 
-	virtual void cancel(APTradeType type, double price, APTrendType trend = TT_Long);
+	virtual void cancel(APTradeType type, double price, APTradeDirection direction = TD_Buy);
 	virtual void cancel(APTradeType type);
 
-	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend = TT_Long);
-	virtual void onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTrendType trend = TT_Long);
+	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTradeDirection direction = TD_Buy);
+	virtual void onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
 
 	void setInstrumentID(APASSETID instrumentID);
-	void setContractType(APTrendType type);
+	void setContractType(APTradeDirection direction);
 
 	// open/close directly
-	void open(APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderTimeCondition ot = OTC_GoodForDay);
-	void close(APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderTimeCondition ot = OTC_GoodForDay);
+	void open(APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot = OTC_GoodForDay);
+	void close(APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot = OTC_GoodForDay);
 	// advanced open/close
-	void open(APASSETID instrumentID, APTrendType trend,
+	void open(APASSETID instrumentID, APTradeDirection direction,
 		APOrderPriceType orderPriceType, double price,
 		APOrderTimeCondition orderTimeCondition = OTC_GoodForDay, std::string date = "",
 		APOrderVolumeCondition orderVolumeCondition = OVC_Any, long volume = 0, long minVolume = 0,
 		APOrderContingentCondition orderContingentCondition = OCC_Immediately, double stopPrice = 0.0);
-	void close(APASSETID instrumentID, APTrendType trend,
+	void close(APASSETID instrumentID, APTradeDirection direction,
 		APOrderPriceType orderPriceType, double price,
 		APOrderTimeCondition orderTimeCondition = OTC_GoodForDay, std::string date = "",
 		APOrderVolumeCondition orderVolumeCondition = OVC_Any, long volume = 0, long minVolume = 0,

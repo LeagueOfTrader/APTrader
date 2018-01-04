@@ -10,16 +10,16 @@ public:
 
 	virtual void init(std::string positionInfo);
 
-	virtual void open(APTrendType type, double price, long volume);
-	virtual void close(APTrendType type, double price, long volume);
-	virtual void openAll(APTrendType type, double price);
-	virtual void closeAll(APTrendType type, double price);
-	virtual void cancel(APTradeType type, double price, APTrendType trend = TT_Long);
+	virtual void open(APTradeDirection direction, double price, long volume);
+	virtual void close(APTradeDirection direction, double price, long volume);
+	virtual void openAll(APTradeDirection direction, double price);
+	virtual void closeAll(APTradeDirection direction, double price);
+	virtual void cancel(APTradeType type, double price, APTradeDirection direction = TD_Buy);
 	virtual void cancel(APTradeType type);
 	//virtual void cancelAll();
 
-	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend = TT_Long);
-	virtual void onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTrendType trend = TT_Long);
+	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTradeDirection direction = TD_Buy);
+	virtual void onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
 
 };
 

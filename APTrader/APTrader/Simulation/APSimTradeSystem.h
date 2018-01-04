@@ -13,7 +13,7 @@ class APSimFuturesQuotation;
 struct APSimTradeStub {
 	UINT tradeID;
 	APASSETID instrumentID;
-	APTrendType trend;
+	APTradeDirection direction;
 	double costPrice;
 	long volume;
 	UINT orderID;
@@ -25,8 +25,8 @@ public:
 	APSimTradeSystem();
 	~APSimTradeSystem();
 
-	APSYSTEMID requestOpen(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume);
-	APSYSTEMID requestClose(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume);
+	APSYSTEMID requestOpen(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume);
+	APSYSTEMID requestClose(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume);
 	void requestCancel(APSYSTEMID sysID);
 
 	void init();
@@ -35,11 +35,11 @@ public:
 	double calcFloatingProfit();
 
 protected:
-	void onTradeDealt(APORDERID orderID, APASSETID instrumentID, APTradeType type, double price, long volume, APSYSTEMID sysID, APTrendType trend);
+	void onTradeDealt(APORDERID orderID, APASSETID instrumentID, APTradeType type, double price, long volume, APSYSTEMID sysID, APTradeDirection direction);
 	void onTradeCanceled(APORDERID orderID, APSYSTEMID sysID);
 	bool arrangeTrade(APTradeOrderInfo& order);
-	void closeTheDeal(APORDERID orderID, APASSETID instrumentID, APTradeType type, double price, long volume, APSYSTEMID sysID, APTrendType trend);
-	double calcProfitAndLoss(double costPrice, double currentPrice, long volume, APTrendType trend);
+	void closeTheDeal(APORDERID orderID, APASSETID instrumentID, APTradeType type, double price, long volume, APSYSTEMID sysID, APTradeDirection direction);
+	double calcProfitAndLoss(double costPrice, double currentPrice, long volume, APTradeDirection direction);
 
 private:
 	void validQuotation(APASSETID instrumentID);

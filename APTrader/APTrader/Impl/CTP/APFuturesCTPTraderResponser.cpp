@@ -2,9 +2,9 @@
 
 #ifdef USE_CTP
 #include "APFuturesCTPTraderAgent.h"
-#include "../APTradeManager.h"
-#include "../APTrade.h"
-#include "../Utils/APLog.h"
+#include "../../APTradeManager.h"
+#include "../../APTrade.h"
+#include "../../Utils/APLog.h"
 
 APFuturesCTPTraderResponser::APFuturesCTPTraderResponser()
 {

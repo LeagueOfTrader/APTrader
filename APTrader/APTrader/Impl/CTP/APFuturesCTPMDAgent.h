@@ -1,16 +1,16 @@
 #pragma once
-#include "../APMarco.h"
+#include "../../APMarco.h"
 
 #ifdef USE_CTP
 
 #include <string>
-#include "../Common/Singleton.h"
+#include "../../Common/Singleton.h"
 #include "ThostFtdcMdApi.h"
 #include "APFuturesCTPMDResponser.h"
 #include "APFuturesCTPAgent.h"
 #include <set>
 #include <map>
-#include "../APTypes.h"
+#include "../../APTypes.h"
 
 class APFuturesCTPMDAgent : public APFuturesCTPAgent, public Singleton<APFuturesCTPMDAgent>
 {

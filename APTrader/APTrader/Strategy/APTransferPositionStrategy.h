@@ -43,6 +43,6 @@ private:
 	APFuturesQuotation* m_targetQuotation;
 	APFuturesQuotation* m_curQuotation;
 
-	APTrendType m_trendType;
+	APTradeDirection m_directionType;
 };
 

@@ -138,10 +138,10 @@ void APQuotationMonitor::goGrids(double value)
 
 bool APQuotationMonitor::inOpenSection(double value)
 {
-	if (m_trend == TT_Long) {
+	if (m_direction == TD_Buy) {
 		return value < m_waitFloor;
 	}
-	else if (m_trend == TT_Short) {
+	else if (m_direction == TD_Sell) {
 		return value > m_waitCeil;
 	}
 
@@ -150,10 +150,10 @@ bool APQuotationMonitor::inOpenSection(double value)
 
 bool APQuotationMonitor::inCloseSection(double value)
 {
-	if (m_trend == TT_Long) {
+	if (m_direction == TD_Buy) {
 		return value >= m_waitCeil;
 	}
-	else if (m_trend == TT_Short) {
+	else if (m_direction == TD_Sell) {
 		return value <= m_waitFloor;
 	}
 
@@ -186,8 +186,8 @@ int APQuotationMonitor::getGridIndex(std::vector<double>& grids, double value, b
 int APQuotationMonitor::getCurTrendGridIndex(std::vector<double>& grids, double value, bool open)
 {
 	bool reverse = false;
-	if ((m_trend == TT_Long && open == false)
-		|| (m_trend == TT_Short && open == true)) {
+	if ((m_direction == TD_Buy && open == false)
+		|| (m_direction == TD_Sell && open == true)) {
 		reverse = true;
 	}
 	return getGridIndex(grids, value, reverse);
@@ -242,12 +242,12 @@ void APQuotationMonitor::initFixGrids(std::string info)
 {
 	APJsonReader jr;
 	jr.initWithString(info);
-	std::string strTrend = jr.getStrValue("Trend");
-	if (strTrend == "Long") {
-		m_trend = TT_Long;
+	std::string strDirection = jr.getStrValue("Direction");
+	if (strDirection == "Buy") {
+		m_direction = TD_Buy;
 	}
-	else if (strTrend == "Short") {
-		m_trend = TT_Short;
+	else if (strDirection == "Sell") {
+		m_direction = TD_Sell;
 	}
 
 	m_waitCeil = jr.getDoubleValue("Ceil");
@@ -268,12 +268,12 @@ void APQuotationMonitor::initRatioGrids(std::string info)
 {
 	APJsonReader jr;
 	jr.initWithString(info);
-	std::string strTrend = jr.getStrValue("Trend");
-	if (strTrend == "Long") {
-		m_trend = TT_Long;
+	std::string strDirection = jr.getStrValue("Direction");
+	if (strDirection == "Buy") {
+		m_direction = TD_Buy;
 	}
-	else if (strTrend == "Short") {
-		m_trend = TT_Short;
+	else if (strDirection == "Sell") {
+		m_direction = TD_Sell;
 	}
 
 	m_waitCeil = jr.getDoubleValue("Ceil");
@@ -283,11 +283,11 @@ void APQuotationMonitor::initRatioGrids(std::string info)
 	double longVal = jr.getDoubleValue("LongVal");
 	double shortVal = jr.getDoubleValue("ShortVal");
 
-	if (m_trend == TT_Long) {
+	if (m_direction == TD_Buy) {
 		buildEqualRatioArray(m_closeValues, longVal, 1.0 + percent, count);
 		buildEqualRatioArray(m_openValues, shortVal, 1.0 - percent, count);
 	}
-	else if (m_trend == TT_Short) {
+	else if (m_direction == TD_Sell) {
 		buildEqualRatioArray(m_openValues, longVal, 1.0 + percent, count);
 		buildEqualRatioArray(m_closeValues, shortVal, 1.0 - percent, count);
 	}
@@ -307,12 +307,12 @@ void APQuotationMonitor::initDiffGrids(std::string info)
 {
 	APJsonReader jr;
 	jr.initWithString(info);
-	std::string strTrend = jr.getStrValue("Trend");
-	if (strTrend == "Long") {
-		m_trend = TT_Long;
+	std::string strDirection = jr.getStrValue("Direction");
+	if (strDirection == "Buy") {
+		m_direction = TD_Buy;
 	}
-	else if (strTrend == "Short") {
-		m_trend = TT_Short;
+	else if (strDirection == "Sell") {
+		m_direction = TD_Sell;
 	}
 
 	m_waitCeil = jr.getDoubleValue("Ceil");
@@ -322,11 +322,11 @@ void APQuotationMonitor::initDiffGrids(std::string info)
 	double longVal = jr.getDoubleValue("LongVal");
 	double shortVal = jr.getDoubleValue("ShortVal");
 
-	if (m_trend == TT_Long) {
+	if (m_direction == TD_Buy) {
 		buildEqualDiffArray(m_openValues, shortVal, -diff, count);
 		buildEqualDiffArray(m_closeValues, longVal, diff, count);
 	}
-	else if (m_trend == TT_Short) {
+	else if (m_direction == TD_Sell) {
 		buildEqualDiffArray(m_closeValues, shortVal, -diff, count);
 		buildEqualDiffArray(m_openValues, longVal, diff, count);
 	}

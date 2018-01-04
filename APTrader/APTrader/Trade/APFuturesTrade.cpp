@@ -2,7 +2,7 @@
 #include "../APMarco.h"
 
 #ifdef USE_CTP
-#include "../Impl/APFuturesCTPTraderAgent.h"
+#include "../Impl/CTP/APFuturesCTPTraderAgent.h"
 #endif
 
 APFuturesTrade::APFuturesTrade()
@@ -14,41 +14,41 @@ APFuturesTrade::~APFuturesTrade()
 {
 }
 
-void APFuturesTrade::open(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderTimeCondition ot)
+void APFuturesTrade::open(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot)
 {
 #ifdef USE_CTP
-	APFuturesCTPTraderAgent::getInstance()->applyOrder(TDT_Open, instrumentID, price, volume, orderID, trend);
+	APFuturesCTPTraderAgent::getInstance()->applyOrder(TT_Open, instrumentID, price, volume, orderID, direction);
 #endif
 }
 
-void APFuturesTrade::close(APORDERID orderID, APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderTimeCondition ot)
+void APFuturesTrade::close(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot)
 {
 #ifdef USE_CTP
-	APFuturesCTPTraderAgent::getInstance()->applyOrder(TDT_Close, instrumentID, price, volume, orderID, trend);
+	APFuturesCTPTraderAgent::getInstance()->applyOrder(TT_Close, instrumentID, price, volume, orderID, direction);
 #endif
 }
 
-void APFuturesTrade::open(APASSETID instrumentID, APORDERID localOrderID, APTrendType trend, 
+void APFuturesTrade::open(APASSETID instrumentID, APORDERID localOrderID, APTradeDirection direction, 
 							APOrderPriceType orderPriceType, double price, 
 							APOrderTimeCondition orderTimeCondition, std::string date, 
 							APOrderVolumeCondition orderVolumeCondition, long volume, long minVolume, 
 							APOrderContingentCondition orderContingentCondition, double stopPrice)
 {
 #ifdef USE_CTP
-	APFuturesCTPTraderAgent::getInstance()->applyOrder(TDT_Open, instrumentID, price, volume, localOrderID, trend, 
+	APFuturesCTPTraderAgent::getInstance()->applyOrder(TT_Open, instrumentID, price, volume, localOrderID, direction, 
 														orderPriceType, orderTimeCondition, date, orderVolumeCondition, minVolume, 
 														orderContingentCondition, stopPrice);
 #endif
 }
 
-void APFuturesTrade::close(APASSETID instrumentID, APORDERID localOrderID, APTrendType trend, 
+void APFuturesTrade::close(APASSETID instrumentID, APORDERID localOrderID, APTradeDirection direction, 
 							APOrderPriceType orderPriceType, double price, 
 							APOrderTimeCondition orderTimeCondition, std::string date, 
 							APOrderVolumeCondition orderVolumeCondition, long volume, long minVolume, 
 							APOrderContingentCondition orderContingentCondition, double stopPrice)
 {
 #ifdef USE_CTP
-	APFuturesCTPTraderAgent::getInstance()->applyOrder(TDT_Close, instrumentID, price, volume, localOrderID, trend,
+	APFuturesCTPTraderAgent::getInstance()->applyOrder(TT_Close, instrumentID, price, volume, localOrderID, direction,
 														orderPriceType, orderTimeCondition, date, orderVolumeCondition, minVolume,
 														orderContingentCondition, stopPrice);
 #endif

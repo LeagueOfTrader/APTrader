@@ -6,7 +6,7 @@
         "Position": {
             "InstrumentID": "rb1805",
             "TotalPosition": 600,
-            "Trend": "Long"
+            "Direction": "Sell"
         },
         "Quotation": {
             "QuotationDecisionType": 101,
@@ -15,7 +15,7 @@
             "Param": 0
         },
         "Grids": {
-            "Trend": "Long",
+            "Direction": "Sell",
             "Ceil": 3500,
             "Floor": 3400,
             "GridPercent": 0.05,

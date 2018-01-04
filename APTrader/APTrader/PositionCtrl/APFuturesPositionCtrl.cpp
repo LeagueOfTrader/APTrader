@@ -22,42 +22,42 @@ void APFuturesPositionCtrl::init(std::string positionInfo)
 }
 
 
-void APFuturesPositionCtrl::open(APTrendType type, double price, long volume)
+void APFuturesPositionCtrl::open(APTradeDirection direction, double price, long volume)
 {
-	open(m_instrumentID, type, price, volume);
+	open(m_instrumentID, direction, price, volume);
 }
 
-void APFuturesPositionCtrl::close(APTrendType type, double price, long volume)
+void APFuturesPositionCtrl::close(APTradeDirection direction, double price, long volume)
 {
-	close(m_instrumentID, type, price, volume);
+	close(m_instrumentID, direction, price, volume);
 }
 
-void APFuturesPositionCtrl::openAll(APTrendType type, double price)
+void APFuturesPositionCtrl::openAll(APTradeDirection direction, double price)
 {
-	open(type, price, m_availablePosition);
+	open(direction, price, m_availablePosition);
 }
 
-void APFuturesPositionCtrl::closeAll(APTrendType type, double price)
+void APFuturesPositionCtrl::closeAll(APTradeDirection direction, double price)
 {
-	close(type, price, m_holdPosition);
+	close(direction, price, m_holdPosition);
 }
 
 //void APFuturesPositionCtrl::cancel(APTradeType type, double price, long volume)
 //{
 //}
 
-void APFuturesPositionCtrl::cancel(APTradeType type, double price, APTrendType trend)
+void APFuturesPositionCtrl::cancel(APTradeType type, double price, APTradeDirection direction)
 {
 	if (m_trade != NULL) {
 		std::list<APORDERID>::iterator it;
 		APTradeOrderInfo info;
-		if (type == TDT_Open) {
+		if (type == TT_Open) {
 			for (it = m_openOrderList.begin(); it != m_openOrderList.end(); ) {			
 				if (m_trade->getOrderInfo(*it, info)) {
-					if (info.trend == trend) {
+					if (info.direction == direction) {
 						if (fabs(info.price - price) < DBL_EPSILON ||
-							(trend == TT_Short && info.price > price) ||  //Short Open, cancel higher offered price
-							(trend == TT_Long &&  info.price < price)) { // Long Open, cancel lower offered price
+							(direction == TD_Sell && info.price > price) ||  //Short Open, cancel higher offered price
+							(direction == TD_Buy &&  info.price < price)) { // Long Open, cancel lower offered price
 							APORDERID orderID = *it;
 							std::list<APORDERID>::iterator itNext = ++it;
 							m_trade->cancel(orderID, this);
@@ -69,13 +69,13 @@ void APFuturesPositionCtrl::cancel(APTradeType type, double price, APTrendType t
 				it++;
 			}
 		}
-		else if (type == TDT_Close) {
+		else if (type == TT_Close) {
 			for (it = m_closeOrderList.begin(); it != m_closeOrderList.end();) {
 				if (m_trade->getOrderInfo(*it, info)) {
-					if (info.trend == trend) {
+					if (info.direction == direction) {
 						if (fabs(info.price - price) < DBL_EPSILON ||
-							(trend == TT_Long  && info.price > price) ||  // Long Close, cancel higher offered price
-							(trend == TT_Short && info.price < price)) { // Short Close, cancel lower offered price
+							(direction == TD_Buy  && info.price > price) ||  // Long Close, cancel higher offered price
+							(direction == TD_Sell && info.price < price)) { // Short Close, cancel lower offered price
 							APORDERID orderID = *it;
 							std::list<APORDERID>::iterator itNext = ++it;
 							m_trade->cancel(orderID, this);
@@ -95,12 +95,12 @@ void APFuturesPositionCtrl::cancel(APTradeType type)
 	if (m_trade != NULL) {
 		//m_trade->cancel(m_instrumentID, type, this);
 		std::list<APORDERID>::iterator it;
-		if (type == TDT_Open) {
+		if (type == TT_Open) {
 			for (it = m_openOrderList.begin(); it != m_openOrderList.end(); it++) {
 				m_trade->cancel(*it, this);
 			}
 		}
-		else if (type == TDT_Close) {
+		else if (type == TT_Close) {
 			for (it = m_closeOrderList.begin(); it != m_closeOrderList.end(); it++) {
 				m_trade->cancel(*it, this);
 			}
@@ -121,14 +121,14 @@ void APFuturesPositionCtrl::cancel(APTradeType type)
 //	}
 //}
 
-void APFuturesPositionCtrl::onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTrendType trend)
+void APFuturesPositionCtrl::onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTradeDirection direction)
 {
 	switch (type) {
-	case TDT_Open:
+	case TT_Open:
 		m_holdPosition += deltaVolume;
 		m_openOrdersPosition -= deltaVolume;
 		break;
-	case TDT_Close:
+	case TT_Close:
 		m_availablePosition += deltaVolume;
 		m_closeOrdersPosition -= deltaVolume;
 		break;
@@ -137,15 +137,15 @@ void APFuturesPositionCtrl::onTradeDealt(APASSETID instrumentID, APTradeType typ
 	}
 }
 
-void APFuturesPositionCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTrendType trend)
+void APFuturesPositionCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction)
 {
 	switch (type) {
-	case TDT_Open:
+	case TT_Open:
 		m_availablePosition += volume;
 		m_openOrdersPosition -= volume;
 		m_openOrderList.remove(orderID);
 		break;
-	case TDT_Close:
+	case TT_Close:
 		m_holdPosition += volume;
 		m_closeOrdersPosition -= volume;
 		m_closeOrderList.remove(orderID);
@@ -160,19 +160,19 @@ void APFuturesPositionCtrl::setInstrumentID(APASSETID instrumentID)
 	m_instrumentID = instrumentID;
 }
 
-void APFuturesPositionCtrl::setContractType(APTrendType type)
+void APFuturesPositionCtrl::setContractType(APTradeDirection direction)
 {
-	m_trendType = type;
+	m_directionType = direction;
 }
 
-void APFuturesPositionCtrl::open(APASSETID instrumentID, APTrendType trend, 
+void APFuturesPositionCtrl::open(APASSETID instrumentID, APTradeDirection direction, 
 									APOrderPriceType orderPriceType, double price, 
 									APOrderTimeCondition orderTimeCondition, std::string date, 
 									APOrderVolumeCondition orderVolumeCondition, long volume, long minVolume, 
 									APOrderContingentCondition orderContingentCondition, double stopPrice)
 {
 	if (m_trade != NULL) {
-		APORDERID orderID = m_trade->open(instrumentID, trend,
+		APORDERID orderID = m_trade->open(instrumentID, direction,
 			orderPriceType, price, this,
 			orderTimeCondition, date,
 			orderVolumeCondition, volume, minVolume,
@@ -181,14 +181,14 @@ void APFuturesPositionCtrl::open(APASSETID instrumentID, APTrendType trend,
 	}
 }
 
-void APFuturesPositionCtrl::close(APASSETID instrumentID, APTrendType trend, 
+void APFuturesPositionCtrl::close(APASSETID instrumentID, APTradeDirection direction, 
 									APOrderPriceType orderPriceType, double price, 
 									APOrderTimeCondition orderTimeCondition, std::string date, 
 									APOrderVolumeCondition orderVolumeCondition, long volume, long minVolume, 
 									APOrderContingentCondition orderContingentCondition, double stopPrice)
 {
 	if (m_trade != NULL) {
-		APORDERID orderID = m_trade->close(instrumentID, trend,
+		APORDERID orderID = m_trade->close(instrumentID, direction,
 			orderPriceType, price, this,
 			orderTimeCondition, date,
 			orderVolumeCondition, volume, minVolume,
@@ -197,18 +197,18 @@ void APFuturesPositionCtrl::close(APASSETID instrumentID, APTrendType trend,
 	}
 }
 
-void APFuturesPositionCtrl::open(APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderTimeCondition ot)
+void APFuturesPositionCtrl::open(APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot)
 {
 	if (m_trade != NULL) {
-		APORDERID orderID = m_trade->open(instrumentID, trend, price, volume, this, ot);
+		APORDERID orderID = m_trade->open(instrumentID, direction, price, volume, this, ot);
 		m_openOrderList.push_back(orderID);		
 	}
 }
 
-void APFuturesPositionCtrl::close(APASSETID instrumentID, APTrendType trend, double price, long volume, APOrderTimeCondition ot)
+void APFuturesPositionCtrl::close(APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot)
 {
 	if (m_trade != NULL) {
-		APORDERID orderID = m_trade->close(instrumentID, trend, price, volume, this, ot);
+		APORDERID orderID = m_trade->close(instrumentID, direction, price, volume, this, ot);
 		m_closeOrderList.push_back(orderID);		
 	}
 }

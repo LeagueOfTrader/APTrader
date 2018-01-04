@@ -10,10 +10,10 @@ public:
 	virtual void init(std::string positionInfo);
 
 	void setTargetContractID(APASSETID instrumentID);
-	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long volume, APORDERID orderID, APTrendType trend = TT_Long);
+	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
 
-	virtual void open(APTrendType type, double price, long volume);
-	virtual void close(APTrendType type, double price, long volume);
+	virtual void open(APTradeDirection direction, double price, long volume);
+	virtual void close(APTradeDirection direction, double price, long volume);
 
 	void beginTransfer();
 	bool isTransferring();
