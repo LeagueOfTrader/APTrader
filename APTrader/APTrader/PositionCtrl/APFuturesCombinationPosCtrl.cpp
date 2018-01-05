@@ -47,6 +47,39 @@ void APFuturesCombinationPosCtrl::initWithData(std::string positionInfo)
 #endif
 }
 
+std::vector<APPositionData> APFuturesCombinationPosCtrl::getHoldPositionDetail()
+{
+	std::vector<APPositionData> holdPosList;
+	APPositionData pd;
+	memset(&pd, 0, sizeof(pd));
+	holdPosList.push_back(pd);
+	memset(&pd, 0, sizeof(pd));
+	holdPosList.push_back(pd);
+	return holdPosList;
+}
+
+void APFuturesCombinationPosCtrl::setHoldAmount(APASSETID instrumentID, long amount) 
+{
+	if (instrumentID == m_instrumentID) {
+		m_prVolume = amount;
+	}
+	else if (instrumentID == m_coInstrumentID) {
+		m_coVolume = amount;
+	}
+}
+
+std::pair<std::vector<APASSETID>, std::vector<long>> APFuturesCombinationPosCtrl::getCombinationUnitVol()
+{	
+	std::vector<APASSETID> instruments;
+	instruments.push_back(m_instrumentID);
+	instruments.push_back(m_coInstrumentID);
+	std::vector<long> unitVols;
+	unitVols.push_back(m_prUnitVol);
+	unitVols.push_back(m_coUnitVol);
+	std::pair<std::vector<APASSETID>, std::vector<long>> combinationUnitVol = std::make_pair(instruments, unitVols);
+	return combinationUnitVol;
+}
+
 void APFuturesCombinationPosCtrl::openPosition(APTradeDirection direction, double price, long volume)
 {
 	if (m_curOpenOperation.hasTarget()) {

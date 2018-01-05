@@ -134,6 +134,22 @@ void APPositionCtrl::unfreezePosition(long position)
 	m_frozenPosition -= position;
 }
 
+std::vector<APPositionData> APPositionCtrl::getHoldPositionDetail()
+{
+	std::vector<APPositionData> holdPosList;
+	APPositionData pd;
+	memset(&pd, 0, sizeof(pd));
+	holdPosList.push_back(pd);
+	return holdPosList;
+}
+
+void APPositionCtrl::setHoldAmount(APASSETID instrumentID, long amount)
+{
+	if (m_instrumentID == instrumentID) {
+		m_holdPosition = amount;
+	}
+}
+
 void APPositionCtrl::recycleFund(APRecycleFundLevel level)
 {
 	switch (level) {

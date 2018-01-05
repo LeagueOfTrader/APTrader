@@ -72,7 +72,7 @@ void APAccountAssets::queryPosition(APASSETID instrumentID, APTradeDirection dir
 	pcw.direction = dir;
 	pcw.posCtrl = posCtrl;
 
-	m_allocQueue.push(pcw);
+	m_distributionQuque.push(pcw);
 
 	if (m_instruments.find(instrumentID) != m_instruments.end()) {
 		return;
@@ -80,7 +80,75 @@ void APAccountAssets::queryPosition(APASSETID instrumentID, APTradeDirection dir
 	m_instruments.insert(instrumentID);
 }
 
-void APAccountAssets::verify()
+void APAccountAssets::processVerification()
+{
+	while (m_verificationQueue.size() > 0) {
+		const APPositionCtrlWrapper& pcw = m_verificationQueue.top();
+		APPositionCtrl* posCtrl = pcw.posCtrl;
+		if (posCtrl != NULL) {
+			std::vector<APPositionData> holdPosList = posCtrl->getHoldPositionDetail();
+			if (holdPosList.size() > 0) {
+				//bool match = false;
+				for (int i = 0; i < holdPosList.size(); i++) {
+					const APPositionData& pd = holdPosList[i];
+					if (pd.direction == TD_Buy) {
+						verifyWithStub(m_buyPositionData, pd, posCtrl);
+					}
+					else if (pd.direction == TD_Sell) {
+						verifyWithStub(m_sellPositionData, pd, posCtrl);
+					}
+				}
+			}
+		}
+		m_verificationQueue.pop();
+	}	
+}
+
+void APAccountAssets::verifyWithStub(std::map<APASSETID, APPositionDataStub>& stub, const APPositionData & pd, APPositionCtrl * posCtrl)
+{
+	if (posCtrl == NULL) {
+		return;
+	}
+
+	if (stub.find(pd.instrumentID) != stub.end()) {
+		if (stub[pd.instrumentID].remainPosition >= pd.holdPosition) {
+			stub[pd.instrumentID].remainPosition -= pd.holdPosition;
+		}
+		else {
+			posCtrl->setHoldAmount(pd.instrumentID, stub[pd.instrumentID].remainPosition);
+			stub[pd.instrumentID].remainPosition = 0;
+		}
+	}
+}
+
+void APAccountAssets::processDistribution()
+{
+	std::vector<APPositionCtrlWrapper> distributionList;
+	while (m_distributionQuque.size() > 0) {
+		APPositionCtrlWrapper pcw = m_distributionQuque.top();
+		distributionList.push_back(pcw);
+		m_distributionQuque.pop();
+	}
+
+	for (int i = 0; i < distributionList.size(); i++) {
+		const APPositionCtrlWrapper& pcw = distributionList[i];
+		if (pcw.direction == TD_Buy) {
+			//
+		}
+		else if (pcw.direction == TD_Sell) {
+			//
+		}
+	}
+}
+
+void APAccountAssets::process()
+{
+	processVerification();
+	processDistribution();
+	m_inited = true;
+}
+
+void APAccountAssets::beginVerify()
 {
 	std::set<APASSETID>::iterator it = m_instruments.begin();
 	while (it != m_instruments.end()) {
@@ -104,7 +172,6 @@ void APAccountAssets::onGetPositionData(CThostFtdcInvestorPositionField * pInves
 	pd.direction = parseCTPDirection(pInvestorPosition->PosiDirection);
 	pd.holdPosition = pInvestorPosition->Position;
 	pd.frozenPosition = 0;
-	pd.remainPosition = pd.holdPosition;
 
 	onGetPositionData(pd);
 }
@@ -112,11 +179,15 @@ void APAccountAssets::onGetPositionData(CThostFtdcInvestorPositionField * pInves
 
 void APAccountAssets::onGetPositionData(APPositionData data)
 {
+	APPositionDataStub localData;
+	localData.assign(data);
+	localData.remainPosition = data.holdPosition;
+
 	if (data.direction == TD_Buy) {
-		m_buyPositionData[data.instrumentID] = data;
+		m_buyPositionData[data.instrumentID] = localData;
 	}
 	else if (data.direction == TD_Sell) {
-		m_sellPositionData[data.instrumentID] = data;
+		m_sellPositionData[data.instrumentID] = localData;
 	}
 
 	checkFinish();
@@ -126,7 +197,7 @@ void APAccountAssets::checkFinish()
 {
 	int reqCounts = m_instruments.size();
 	std::set<APASSETID> receivedPosData;
-	std::map<APASSETID, APPositionData>::iterator it;
+	std::map<APASSETID, APPositionDataStub>::iterator it;
 	for (it = m_buyPositionData.begin(); it != m_buyPositionData.end(); it++) {
 		receivedPosData.insert(it->first);
 	}
@@ -135,8 +206,8 @@ void APAccountAssets::checkFinish()
 	}
 
 	if (reqCounts == receivedPosData.size()) {
-		m_inited = true;
-		//local verify end
+		//local verify processing
+		process();
 	}
 }
 

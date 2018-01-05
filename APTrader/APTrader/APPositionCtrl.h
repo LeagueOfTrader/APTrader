@@ -44,6 +44,9 @@ public:
 	long getFrozenPosition();
 	void unfreezePosition(long position = -1);
 
+	virtual std::vector<APPositionData> getHoldPositionDetail();
+	virtual void setHoldAmount(APASSETID instrumentID, long amount);
+
 	void recycleFund(APRecycleFundLevel level = RFL_UndeficitPosition);
 
 	long getCurPosition();

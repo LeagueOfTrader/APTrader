@@ -34,8 +34,17 @@ struct APPositionData {
 	std::string instrumentID;
 	APTradeDirection direction;
 	long holdPosition;
-	long frozenPosition;
-	
+	long frozenPosition;	
+
+	void assign(const APPositionData& refData) {
+		instrumentID = refData.instrumentID;
+		direction = refData.direction;
+		holdPosition = refData.holdPosition;
+		frozenPosition = refData.frozenPosition;
+	}
+};
+
+struct APPositionDataStub : APPositionData{
 	// used for local verification
 	long remainPosition;
 };
@@ -65,7 +74,8 @@ public:
 	void verifyPosition(APASSETID instrumentID, APTradeDirection dir, APPositionCtrl* posCtrl);
 	void queryPosition(APASSETID instrumentID, APTradeDirection dir, APPositionCtrl* posCtrl);
 	
-	void verify();
+	void beginVerify();
+	
 
 #ifdef USE_CTP
 	void onGetPositionData(CThostFtdcInvestorPositionField* pInvestorPosition);
@@ -74,13 +84,19 @@ public:
 protected:
 	void onGetPositionData(APPositionData data);
 	void checkFinish();
+	void process();
+	void processVerification();
+	void processDistribution();
 
 private:
-	std::map<APASSETID, APPositionData> m_buyPositionData;
-	std::map<APASSETID, APPositionData> m_sellPositionData;
+	void verifyWithStub(std::map<APASSETID, APPositionDataStub>& stub, const APPositionData& pd, APPositionCtrl* posCtrl);
+
+private:
+	std::map<APASSETID, APPositionDataStub> m_buyPositionData;
+	std::map<APASSETID, APPositionDataStub> m_sellPositionData;
 
 	std::priority_queue<APPositionCtrlWrapper, std::vector<APPositionCtrlWrapper>, APPositionCtrlWrapperComparer> m_verificationQueue;
-	std::priority_queue<APPositionCtrlWrapper, std::vector<APPositionCtrlWrapper>, APPositionCtrlWrapperComparer> m_allocQueue;
+	std::priority_queue<APPositionCtrlWrapper, std::vector<APPositionCtrlWrapper>, APPositionCtrlWrapperComparer> m_distributionQuque;
 
 	std::set<APASSETID> m_instruments;
 

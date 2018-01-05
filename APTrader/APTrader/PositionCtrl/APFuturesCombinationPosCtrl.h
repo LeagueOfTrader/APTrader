@@ -52,6 +52,10 @@ public:
 
 	virtual void initWithData(std::string positionInfo);
 
+	virtual std::vector<APPositionData> getHoldPositionDetail();
+	virtual void setHoldAmount(APASSETID instrumentID, long amount);
+	std::pair<std::vector<APASSETID>, std::vector<long>> getCombinationUnitVol();
+
 	virtual void openPosition(APTradeDirection direction, double price, long volume); // ignore price in this class
 	virtual void closePosition(APTradeDirection direction, double price, long volume);
 	virtual void openFullPosition(APTradeDirection direction, double price);
