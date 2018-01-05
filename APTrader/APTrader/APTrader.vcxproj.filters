@@ -210,6 +210,9 @@
     <ClInclude Include="Impl\CTP\APFuturesCTPTraderResponser.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\APRedisAgent.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APPositionCtrl.cpp">
@@ -372,6 +375,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="APAccountAssets.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\APRedisAgent.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
