@@ -1,6 +1,7 @@
 ﻿#include <stdlib.h>
 #include <string.h>
 #include <vector>
+#include "../APTypes.h"
 
 template<class T>
 class CycleBuffer
@@ -12,14 +13,17 @@ public:
 		reset();
 		m_pBuf.resize(size);
 		m_nBufSize = size;
+		m_nGrowSize = size;
+		m_nAlertSize = 4096;
 	}
 
 	virtual ~CycleBuffer()
 	{
-		if(m_pBuf != NULL)
-		{
-			FREE(m_pBuf);
+		for (int i = 0; i < m_pBuf.size() i++) {
+			delete m_pBuf[i];
 		}
+
+		m_pBuf.clear();
 	}
 
 	int grow(int nSize)
@@ -38,7 +42,7 @@ public:
 
 		if (m_nWriteIndex < m_nReadIndex) {
 			for (int i = 0; i < m_nWriteIndex; i++) {
-				m_pBuf.set((m_nBufSize + i) % bufSize, m_pBuf.get(i));
+				m_pBuf[(m_nBufSize + i) % bufSize] = m_pBuf[i];
 			}
 
 			m_nWriteIndex = (m_nBufSize + m_nWriteIndex) % bufSize;
@@ -52,7 +56,7 @@ public:
 	//写到写列表的头部内存
 	int writeToHead(T pBuf)
 	{
-		if (pBuf == null)
+		if (pBuf == NULL)
 		{
 			return 0;
 		}
@@ -76,7 +80,7 @@ public:
 		}
 
 		m_nReadIndex = (m_nReadIndex + m_nBufSize - 1) % m_nBufSize;
-		m_pBuf.set(m_nReadIndex, pBuf);
+		m_pBuf[m_nReadIndex] = pBuf;
 
 		m_nDataSize++;
 
@@ -86,7 +90,7 @@ public:
 	//写到写列表的尾部内存
 	int write(T pBuf)
 	{
-		if (pBuf == null)
+		if (pBuf == NULL)
 		{
 			return 0;
 		}
@@ -131,10 +135,10 @@ public:
 	T read()
 	{
 		if (size() == 0) {
-			return null;
+			return NULL;
 		}
 
-		T data = m_pBuf.get(m_nReadIndex);
+		T data = m_pBuf[m_nReadIndex];
 		m_nReadIndex = (m_nReadIndex + 1) % m_nBufSize;
 
 		m_nDataSize--;
@@ -177,10 +181,12 @@ public:
 	}
 
 protected:
-	bool m_autoGrow;
+	bool m_bAutoGrow;
 	UINT m_nReadIndex;
 	UINT m_nWriteIndex;
 	UINT m_nDataSize;
 	UINT m_nBufSize;
+	UINT m_nGrowSize;
+	UINT m_nAlertSize;
 	std::vector<T> m_pBuf;
 };

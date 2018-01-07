@@ -1,3 +1,4 @@
+#pragma once
 #include "APMarco.h"
 #include "Strategy/APStandardGridStrategy.h"
 #include "APFramework.h"
@@ -11,6 +12,7 @@
 #include "Quotation/APFuturesMarketQuotations.h"
 #include "Monitor/APMonitorFramework.h"
 #include <thread>
+#include "Utils/APRedisAgent.h"
 
 //void frameworkLoop() {
 //	APMonitorFramework* framework = APMonitorFramework::getInstance();

@@ -213,6 +213,9 @@
     <ClInclude Include="Utils\APRedisAgent.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Common\ThreadSafeQueue.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APPositionCtrl.cpp">
