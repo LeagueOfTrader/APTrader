@@ -19,6 +19,9 @@ public:
 
 	void registerInitCallback(InitCallback callback);
 
+	std::string getUserID();
+	std::string getBrokerID();
+
 protected:
 	void readAccount();
 	void readParam();

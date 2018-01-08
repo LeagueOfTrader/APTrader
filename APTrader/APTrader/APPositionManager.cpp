@@ -28,7 +28,7 @@ APPositionCtrl * APPositionManager::createPositionCtrl(std::string positionInfo)
 	pc->m_id = m_idAccumulator->generateID();
 	pc->init(positionInfo);
 	m_positionCtrls[pc->m_id] = pc;
-	//APTradeManager::getInstance()->registerPositionCtrl(pc->getInstrumentID(), pc->getTrendType(), pc);
+	//APTradeManager::getInstance()->registerPositionCtrl(pc->getInstrumentID(), pc->getTradeDirection(), pc);
 	return pc;
 }
 

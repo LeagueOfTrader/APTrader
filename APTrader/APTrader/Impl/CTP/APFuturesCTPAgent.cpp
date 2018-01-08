@@ -55,6 +55,16 @@ void APFuturesCTPAgent::registerInitCallback(InitCallback callback)
 	m_initCallback = callback;
 }
 
+std::string APFuturesCTPAgent::getUserID()
+{
+	return m_userID;
+}
+
+std::string APFuturesCTPAgent::getBrokerID()
+{
+	return m_brokerID;
+}
+
 void APFuturesCTPAgent::readAccount()
 {
 	APJsonReader jr;

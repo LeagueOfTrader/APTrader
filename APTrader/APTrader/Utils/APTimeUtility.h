@@ -19,5 +19,17 @@ public:
 	static UINT getWorkDaysToFuturesDeliveryDate(std::string ym);
 
 	static UINT getTimestamp();
+
+	static std::string getDateTime();
+	static std::string getLastFutureTransactionDay();
+	int compareDateTime(std::string dt0, std::string dt1);
+	
+	static std::string calcDateByDeltaDays(std::string srcDate, int deltaDays);
+	static UINT getYearInDateTime(std::string dateTime);
+	static UINT getMonthInDateTime(std::string dateTime);
+	static UINT getDayInDateTime(std::string dateTime);
+	static UINT getHourInDateTime(std::string dateTime);
+	static UINT getMinuteInDateTime(std::string dateTime);
+	static UINT getSecondInDateTime(std::string dateTime);
 };
 

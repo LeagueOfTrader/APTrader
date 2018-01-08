@@ -76,6 +76,8 @@ public:
 	
 	void beginVerify();
 	
+	std::string getAccountID();
+	std::string getInterfaceType();
 
 #ifdef USE_CTP
 	void onGetPositionData(CThostFtdcInvestorPositionField* pInvestorPosition);
@@ -101,5 +103,8 @@ private:
 	std::set<APASSETID> m_instruments;
 
 	bool m_inited;
+
+	std::string m_accountID;
+	std::string m_interfaceType;
 };
 

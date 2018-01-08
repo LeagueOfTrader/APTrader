@@ -99,7 +99,7 @@ void APSharesPositionCtrl::onTradeDealt(APASSETID instrumentID, APTradeType type
 			m_openOrdersPosition -= deltaVolume;
 			break;
 		case TT_Close:
-			m_availablePosition += deltaVolume;
+			m_marginPosition += deltaVolume;
 			m_closeOrdersPosition -= deltaVolume;
 			break;
 
@@ -112,12 +112,12 @@ void APSharesPositionCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType t
 {
 	switch (type) {
 	case TT_Open:
-		m_availablePosition += volume;
+		m_marginPosition += volume;
 		m_openOrdersPosition -= volume;
 		m_openOrderList.remove(orderID);
 		break;
 	case TT_Close:
-		m_holdPosition += volume;
+		m_availablePosition += volume;
 		m_closeOrdersPosition -= volume;
 		m_closeOrderList.remove(orderID);
 		break;

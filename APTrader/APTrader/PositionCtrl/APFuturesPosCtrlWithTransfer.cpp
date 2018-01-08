@@ -29,7 +29,8 @@ void APFuturesPosCtrlWithTransfer::onTradeDealt(APASSETID instrumentID, APTradeT
 
 	if (m_isTransferring && !m_finishTransferring && type == TT_Open) {
 		if (instrumentID == m_instrumentID) {
-			m_holdPosition += deltaVolume;
+			m_availablePosition += deltaVolume;
+			//m_holdPosition += deltaVolume;
 		}
 		else {
 			m_targetContractHoldPosition += deltaVolume;
@@ -58,10 +59,10 @@ void APFuturesPosCtrlWithTransfer::open(APTradeDirection direction, double price
 void APFuturesPosCtrlWithTransfer::close(APTradeDirection direction, double price, long volume)
 {
 	if (m_isTransferring) {
-		long srcContractVolume = std::min(volume, m_holdPosition - m_closeOrdersPosition);
+		long srcContractVolume = std::min(volume, m_availablePosition - m_closeOrdersPosition);
 		APFuturesPositionCtrl::close(direction, price, srcContractVolume);
-		if (volume > m_holdPosition - m_closeOrdersPosition) {
-			long volumeSurplus = volume - (m_holdPosition - m_closeOrdersPosition);
+		if (volume > m_availablePosition - m_closeOrdersPosition) {
+			long volumeSurplus = volume - (m_availablePosition - m_closeOrdersPosition);
 			APFuturesPositionCtrl::close(m_targetContractID, direction, price, volumeSurplus);
 		}
 		return;
@@ -73,7 +74,7 @@ void APFuturesPosCtrlWithTransfer::close(APTradeDirection direction, double pric
 void APFuturesPosCtrlWithTransfer::beginTransfer()
 {
 	m_isTransferring = true;
-	m_positonNeedTransfer = m_holdPosition;
+	m_positonNeedTransfer = m_availablePosition;
 }
 
 bool APFuturesPosCtrlWithTransfer::isTransferring()
@@ -88,7 +89,7 @@ bool APFuturesPosCtrlWithTransfer::isTransferFinished()
 
 void APFuturesPosCtrlWithTransfer::transferContracts(double droppedContractPrice, double targetContractPrice, long volume)
 {
-	long realVolume = std::min(volume, m_holdPosition - m_closeOrdersPosition);
+	long realVolume = std::min(volume, m_availablePosition - m_closeOrdersPosition);
 	//fak may has mistakes
 	APFuturesPositionCtrl::close(m_instrumentID, m_directionType, droppedContractPrice, realVolume);
 	realVolume = std::min(realVolume, m_positonNeedTransfer - m_targetContractHoldPosition);
@@ -100,7 +101,7 @@ void APFuturesPosCtrlWithTransfer::transferContracts(double droppedContractPrice
 void APFuturesPosCtrlWithTransfer::checkTransferStatus()
 {
 	if (m_isTransferring) {
-		if (m_holdPosition == 0 && m_targetContractHoldPosition >= m_positonNeedTransfer) {
+		if (m_availablePosition == 0 && m_targetContractHoldPosition >= m_positonNeedTransfer) {
 			m_finishTransferring = true;
 		}
 	}

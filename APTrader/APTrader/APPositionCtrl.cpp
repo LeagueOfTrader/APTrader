@@ -8,6 +8,7 @@
 #include "APPositionManager.h"
 #include "APTrade.h"
 #include "3rdParty/jsoncpp/include/json/writer.h"
+#include "Utils/APTimeUtility.h"
 
 APPositionCtrl::APPositionCtrl()
 {
@@ -50,7 +51,8 @@ const APASSETID& APPositionCtrl::getInstrumentID()
 	return m_instrumentID;
 }
 
-APTradeDirection APPositionCtrl::getTrendType() {
+APTradeDirection APPositionCtrl::getTradeDirection() 
+{
 	return m_directionType;
 }
 
@@ -99,14 +101,14 @@ void APPositionCtrl::setFrozenPosition(long position)
 	m_frozenPosition = position;
 }
 
-void APPositionCtrl::setAvailablePosition(long position)
+void APPositionCtrl::setMarginPosition(long position)
 {
-	m_availablePosition = position;
+	m_marginPosition = position;
 }
 
 void APPositionCtrl::resetAvailablePosition()
 {
-	m_availablePosition = m_maxPosition - m_holdPosition - m_frozenPosition - m_openOrdersPosition;
+	m_marginPosition = m_maxPosition - m_holdPosition;
 }
 
 long APPositionCtrl::getMaxPosition()
@@ -114,9 +116,9 @@ long APPositionCtrl::getMaxPosition()
 	return m_maxPosition;
 }
 
-long APPositionCtrl::getAvailablePosition()
+long APPositionCtrl::getMarginPosition()
 {
-	return m_availablePosition;
+	return m_marginPosition;
 }
 
 long APPositionCtrl::getFrozenPosition()
@@ -124,15 +126,15 @@ long APPositionCtrl::getFrozenPosition()
 	return m_frozenPosition;
 }
 
-void APPositionCtrl::unfreezePosition(long position)
-{
-	if (position == -1){
-		position = m_frozenPosition;
-	}
-	
-	m_holdPosition += position;
-	m_frozenPosition -= position;
-}
+//void APPositionCtrl::unfreezePosition(long position)
+//{
+//	if (position == -1){
+//		position = m_frozenPosition;
+//	}
+//	
+//	m_availablePosition += position;
+//	m_frozenPosition -= position;
+//}
 
 std::vector<APPositionData> APPositionCtrl::getHoldPositionDetail()
 {
@@ -164,14 +166,14 @@ void APPositionCtrl::recycleFund(APRecycleFundLevel level)
 	}
 }
 
-long APPositionCtrl::getCurPosition()
-{
-	return m_holdPosition + m_frozenPosition;
-}
-
-long APPositionCtrl::getTradablePosition()
+long APPositionCtrl::getHoldPosition()
 {
 	return m_holdPosition;
+}
+
+long APPositionCtrl::getAvailablePosition()
+{
+	return m_availablePosition;
 }
 
 long APPositionCtrl::getOpenOrderedPosition()
@@ -186,8 +188,8 @@ long APPositionCtrl::getCloseOrderedPosition()
 
 void APPositionCtrl::openPosition(APTradeDirection direction, double price, long volume)
 {	
-	if (volume > m_availablePosition) {
-		volume = m_availablePosition;
+	if (volume > m_marginPosition) {
+		volume = m_marginPosition;
 	}
 
 	double quotePrice = price;
@@ -203,15 +205,15 @@ void APPositionCtrl::openPosition(APTradeDirection direction, double price, long
 		}
 	}
 
-	m_availablePosition -= volume;
+	m_marginPosition -= volume;
 	m_openOrdersPosition += volume;
 	open(direction, quotePrice, volume);
 }
 
 void APPositionCtrl::closePosition(APTradeDirection direction, double price, long volume)
 {
-	if (volume > m_holdPosition) {
-		volume = m_holdPosition;
+	if (volume > m_availablePosition) {
+		volume = m_availablePosition;
 	}
 
 	double quotePrice = price;
@@ -226,8 +228,8 @@ void APPositionCtrl::closePosition(APTradeDirection direction, double price, lon
 			quotePrice = marketPrice;
 		}
 	}
-
-	m_holdPosition -= volume;
+	
+	m_availablePosition -= volume;
 	m_closeOrdersPosition += volume;
 	close(direction, quotePrice, volume);
 }
@@ -235,15 +237,15 @@ void APPositionCtrl::closePosition(APTradeDirection direction, double price, lon
 void APPositionCtrl::openFullPosition(APTradeDirection direction, double price)
 {
 	openAll(direction, price);
-	m_openOrdersPosition += m_availablePosition;
-	m_availablePosition = 0;	
+	m_openOrdersPosition += m_marginPosition;
+	m_marginPosition = 0;	
 }
 
 void APPositionCtrl::closeOffPosition(APTradeDirection direction, double price)
 {
 	closeAll(direction, price);
-	m_closeOrdersPosition += m_holdPosition;
-	m_holdPosition = 0;	
+	m_closeOrdersPosition += m_availablePosition;
+	m_availablePosition = 0;	
 }
 
 //void APPositionCtrl::cancelTrade(APTradeType type, double price, long volume)
@@ -285,11 +287,27 @@ void APPositionCtrl::onCompleteOrder(APORDERID orderID, APTradeType type)
 	}
 }
 
+void APPositionCtrl::save()
+{
+	std::string redisKey = APAccountAssets::getInstance()->getInterfaceType() + ":"
+							+ APAccountAssets::getInstance()->getAccountID() + ":"
+							+ m_tag;
+	archive(redisKey);
+}
+
+void APPositionCtrl::load()
+{
+	std::string redisKey = APAccountAssets::getInstance()->getInterfaceType() + ":"
+							+ APAccountAssets::getInstance()->getAccountID() + ":"
+							+ m_tag;
+	unarchive(redisKey);
+}
+
 void APPositionCtrl::onSyncPositionStatus(const APPositionData & pd)
 {
-	//m_availablePosition = m_maxPosition - pd.holdPosition;
+	//m_marginPosition = m_maxPosition - pd.holdPosition;
 	//m_frozenPosition = pd.frozenPosition;
-	//m_holdPosition = pd.holdPosition;
+	//m_availablePosition = pd.holdPosition;
 	//m_openOrdersPosition = pd.openOrdersPosition;
 	//m_closeOrdersPosition = pd.closeOrdersPosition;
 }
@@ -301,9 +319,9 @@ void APPositionCtrl::syncPositionStatus()
 	//	onSyncPositionStatus(pd);
 	//}
 	//else {
-	//	m_availablePosition = m_maxPosition;
+	//	m_marginPosition = m_maxPosition;
 	//	m_frozenPosition = 0;
-	//	m_holdPosition = 0;
+	//	m_availablePosition = 0;
 	//	m_openOrdersPosition = 0;
 	//	m_closeOrdersPosition = 0;
 	//}
@@ -337,13 +355,30 @@ void APPositionCtrl::initWithData(std::string positionInfo)
 std::string APPositionCtrl::serialize()
 {
 	Json::Value v;
-	v["OpenOrdersPosition"] = Json::Value(m_openOrdersPosition);
-	v["CloseOrdersPosition"] = Json::Value(m_closeOrdersPosition);
-	v["HoldPosition"] = Json::Value(m_holdPosition);
-	v["AvailablePosition"] = Json::Value(m_availablePosition);
-	v["FrozenPosition"] = Json::Value(m_frozenPosition);
+	v["OpenOrdersPosition"] = m_openOrdersPosition;
+	v["CloseOrdersPosition"] = m_closeOrdersPosition;
+	v["HoldPosition"] = m_holdPosition;
+	v["AvailablePosition"] = m_availablePosition;
+	v["MarginPosition"] = m_marginPosition;
+	v["FrozenPosition"] = m_frozenPosition;
+	v["DateTime"] = APTimeUtility::getDateTime();
 
 	// array process
+	Json::Value bidArr;
+	std::list<APORDERID>::iterator it;
+	int index = 0;
+	for (it = m_openOrderList.begin(); it != m_openOrderList.end(); it++) {
+		APORDERID orderID = *it;
+		bidArr[index++] = orderID;
+	}
+	v["BidOrders"] = bidArr;
+	Json::Value askArr;
+	index = 0;
+	for (it = m_closeOrderList.begin(); it != m_closeOrderList.end(); it++) {
+		APORDERID orderID = *it;
+		askArr[index++] = orderID;
+	}
+	v["AskOrders"] = askArr;
 
 	Json::FastWriter fw;
 	return fw.write(v);
@@ -351,7 +386,30 @@ std::string APPositionCtrl::serialize()
 
 void APPositionCtrl::deserialize(std::string str)
 {
-	//
+	APJsonReader jr;
+	jr.initWithString(str);
+
+	m_openOrdersPosition = jr.getIntValue("OpenOrdersPosition");
+	m_closeOrdersPosition = jr.getIntValue("ClsoeOrdersPosition");
+	m_holdPosition = jr.getIntValue("HoldPosition");
+	m_availablePosition = jr.getIntValue("AvailablePosition");
+	m_marginPosition = jr.getIntValue("MarginPosition");
+	m_frozenPosition = jr.getIntValue("FrozenPosition");
+
+	int count = jr.getArraySize("BidOrders");
+	for (int i = 0; i < count; i++) {
+		APORDERID orderID = jr.getArrayIntValue("BidOrders", 0);
+		m_openOrderList.push_back(orderID);
+	}
+
+	count = jr.getArraySize("AskOrders");
+	for (int i = 0; i < count; i++) {
+		APORDERID orderID = jr.getArrayIntValue("AskOrders", 0);
+		m_closeOrderList.push_back(orderID);
+	}
+
+	std::string dateTime = jr.getStrValue("DateTime");
+	//todo: if beyond last transaction day, change yd hold and td hold
 }
 
 void APPositionCtrl::cancel(APTradeType type, double price, APTradeDirection direction)

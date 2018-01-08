@@ -160,6 +160,7 @@ void APFuturesCombinationPosCtrl::onTradeDealt(APASSETID instrumentID, APTradeTy
 			if (m_curOpenOperation.coVolume == m_curOpenOperation.coTarget) {
 				// finish
 				m_holdPosition += m_curOpenOperation.groupCount;
+				m_availablePosition += m_curOpenOperation.groupCount;
 				m_openOrdersPosition -= m_curOpenOperation.groupCount;
 				m_curOpenOperation.reset();
 			}
@@ -180,7 +181,9 @@ void APFuturesCombinationPosCtrl::onTradeDealt(APASSETID instrumentID, APTradeTy
 			m_curCloseOperation.coVolume += deltaVolume;
 			if (m_curCloseOperation.coVolume == m_curCloseOperation.coTarget) {
 				// finish
-				m_availablePosition += m_curCloseOperation.groupCount;
+				m_holdPosition -= m_curCloseOperation.groupCount;
+				m_availablePosition -= m_curCloseOperation.groupCount;
+
 				m_closeOrdersPosition -= m_curCloseOperation.groupCount;
 				m_curOpenOperation.reset();
 			}
@@ -205,7 +208,7 @@ void APFuturesCombinationPosCtrl::onTradeCanceled(APASSETID instrumentID, APTrad
 		break;
 	case TT_Close:
 		if (instrumentID == m_instrumentID) {
-			m_holdPosition += m_curCloseOperation.groupCount;
+			m_marginPosition += m_curCloseOperation.groupCount;
 			m_closeOrdersPosition -= m_curCloseOperation.groupCount;
 			m_closeOrderList.remove(orderID);
 			m_curCloseOperation.reset();

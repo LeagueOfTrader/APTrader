@@ -155,6 +155,7 @@
     <ClInclude Include="APDef.h" />
     <ClInclude Include="APFramework.h" />
     <ClInclude Include="APFundPool.h" />
+    <ClInclude Include="Utils\APRedisSerializedObject.h" />
     <ClInclude Include="Common\ThreadSafeQueue.h" />
     <ClInclude Include="Utils\APRedisAgent.h" />
     <ClInclude Include="Monitor\APMonitorFramework.h" />
@@ -222,6 +223,7 @@
     <ClCompile Include="APAccountAssets.cpp" />
     <ClCompile Include="APFramework.cpp" />
     <ClCompile Include="APFundPool.cpp" />
+    <ClCompile Include="Utils\APRedisSerializedObject.cpp" />
     <ClCompile Include="Utils\APRedisAgent.cpp" />
     <ClCompile Include="Monitor\APMonitorFramework.cpp" />
     <ClCompile Include="Monitor\APQuotationMonitorManager.cpp" />

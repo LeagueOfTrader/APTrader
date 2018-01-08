@@ -47,5 +47,10 @@ public:
 		APOrderTimeCondition orderTimeCondition = OTC_GoodForDay, std::string date = "",
 		APOrderVolumeCondition orderVolumeCondition = OVC_Any, long volume = 0, long minVolume = 0,
 		APOrderContingentCondition orderContingentCondition = OCC_Immediately, double stopPrice = 0.0);
+
+	void setCloseTodayFirst(bool closeTDFirst);
+
+private:
+	bool m_closeTodayFirst;
 };
 

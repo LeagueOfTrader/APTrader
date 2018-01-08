@@ -387,9 +387,7 @@ void APFuturesCTPTraderAgent::cancelOrder(APORDERID localOrderID, APSYSTEMID sys
 	req.FrontID = m_frontID;
 	req.SessionID = m_sessionID;
 	req.ActionFlag = THOST_FTDC_AF_Delete;
-	char remoteID[32];
-	itoa(sysID, remoteID, 10);
-	strcpy(req.OrderSysID, remoteID);
+	strcpy(req.OrderSysID, sysID.c_str());
 
 	int ret = m_traderApi->ReqOrderAction(&req, genReqID());
 	if (ret == 0) {
@@ -467,6 +465,36 @@ int APFuturesCTPTraderAgent::reqQryInvestorPosition(APASSETID instrumentID)
 	strcpy(req.InstrumentID, instrumentID.c_str());
 
 	int ret = m_traderApi->ReqQryInvestorPosition(&req, genReqID());
+	return ret;
+}
+
+int APFuturesCTPTraderAgent::reqQryOrder(APASSETID instrumentID, APSYSTEMID sysID)
+{
+	if (m_traderApi == NULL) {
+		return -1;
+	}
+
+	CThostFtdcQryOrderField req;
+	memset(&req, 0, sizeof(req));
+	strcpy(req.BrokerID, m_brokerID.c_str());
+	strcpy(req.InvestorID, m_userID.c_str());
+	strcpy(req.InstrumentID, instrumentID.c_str());
+	strcpy(req.OrderSysID, sysID.c_str());
+
+	int ret = m_traderApi->ReqQryOrder(&req, genReqID());
+	return ret;
+}
+
+int APFuturesCTPTraderAgent::reqQryTrade(std::string tradeID)
+{
+	if (m_traderApi == NULL) {
+		return -1;
+	}
+
+	CThostFtdcQryTradeField req;
+	memset(&req, 0, sizeof(req));
+	strcpy(req.TradeID, tradeID.c_str());
+	int ret = m_traderApi->ReqQryTrade(&req, genReqID());
 	return ret;
 }
 

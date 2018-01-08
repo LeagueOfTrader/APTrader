@@ -54,7 +54,7 @@ void APSimFuturesTrade::close(APORDERID orderID, APASSETID instrumentID, APTrade
 void APSimFuturesTrade::cancel(APORDERID orderID)
 {
 	APSYSTEMID sysID = getSysIDByOrder(orderID);
-	if (sysID > 0) {
+	if (sysID.length() > 0) {
 		APSimTradeSystem::getInstance()->requestCancel(sysID);
 	}
 }

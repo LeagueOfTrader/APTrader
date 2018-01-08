@@ -144,15 +144,17 @@ void APFuturesCTPTraderResponser::OnRspCombActionInsert(CThostFtdcInputCombActio
 
 void APFuturesCTPTraderResponser::OnRspQryOrder(CThostFtdcOrderField * pOrder, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
+	// todo: qry order
 }
 
 void APFuturesCTPTraderResponser::OnRspQryTrade(CThostFtdcTradeField * pTrade, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
+	// todo: qry trade
 }
 
 void APFuturesCTPTraderResponser::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField * pInvestorPosition, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
-	//
+	// todo: qry position
 }
 
 void APFuturesCTPTraderResponser::OnRspQryTradingAccount(CThostFtdcTradingAccountField * pTradingAccount, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
@@ -191,7 +193,6 @@ void APFuturesCTPTraderResponser::OnRspQryInstrument(CThostFtdcInstrumentField *
 
 void APFuturesCTPTraderResponser::OnRspQryDepthMarketData(CThostFtdcDepthMarketDataField * pDepthMarketData, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
-	//
 }
 
 void APFuturesCTPTraderResponser::OnRspQrySettlementInfo(CThostFtdcSettlementInfoField * pSettlementInfo, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)

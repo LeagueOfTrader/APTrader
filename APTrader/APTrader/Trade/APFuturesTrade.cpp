@@ -58,7 +58,7 @@ void APFuturesTrade::cancel(APORDERID orderID)
 {
 #ifdef USE_CTP
 	APSYSTEMID sysID = getSysIDByOrder(orderID);
-	if (sysID > 0) {
+	if (sysID.length() > 0) {
 		APFuturesCTPTraderAgent::getInstance()->cancelOrder(orderID, sysID);
 	}
 #endif

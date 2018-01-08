@@ -22,8 +22,10 @@ APSimTradeSystem::~APSimTradeSystem()
 }
 
 APSYSTEMID APSimTradeSystem::requestOpen(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume)
-{
-	APSYSTEMID sysID = m_orderIDAccumulator->generateID();
+{	
+	char strID[32];
+	sprintf(strID, "%d", m_orderIDAccumulator->generateID());
+	APSYSTEMID sysID = strID;
 	APTradeOrderInfo order = {orderID, TT_Open, instrumentID, price, volume, direction, TS_Ordered, sysID, 0};
 	m_orderList.push_back(order);
 	if (m_trade != NULL) {
@@ -34,7 +36,9 @@ APSYSTEMID APSimTradeSystem::requestOpen(APORDERID orderID, APASSETID instrument
 
 APSYSTEMID APSimTradeSystem::requestClose(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume)
 {
-	APSYSTEMID sysID = m_orderIDAccumulator->generateID();
+	char strID[32];
+	sprintf(strID, "%d", m_orderIDAccumulator->generateID());
+	APSYSTEMID sysID = strID;
 	APTradeOrderInfo order = { orderID, TT_Close, instrumentID, price, volume, direction, TS_Ordered, sysID, 0 };
 	m_orderList.push_back(order);
 	if (m_trade != NULL) {

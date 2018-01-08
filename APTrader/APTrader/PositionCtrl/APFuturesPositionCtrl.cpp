@@ -4,8 +4,8 @@
 APFuturesPositionCtrl::APFuturesPositionCtrl()
 {
 	m_trade = NULL;
+	m_closeTodayFirst = true;
 }
-
 
 APFuturesPositionCtrl::~APFuturesPositionCtrl()
 {
@@ -34,12 +34,12 @@ void APFuturesPositionCtrl::close(APTradeDirection direction, double price, long
 
 void APFuturesPositionCtrl::openAll(APTradeDirection direction, double price)
 {
-	open(direction, price, m_availablePosition);
+	open(direction, price, m_marginPosition);
 }
 
 void APFuturesPositionCtrl::closeAll(APTradeDirection direction, double price)
 {
-	close(direction, price, m_holdPosition);
+	close(direction, price, m_availablePosition);
 }
 
 //void APFuturesPositionCtrl::cancel(APTradeType type, double price, long volume)
@@ -126,10 +126,12 @@ void APFuturesPositionCtrl::onTradeDealt(APASSETID instrumentID, APTradeType typ
 	switch (type) {
 	case TT_Open:
 		m_holdPosition += deltaVolume;
+		m_availablePosition += deltaVolume;
 		m_openOrdersPosition -= deltaVolume;
 		break;
 	case TT_Close:
-		m_availablePosition += deltaVolume;
+		m_marginPosition += deltaVolume;
+		m_holdPosition -= deltaVolume;
 		m_closeOrdersPosition -= deltaVolume;
 		break;
 	default:
@@ -141,12 +143,12 @@ void APFuturesPositionCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType 
 {
 	switch (type) {
 	case TT_Open:
-		m_availablePosition += volume;
+		m_marginPosition += volume;
 		m_openOrdersPosition -= volume;
 		m_openOrderList.remove(orderID);
 		break;
 	case TT_Close:
-		m_holdPosition += volume;
+		m_availablePosition += volume;
 		m_closeOrdersPosition -= volume;
 		m_closeOrderList.remove(orderID);
 		break;
@@ -195,6 +197,11 @@ void APFuturesPositionCtrl::close(APASSETID instrumentID, APTradeDirection direc
 			orderContingentCondition, stopPrice);
 		m_closeOrderList.push_back(orderID);
 	}
+}
+
+void APFuturesPositionCtrl::setCloseTodayFirst(bool closeTDFirst)
+{
+	m_closeTodayFirst = closeTDFirst;
 }
 
 void APFuturesPositionCtrl::open(APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot)

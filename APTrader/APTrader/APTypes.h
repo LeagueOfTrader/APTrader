@@ -9,4 +9,5 @@ typedef unsigned char BYTE;
 
 typedef std::string APASSETID;
 
-typedef unsigned int APSYSTEMID;
+//typedef unsigned int APSYSTEMID;
+typedef std::string APSYSTEMID;

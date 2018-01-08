@@ -126,3 +126,151 @@ UINT APTimeUtility::getTimestamp()
 	localtime(&t);
 	return t;
 }
+
+std::string APTimeUtility::getDateTime()
+{
+	SYSTEMTIME sys;
+	GetLocalTime(&sys);
+	char strDateTime[64];
+	sprintf(strDateTime, "%4d%2d%2d%2d%2d%2d", sys.wYear, sys.wMonth, sys.wDay, sys.wHour, sys.wMinute, sys.wSecond);
+	std::string dateTime = strDateTime;
+	return dateTime;
+}
+
+std::string APTimeUtility::getLastFutureTransactionDay()
+{
+	SYSTEMTIME sys;
+	GetLocalTime(&sys);
+	if (sys.wDayOfWeek == 0 || sys.wDayOfWeek == 6) {
+		//
+	}
+	char strDateTime[64];
+	sprintf(strDateTime, "%4d%2d%2d%2d%2d%2d", sys.wYear, sys.wMonth, sys.wDay, sys.wHour, sys.wMinute, sys.wSecond);
+	std::string dateTime = strDateTime;
+	return dateTime;
+}
+
+int APTimeUtility::compareDateTime(std::string dt0, std::string dt1)
+{
+	UINT y0 = getYearInDateTime(dt0);
+	UINT y1 = getYearInDateTime(dt1);
+	if (y0 > y1) {
+		return 1;
+	}
+	else if (y0 < y1) {
+		return -1;
+	}
+
+	UINT m0 = getMonthInDateTime(dt0);
+	UINT m1 = getMonthInDateTime(dt1);
+	if (m0 > m1) {
+		return 1;
+	}
+	else if (m0 < m1) {
+		return -1;
+	}
+
+	UINT d0 = getDayInDateTime(dt0);
+	UINT d1 = getDayInDateTime(dt1);
+	if (d0 > d1) {
+		return 1;
+	}
+	else if (d0 < d1) {
+		return -1;
+	}
+
+	UINT h0 = getHourInDateTime(dt0);
+	UINT h1 = getHourInDateTime(dt1);
+	if (h0 > h1) {
+		return 1;
+	}
+	else if (h0 < h1) {
+		return -1;
+	}
+
+	UINT min0 = getMinuteInDateTime(dt0);
+	UINT min1 = getMinuteInDateTime(dt1);
+	if (min0 > min1) {
+		return 1;
+	}
+	else if (min0 < min1) {
+		return -1;
+	}
+
+	UINT sec0 = getSecondInDateTime(dt0);
+	UINT sec1 = getSecondInDateTime(dt1);
+	if (sec0 > sec1) {
+		return 1;
+	}
+	else if (sec0 < sec1) {
+		return -1;
+	}
+
+	return 0;
+}
+
+std::string APTimeUtility::calcDateByDeltaDays(std::string srcDate, int deltaDays) // delta < 1 month
+{
+	SYSTEMTIME sys;
+	GetLocalTime(&sys);
+	int year = sys.wYear;
+	int month = sys.wMonth;
+	int day = sys.wDay;
+	day += deltaDays;
+	if (day <= 0) {
+		month--;
+		if (month <= 0) {
+			month = 12;
+			year--;
+		}
+		day += DAYS_IN_MONTH[month];
+	}
+	else if (day > DAYS_IN_MONTH[month]) {
+		day -= DAYS_IN_MONTH[month++];
+		if (month > 12) {
+			month = 1;
+		}
+	}
+
+	char strDateTime[64];
+	sprintf(strDateTime, "%4d%2d%2d", sys.wYear, sys.wMonth, sys.wDay);
+	std::string ymd = strDateTime;
+
+	return ymd;
+}
+
+UINT APTimeUtility::getYearInDateTime(std::string dateTime)
+{
+	std::string str = dateTime.substr(0, 4);
+	return atoi(str.c_str());
+}
+
+UINT APTimeUtility::getMonthInDateTime(std::string dateTime)
+{
+	std::string str = dateTime.substr(4, 2);
+	return atoi(str.c_str());
+}
+
+UINT APTimeUtility::getDayInDateTime(std::string dateTime)
+{
+	std::string str = dateTime.substr(6, 2);
+	return atoi(str.c_str());
+}
+
+UINT APTimeUtility::getHourInDateTime(std::string dateTime)
+{
+	std::string str = dateTime.substr(8, 2);
+	return atoi(str.c_str());
+}
+
+UINT APTimeUtility::getMinuteInDateTime(std::string dateTime)
+{
+	std::string str = dateTime.substr(10, 2);
+	return atoi(str.c_str());
+}
+
+UINT APTimeUtility::getSecondInDateTime(std::string dateTime)
+{
+	std::string str = dateTime.substr(12, 2);
+	return atoi(str.c_str());
+}

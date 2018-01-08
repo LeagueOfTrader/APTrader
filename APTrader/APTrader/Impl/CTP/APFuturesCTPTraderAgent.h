@@ -42,6 +42,9 @@ public:
 	int reqQryTradingAccount();
 	// 请求查询仓位
 	int reqQryInvestorPosition(APASSETID instrumentID);
+	//	订单查询
+	int reqQryOrder(APASSETID instrumentID, APSYSTEMID sysID);
+	int reqQryTrade(std::string tradeID);
 
 	// response
 	void onQryInstrumentPosition(CThostFtdcInvestorPositionField* pInvestorPosition);

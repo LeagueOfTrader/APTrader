@@ -4,12 +4,12 @@
 #include "APAccountAssets.h"
 #include "APTypes.h"
 #include <list>
-#include "Common/SerializedObject.h"
+#include "Utils/APRedisSerializedObject.h"
 
 class APTrade;
 class APInstrumentQuotation;
 
-class APPositionCtrl : public SerializedObject
+class APPositionCtrl : public APRedisSerializedObject
 {
 public:
 	APPositionCtrl();
@@ -20,7 +20,7 @@ public:
 	virtual void syncPositionStatus();	
 
 	void setInstrumentID(APASSETID instrumentID);
-	APTradeDirection getTrendType();
+	APTradeDirection getTradeDirection();
 	const APASSETID& getInstrumentID();
 	UINT getID();
 
@@ -37,20 +37,20 @@ public:
 
 	void setMaxPosition(long position);
 	void setFrozenPosition(long position);
-	void setAvailablePosition(long position);
+	void setMarginPosition(long position);
 	void resetAvailablePosition();
 	long getMaxPosition();
 	long getAvailablePosition();
+	long getMarginPosition();
+	long getHoldPosition();
 	long getFrozenPosition();
-	void unfreezePosition(long position = -1);
+	//void unfreezePosition(long position = -1);
 
 	virtual std::vector<APPositionData> getHoldPositionDetail();
 	virtual void setHoldAmount(APASSETID instrumentID, long amount);
 
 	void recycleFund(APRecycleFundLevel level = RFL_UndeficitPosition);
 
-	long getCurPosition();
-	long getTradablePosition();
 	long getOpenOrderedPosition();
 	long getCloseOrderedPosition();
 
@@ -72,6 +72,9 @@ public:
 
 	void onCompleteOrder(APORDERID orderID, APTradeType type);
 
+	void save();
+	void load();
+
 protected:
 	virtual void open(APTradeDirection direction, double price, long volume) = 0;
 	virtual void close(APTradeDirection direction, double price, long volume) = 0;
@@ -91,12 +94,20 @@ protected:
 	virtual void deserialize(std::string str);
 
 protected:
-	long m_openOrdersPosition;
-	long m_closeOrdersPosition;
-	long m_holdPosition; // position to close
-	long m_maxPosition; // maxium position
-	long m_availablePosition; // position available to open
-	long m_frozenPosition; // freezed position, cannot close until t+n
+	long m_openOrdersPosition; // 开仓冻结量
+	long m_closeOrdersPosition; // 平仓冻结量
+	
+	long m_holdPosition; // 持仓量
+	long m_availablePosition; // 可平量
+	long m_maxPosition; // 最大开仓上限
+	long m_marginPosition; // 还可开仓的量
+	long m_frozenPosition; // 冻结的量
+
+	long m_todayHoldPosition; // 今持
+	long m_yesterdayHoldPosition; // 昨持
+
+	long m_cancelOpenOrdersPosition; // 撤销开仓量
+	long m_cancelCloseOrdersPosition; // 撤销平仓量
 
 	// process later, fund
 	double m_availableFund;

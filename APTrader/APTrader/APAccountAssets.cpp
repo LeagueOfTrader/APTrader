@@ -33,6 +33,8 @@ APTradeDirection parseCTPDirection(TThostFtdcPosiDirectionType dt) {
 APAccountAssets::APAccountAssets()
 {
 	m_inited = false;
+	m_accountID = "Default";
+	m_interfaceType = "";
 }
 
 APAccountAssets::~APAccountAssets()
@@ -41,6 +43,10 @@ APAccountAssets::~APAccountAssets()
 
 void APAccountAssets::init()
 {
+#ifdef USE_CTP
+	m_accountID = APFuturesCTPTraderAgent::getInstance()->getUserID();
+	m_interfaceType = "CTP";
+#endif
 }
 
 bool APAccountAssets::inited()
@@ -115,8 +121,9 @@ void APAccountAssets::verifyWithStub(std::map<APASSETID, APPositionDataStub>& st
 			stub[pd.instrumentID].remainPosition -= pd.holdPosition;
 		}
 		else {
-			posCtrl->setHoldAmount(pd.instrumentID, stub[pd.instrumentID].remainPosition);
-			stub[pd.instrumentID].remainPosition = 0;
+			// check order
+			//posCtrl->setHoldAmount(pd.instrumentID, stub[pd.instrumentID].remainPosition);
+			//stub[pd.instrumentID].remainPosition = 0;
 		}
 	}
 }
@@ -157,6 +164,16 @@ void APAccountAssets::beginVerify()
 		APFuturesCTPTraderAgent::getInstance()->reqQryInvestorPosition(id);
 #endif
 	}
+}
+
+std::string APAccountAssets::getAccountID()
+{
+	return m_accountID;
+}
+
+std::string APAccountAssets::getInterfaceType()
+{
+	return m_interfaceType;
 }
 
 #ifdef USE_CTP
