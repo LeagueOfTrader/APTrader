@@ -34,13 +34,20 @@ struct APPositionData {
 	std::string instrumentID;
 	APTradeDirection direction;
 	long holdPosition;
-	long frozenPosition;	
+	long longFrozenPosition;	
+	long shortFrozenPosition;
+	//
+	long yesterdayPosition;
+	long todayPosition;
 
 	void assign(const APPositionData& refData) {
 		instrumentID = refData.instrumentID;
 		direction = refData.direction;
 		holdPosition = refData.holdPosition;
-		frozenPosition = refData.frozenPosition;
+		longFrozenPosition = refData.longFrozenPosition;
+		shortFrozenPosition = refData.shortFrozenPosition;
+		yesterdayPosition = refData.yesterdayPosition;
+		todayPosition = refData.todayPosition;
 	}
 };
 
@@ -80,7 +87,7 @@ public:
 	std::string getInterfaceType();
 
 #ifdef USE_CTP
-	void onGetPositionData(CThostFtdcInvestorPositionField* pInvestorPosition);
+	void onGetPositionData(APASSETID instrumentID, std::vector<CThostFtdcInvestorPositionField>& positionDataArr);
 #endif
 
 protected:
@@ -92,6 +99,10 @@ protected:
 
 private:
 	void verifyWithStub(std::map<APASSETID, APPositionDataStub>& stub, const APPositionData& pd, APPositionCtrl* posCtrl);
+
+#ifdef USE_CTP
+	void appendPositionInfo(APPositionData& pd, CThostFtdcInvestorPositionField& info);
+#endif
 
 private:
 	std::map<APASSETID, APPositionDataStub> m_buyPositionData;

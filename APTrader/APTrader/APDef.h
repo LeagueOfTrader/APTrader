@@ -7,6 +7,12 @@ enum APTradeDirection {
 	TD_Num
 };
 
+enum APPositionDirection {
+	PD_Long,
+	PD_Short,
+	PD_Num
+};
+
 enum APFinancialInstrumentType {
 	FCT_Shares,
 	FCT_Futrues,

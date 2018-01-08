@@ -465,6 +465,7 @@ int APFuturesCTPTraderAgent::reqQryInvestorPosition(APASSETID instrumentID)
 	strcpy(req.InstrumentID, instrumentID.c_str());
 
 	int ret = m_traderApi->ReqQryInvestorPosition(&req, genReqID());
+	//m_traderApi->ReqQryInvestorPositionDetail();
 	return ret;
 }
 
@@ -498,10 +499,61 @@ int APFuturesCTPTraderAgent::reqQryTrade(std::string tradeID)
 	return ret;
 }
 
-void APFuturesCTPTraderAgent::onQryInstrumentPosition(CThostFtdcInvestorPositionField * pInvestorPosition)
+int APFuturesCTPTraderAgent::reqQryInstrumentCommissionRate(APASSETID instrumentID)
 {
-	APAccountAssets::getInstance()->onGetPositionData(pInvestorPosition);
+	if (m_traderApi == NULL) {
+		return -1;
+	}
+
+	CThostFtdcQryInstrumentCommissionRateField req;
+	memset(&req, 0, sizeof(req));
+	strcpy(req.BrokerID, m_brokerID.c_str());
+	strcpy(req.InvestorID, m_userID.c_str());
+	strcpy(req.InstrumentID, instrumentID.c_str());
+	int ret = m_traderApi->ReqQryInstrumentCommissionRate(&req, genReqID());
+	return ret;
 }
+
+int APFuturesCTPTraderAgent::reqQryInstrumentMarginRate(APASSETID instrumentID)
+{
+	if (m_traderApi == NULL) {
+		return -1;
+	}
+	
+	CThostFtdcQryInstrumentMarginRateField req;
+	memset(&req, 0, sizeof(req));
+	strcpy(req.BrokerID, m_brokerID.c_str());
+	strcpy(req.InvestorID, m_userID.c_str());
+	strcpy(req.InstrumentID, instrumentID.c_str());
+	req.HedgeFlag = THOST_FTDC_HF_Speculation;
+
+	int ret = m_traderApi->ReqQryInstrumentMarginRate(&req, genReqID());
+	return ret;
+}
+
+void APFuturesCTPTraderAgent::onQryInstrumentPositionFinished(APASSETID instrumentID)
+{
+	APAccountAssets::getInstance()->onGetPositionData(instrumentID, m_positionInfo[instrumentID]);
+}
+
+void APFuturesCTPTraderAgent::onQryInstrumentPosition(APASSETID instrumentID, CThostFtdcInvestorPositionField * positionInfo)
+{
+	if (positionInfo == NULL) {
+		return;
+	}
+
+	if (m_positionInfo.find(instrumentID) == m_positionInfo.end()) {
+		std::vector<CThostFtdcInvestorPositionField> posInfoArr;
+		m_positionInfo[instrumentID] = posInfoArr;
+	}
+
+	m_positionInfo[instrumentID].push_back(*positionInfo);
+}
+
+//void APFuturesCTPTraderAgent::onQryInstrumentPosition(CThostFtdcInvestorPositionField * pInvestorPosition)
+//{
+//	APAccountAssets::getInstance()->onGetPositionData(pInvestorPosition);
+//}
 
 
 #endif

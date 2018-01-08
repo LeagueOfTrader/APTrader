@@ -145,6 +145,11 @@ void APFuturesCTPTraderResponser::OnRspCombActionInsert(CThostFtdcInputCombActio
 void APFuturesCTPTraderResponser::OnRspQryOrder(CThostFtdcOrderField * pOrder, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
 	// todo: qry order
+	if (isErrorRspInfo(pRspInfo) || pOrder == NULL) {
+		return;
+	}
+
+	//CThostFtdcOrderField
 }
 
 void APFuturesCTPTraderResponser::OnRspQryTrade(CThostFtdcTradeField * pTrade, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
@@ -154,7 +159,16 @@ void APFuturesCTPTraderResponser::OnRspQryTrade(CThostFtdcTradeField * pTrade, C
 
 void APFuturesCTPTraderResponser::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField * pInvestorPosition, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
-	// todo: qry position
+	// 
+	if (isErrorRspInfo(pRspInfo) || pInvestorPosition == NULL) {
+		return;
+	}
+
+	std::string instrumentID = pInvestorPosition->InstrumentID;
+	APFuturesCTPTraderAgent::getInstance()->onQryInstrumentPosition(instrumentID, pInvestorPosition);
+	if (bIsLast) {
+		APFuturesCTPTraderAgent::getInstance()->onQryInstrumentPositionFinished(instrumentID);
+	}
 }
 
 void APFuturesCTPTraderResponser::OnRspQryTradingAccount(CThostFtdcTradingAccountField * pTradingAccount, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
@@ -203,8 +217,10 @@ void APFuturesCTPTraderResponser::OnRspQryTransferBank(CThostFtdcTransferBankFie
 {
 }
 
-void APFuturesCTPTraderResponser::OnRspQryInvestorPositionDetail(CThostFtdcInvestorPositionDetailField * pInvestorPositionDetail, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
+void APFuturesCTPTraderResponser::OnRspQryInvestorPositionDetail(CThostFtdcInvestorPositionDetailField * pInvestorPositionDetail, 
+																	CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
+	//
 }
 
 void APFuturesCTPTraderResponser::OnRspQryNotice(CThostFtdcNoticeField * pNotice, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)

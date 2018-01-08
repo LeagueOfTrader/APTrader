@@ -128,6 +128,8 @@ void APAccountAssets::verifyWithStub(std::map<APASSETID, APPositionDataStub>& st
 	}
 }
 
+
+
 void APAccountAssets::processDistribution()
 {
 	std::vector<APPositionCtrlWrapper> distributionList;
@@ -177,20 +179,46 @@ std::string APAccountAssets::getInterfaceType()
 }
 
 #ifdef USE_CTP
-void APAccountAssets::onGetPositionData(CThostFtdcInvestorPositionField * pInvestorPosition)
+
+void APAccountAssets::appendPositionInfo(APPositionData & pd, CThostFtdcInvestorPositionField & info)
 {
-	if (pInvestorPosition == NULL) {
-		return;
+	pd.holdPosition += info.Position;
+	pd.longFrozenPosition += info.LongFrozen;
+	pd.shortFrozenPosition += info.ShortFrozen;
+	pd.todayPosition += info.TodayPosition;
+	pd.yesterdayPosition += info.YdPosition;
+}
+
+void APAccountAssets::onGetPositionData(APASSETID instrumentID, std::vector<CThostFtdcInvestorPositionField>& positionDataArr)
+{
+	APPositionData posDataBuy;
+	memset(&posDataBuy, 0, sizeof(posDataBuy));
+	posDataBuy.direction = TD_Buy;
+	posDataBuy.instrumentID = instrumentID;
+	APPositionData posDataSell;
+	memset(&posDataSell, 0, sizeof(posDataSell));
+	posDataSell.direction = TD_Sell;
+	posDataSell.instrumentID = instrumentID;
+	
+	for (int i = 0; i < positionDataArr.size(); i++) {
+		CThostFtdcInvestorPositionField& ipf = positionDataArr[i];
+		if (ipf.PosiDirection == THOST_FTDC_PD_Long) {
+			appendPositionInfo(posDataBuy, ipf);
+		}
+		else if (ipf.PosiDirection == THOST_FTDC_PD_Short) {
+			appendPositionInfo(posDataSell, ipf);
+		}
 	}
 
-	APPositionData pd;
-	memset(&pd, 0, sizeof(pd));
-	pd.instrumentID = pInvestorPosition->InstrumentID;
-	pd.direction = parseCTPDirection(pInvestorPosition->PosiDirection);
-	pd.holdPosition = pInvestorPosition->Position;
-	pd.frozenPosition = 0;
+	if (posDataBuy.holdPosition > 0) {
+		onGetPositionData(posDataBuy);
+	}
 
-	onGetPositionData(pd);
+	if (posDataSell.holdPosition > 0) {
+		onGetPositionData(posDataSell);
+	}
+
+	checkFinish();
 }
 #endif
 
@@ -206,8 +234,6 @@ void APAccountAssets::onGetPositionData(APPositionData data)
 	else if (data.direction == TD_Sell) {
 		m_sellPositionData[data.instrumentID] = localData;
 	}
-
-	checkFinish();
 }
 
 void APAccountAssets::checkFinish()

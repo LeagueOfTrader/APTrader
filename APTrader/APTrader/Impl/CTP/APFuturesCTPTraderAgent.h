@@ -10,6 +10,8 @@
 #include "APFuturesCTPAgent.h"
 #include "../../APDef.h"
 #include "../../APTypes.h"
+#include <map>
+#include <vector>
 
 class APFuturesCTPTraderAgent : public APFuturesCTPAgent, public Singleton<APFuturesCTPTraderAgent>
 {
@@ -46,8 +48,12 @@ public:
 	int reqQryOrder(APASSETID instrumentID, APSYSTEMID sysID);
 	int reqQryTrade(std::string tradeID);
 
-	// response
-	void onQryInstrumentPosition(CThostFtdcInvestorPositionField* pInvestorPosition);
+	int reqQryInstrumentCommissionRate(APASSETID instrumentID);
+	int reqQryInstrumentMarginRate(APASSETID instrumentID);
+
+	// response	
+	void onQryInstrumentPositionFinished(APASSETID instrumentID);
+	void onQryInstrumentPosition(APASSETID instrumentID, CThostFtdcInvestorPositionField* positionInfo);
 
 private:
 	CThostFtdcTraderApi* m_traderApi;
@@ -55,6 +61,8 @@ private:
 	TThostFtdcFrontIDType m_frontID;
 	TThostFtdcSessionIDType m_sessionID;
 	std::string m_tradingDay;
+
+	std::map<APASSETID, std::vector<CThostFtdcInvestorPositionField>> m_positionInfo;
 };
 
 #endif
