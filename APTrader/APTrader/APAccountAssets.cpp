@@ -3,32 +3,12 @@
 #include "APGlobalConfig.h"
 #include "Utils/APTimeUtility.h"
 #include "APPositionCtrl.h"
+#include "APTradeManager.h"
 
 
 #ifdef USE_CTP
 #include "Impl/CTP/APFuturesCTPTraderAgent.h"
 #endif // USE_CTP
-
-#ifdef USE_CTP
-APTradeDirection parseCTPDirection(TThostFtdcPosiDirectionType dt) {
-	APTradeDirection dir = TD_Buy;
-	switch (dt) {
-	case THOST_FTDC_PD_Long:
-		dir = TD_Buy;
-		break;
-	case THOST_FTDC_PD_Short:
-		dir = TD_Sell;
-		break;
-	case THOST_FTDC_PD_Net:
-		break;
-	default:
-		break;
-	}
-
-	return dir;
-}
-#endif
-
 
 APAccountAssets::APAccountAssets()
 {
@@ -117,13 +97,11 @@ void APAccountAssets::verifyWithStub(std::map<APASSETID, APPositionDataStub>& st
 	}
 
 	if (stub.find(pd.instrumentID) != stub.end()) {
-		if (stub[pd.instrumentID].remainPosition >= pd.holdPosition) {
-			stub[pd.instrumentID].remainPosition -= pd.holdPosition;
+		if (stub[pd.instrumentID].capable(pd)) {
+			stub[pd.instrumentID].handle(pd);
 		}
 		else {
-			// check order
-			//posCtrl->setHoldAmount(pd.instrumentID, stub[pd.instrumentID].remainPosition);
-			//stub[pd.instrumentID].remainPosition = 0;
+			//
 		}
 	}
 }
@@ -226,7 +204,9 @@ void APAccountAssets::onGetPositionData(APPositionData data)
 {
 	APPositionDataStub localData;
 	localData.assign(data);
-	localData.remainPosition = data.holdPosition;
+	localData.remainHold = data.holdPosition;
+	localData.remainLongFrozen = data.longFrozenPosition;
+	localData.remainShortFrozen = data.shortFrozenPosition;
 
 	if (data.direction == TD_Buy) {
 		m_buyPositionData[data.instrumentID] = localData;
@@ -238,6 +218,7 @@ void APAccountAssets::onGetPositionData(APPositionData data)
 
 void APAccountAssets::checkFinish()
 {
+	bool positionDataComplete = false;
 	int reqCounts = m_instruments.size();
 	std::set<APASSETID> receivedPosData;
 	std::map<APASSETID, APPositionDataStub>::iterator it;
@@ -249,7 +230,18 @@ void APAccountAssets::checkFinish()
 	}
 
 	if (reqCounts == receivedPosData.size()) {
-		//local verify processing
+		positionDataComplete = true;		
+	}
+
+	bool orderDataComplete = false;
+	if (APTradeManager::getInstance()->inited()) {
+		APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
+		if (trader != NULL) {
+			orderDataComplete = trader->isOrderDataComplete();
+		}
+	}
+	
+	if (orderDataComplete && positionDataComplete) {
 		process();
 	}
 }

@@ -53,7 +53,29 @@ struct APPositionData {
 
 struct APPositionDataStub : APPositionData{
 	// used for local verification
-	long remainPosition;
+	long remainHold;
+	long remainLongFrozen;
+	long remainShortFrozen;
+
+	bool capable(const APPositionData& posData) {
+		if (remainHold < posData.holdPosition) {
+			return false;
+		}
+		if (remainLongFrozen < posData.longFrozenPosition) {
+			return false;
+		}
+		if (remainShortFrozen < posData.shortFrozenPosition) {
+			return false;
+		}
+
+		return true;
+	}
+
+	void handle(const APPositionData& posData) {
+		remainHold -= posData.holdPosition;
+		remainLongFrozen -= posData.longFrozenPosition;
+		remainShortFrozen -= posData.shortFrozenPosition;
+	}
 };
 
 struct APPositionCtrlWrapper {

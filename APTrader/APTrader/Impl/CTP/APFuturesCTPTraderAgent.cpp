@@ -207,6 +207,26 @@ APOrderState parseOrderState(TThostFtdcOrderStatusType orderStatus) {
 	return orderState;
 }
 
+APPositionDirection parsePositionDirection(TThostFtdcPosiDirectionType dt) {
+	APPositionDirection dir = PD_Long;
+	switch (dt) {
+	case THOST_FTDC_PD_Long:
+		dir = PD_Long;
+		break;
+	case THOST_FTDC_PD_Short:
+		dir = PD_Short;
+		break;
+	case THOST_FTDC_PD_Net:
+		break;
+	default:
+		break;
+	}
+
+	return dir;
+}
+
+//
+
 const std::string tradeFlowPath = "Data/CTP/tradeflow/";
 
 APFuturesCTPTraderAgent::APFuturesCTPTraderAgent()

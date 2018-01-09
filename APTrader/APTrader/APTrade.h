@@ -137,9 +137,12 @@ public:
 	void setOrderIDBase(APORDERID base);
 
 	// sync orders
+	void bindOrder(APORDERID localOrderID, APPositionCtrl* posCtrl);
 	void queryOrder(APORDERID localOrderID);
 	void onQueryOrder(APORDERID localOrderID);
 	void onQueryOrderFailed(APORDERID localOrderID);
+
+	bool isOrderDataComplete();
 
 protected:
 	virtual void open(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, 

@@ -260,6 +260,17 @@ void APTrade::setOrderIDBase(APORDERID base)
 	m_idAccumulator->setBase(base);
 }
 
+void APTrade::bindOrder(APORDERID localOrderID, APPositionCtrl * posCtrl)
+{
+	if (posCtrl == NULL) {
+		return;
+	}
+
+	if (m_orderRecordInfo.find(localOrderID) != m_orderRecordInfo.end()) {
+		m_orderRecordInfo[localOrderID].positionCtrlID = posCtrl->getID();
+	}
+}
+
 void APTrade::queryOrder(APORDERID localOrderID)
 {
 #ifdef USE_CTP
@@ -326,6 +337,11 @@ void APTrade::onQueryOrderFailed(APORDERID localOrderID)
 		
 		m_orderRecordInfo.erase(localOrderID);
 	}
+}
+
+bool APTrade::isOrderDataComplete()
+{
+	return m_orderRecordInfo.size() == m_localOrders.size();
 }
 
 APORDERID APTrade::generateOrderID()
