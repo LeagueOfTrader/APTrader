@@ -26,10 +26,10 @@ APSYSTEMID APSimTradeSystem::requestOpen(APORDERID orderID, APASSETID instrument
 	char strID[32];
 	sprintf(strID, "%d", m_orderIDAccumulator->generateID());
 	APSYSTEMID sysID = strID;
-	APTradeOrderInfo order = {orderID, TT_Open, instrumentID, price, volume, direction, TS_Ordered, sysID, 0};
+	APTradeOrderInfo order = {orderID, TT_Open, instrumentID, price, volume, direction, OS_Touched, sysID, 0};
 	m_orderList.push_back(order);
 	if (m_trade != NULL) {
-		m_trade->onTradeOrdered(instrumentID, TT_Open, price, volume, orderID, TS_Ordered, sysID, direction);
+		m_trade->onTraded(instrumentID, TT_Open, price, volume, orderID, sysID, direction);
 	}
 	return sysID;
 }
@@ -39,10 +39,10 @@ APSYSTEMID APSimTradeSystem::requestClose(APORDERID orderID, APASSETID instrumen
 	char strID[32];
 	sprintf(strID, "%d", m_orderIDAccumulator->generateID());
 	APSYSTEMID sysID = strID;
-	APTradeOrderInfo order = { orderID, TT_Close, instrumentID, price, volume, direction, TS_Ordered, sysID, 0 };
+	APTradeOrderInfo order = { orderID, TT_Close, instrumentID, price, volume, direction, OS_Touched, sysID, 0 };
 	m_orderList.push_back(order);
 	if (m_trade != NULL) {
-		m_trade->onTradeOrdered(instrumentID, TT_Close, price, volume, orderID, TS_Ordered, sysID, direction);
+		m_trade->onTraded(instrumentID, TT_Close, price, volume, orderID, sysID, direction);
 	}
 	return sysID;
 }
@@ -112,7 +112,7 @@ double APSimTradeSystem::calcFloatingProfit()
 void APSimTradeSystem::onTradeDealt(APORDERID orderID, APASSETID instrumentID, APTradeType type, double price, long volume, APSYSTEMID sysID, APTradeDirection direction)
 {
 	if (m_trade != NULL) {
-		m_trade->onTradeDealt(instrumentID, type, price, volume, orderID, TS_Filled, sysID, direction);
+		m_trade->onTraded(instrumentID, type, price, volume, orderID, sysID, direction);
 
 		std::string tradeTypeStr;
 		if (type == TT_Open) {
@@ -129,7 +129,7 @@ void APSimTradeSystem::onTradeDealt(APORDERID orderID, APASSETID instrumentID, A
 void APSimTradeSystem::onTradeCanceled(APORDERID orderID, APSYSTEMID sysID)
 {
 	if (m_trade != NULL) {
-		m_trade->onTradeCanceled(orderID, sysID);
+		m_trade->onCanceled(orderID, sysID);
 	}
 }
 

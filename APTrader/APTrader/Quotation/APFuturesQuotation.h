@@ -1,6 +1,6 @@
 #pragma once
 #include "../APInstrumentQuotation.h"
-#include "../APMarco.h"
+#include "../APMacro.h"
 
 #ifdef USE_CTP
 #include "ThostFtdcUserApiStruct.h"

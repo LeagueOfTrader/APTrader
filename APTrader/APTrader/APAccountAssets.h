@@ -6,7 +6,7 @@
 #include "APTypes.h"
 #include <queue>
 #include <set>
-#include "APMarco.h"
+#include "APMacro.h"
 
 #ifdef USE_CTP
 #include "ThostFtdcUserApiStruct.h"

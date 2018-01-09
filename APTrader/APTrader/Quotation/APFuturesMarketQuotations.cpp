@@ -1,4 +1,4 @@
-#include "../APMarco.h"
+#include "../APMacro.h"
 #include "APFuturesMarketQuotations.h"
 
 #ifdef USE_CTP

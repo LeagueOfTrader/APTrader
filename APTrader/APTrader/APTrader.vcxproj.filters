@@ -159,9 +159,6 @@
     <ClInclude Include="Quotation\APFuturesMarketQuotations.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="APMarco.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="APMarketDataManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -217,6 +214,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Utils\APRedisSerializedObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APMacro.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

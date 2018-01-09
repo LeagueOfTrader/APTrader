@@ -4,7 +4,13 @@
 #include "./Utils/APIntAccumulator.h"
 #include "./Utils/APTimeUtility.h"
 
-const UINT TRADE_ID_SHIFT = 1000;
+#include "APMacro.h"
+
+#ifdef USE_CTP
+#include "Impl/CTP/APFuturesCTPTraderAgent.h"
+#endif
+
+//const UINT TRADE_ID_SHIFT = 1000;
 
 APTrade::APTrade()
 {
@@ -25,7 +31,7 @@ APORDERID APTrade::open(APASSETID instrumentID, APTradeDirection direction, doub
 	}
 
 	APORDERID orderID = generateOrderID();
-	APTradeOrderInfo info = { orderID, TT_Open, instrumentID, price, volume, direction, TS_New, 0, pc->getID()};
+	APTradeOrderInfo info = { orderID, TT_Open, instrumentID, price, volume, direction, OS_None, 0, pc->getID()};
 	m_localOrders[orderID] = info;
 	//m_orderPosCtrlRelation[orderID] = pc->getID();
 	
@@ -39,7 +45,7 @@ APORDERID APTrade::close(APASSETID instrumentID, APTradeDirection direction, dou
 	}
 
 	APORDERID orderID = generateOrderID();
-	APTradeOrderInfo info = { orderID, TT_Close, instrumentID, price, volume, direction, TS_New, 0, pc->getID() };
+	APTradeOrderInfo info = { orderID, TT_Close, instrumentID, price, volume, direction, OS_None, 0, pc->getID() };
 	m_localOrders[orderID] = info;
 	//m_orderPosCtrlRelation[orderID] = pc->getID();
 	
@@ -54,7 +60,7 @@ APORDERID APTrade::open(APASSETID instrumentID, APTradeDirection direction, APOr
 	}
 
 	APORDERID orderID = generateOrderID();
-	APTradeOrderInfo info = { orderID, TT_Open, instrumentID, price, volume, direction, TS_New, 0, pc->getID() };
+	APTradeOrderInfo info = { orderID, TT_Open, instrumentID, price, volume, direction, OS_None, 0, pc->getID() };
 	m_localOrders[orderID] = info;
 
 	open(instrumentID, orderID, direction, 
@@ -72,7 +78,7 @@ APORDERID APTrade::close(APASSETID instrumentID, APTradeDirection direction, APO
 	}
 
 	APORDERID orderID = generateOrderID();
-	APTradeOrderInfo info = { orderID, TT_Close, instrumentID, price, volume, direction, TS_New, 0, pc->getID() };
+	APTradeOrderInfo info = { orderID, TT_Close, instrumentID, price, volume, direction, OS_None, 0, pc->getID() };
 	m_localOrders[orderID] = info;
 
 	close(instrumentID, orderID, direction,
@@ -178,44 +184,46 @@ void APTrade::cancel(APORDERID orderID, APPositionCtrl * pc)
 	cancel(orderID);
 }
 
-void APTrade::onTradeDealt(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, 
-							APTradeState state, APSYSTEMID sysID, APTradeDirection direction)
+void APTrade::onTraded(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, 
+							APSYSTEMID sysID, APTradeDirection direction)
 {
 	if (m_localOrders.find(orderID) != m_localOrders.end()) {		
 		APTradeOrderInfo& orderInfo = m_localOrders[orderID];
-		long deltaVolume = orderInfo.volume - volume;
-		orderInfo.volume = volume;
-		orderInfo.sysID = sysID;
-		orderInfo.state = state;
 
 		APPositionCtrl* posCtrl = getPositionCtrlByOrder(orderID);
 		if (posCtrl != NULL) {			
-			posCtrl->onTradeDealt(instrumentID, type, price, deltaVolume, orderID, direction);
+			posCtrl->onTradeDealt(instrumentID, type, price, volume, orderID, direction);
 		}
-		
-		if (orderInfo.volume == 0) {
-			//trade fully finished
+	}
+}
+
+void APTrade::onOrderStatusChanged(APASSETID instrumentID, APTradeType type, APORDERID orderID, long volumeSurplus, long volumeTraded, 
+									APOrderState state, APSYSTEMID sysID, APSYSTEMID tradeID, APTradeDirection direction) {
+	std::map<APORDERID, APTradeOrderInfo>::iterator it = m_localOrders.find(orderID);
+	if(it != m_localOrders.end()) {
+		APTradeOrderInfo& info = it->second;
+		info.sysID = sysID;
+		info.state = state;
+		info.tradeID = tradeID;
+		info.volumeSurplus = volumeSurplus;
+		info.volumeTraded = volumeTraded;
+
+		//
+		APPositionCtrl* posCtrl = getPositionCtrlByOrder(orderID);
+		if (state == OS_AllTraded || state == OS_PartTradedNotQueueing) {
 			if (posCtrl != NULL) {
 				posCtrl->onCompleteOrder(orderID, type);
 			}
 			removeLocalOrder(orderID);
 		}
-		else {
-			orderInfo.state = TS_PartiallyFilled;
+
+		if (state == OS_Canceled || state == OS_NoTradeNotQueueing) {
+			onCanceled(orderID, sysID);
 		}
 	}
 }
 
-void APTrade::onTradeOrdered(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeState state, APSYSTEMID sysID, APTradeDirection direction) {
-	std::map<APORDERID, APTradeOrderInfo>::iterator it = m_localOrders.find(orderID);
-	if(it != m_localOrders.end()) {
-		APTradeOrderInfo& info = it->second;
-		info.sysID = sysID;
-		info.state = TS_Ordered;
-	}
-}
-
-void APTrade::onTradeCanceled(APORDERID orderID, APSYSTEMID sysID)
+void APTrade::onCanceled(APORDERID orderID, APSYSTEMID sysID)
 {
 	if (m_localOrders.find(orderID) != m_localOrders.end()) {
 		APTradeOrderInfo& info = m_localOrders[orderID];
@@ -228,8 +236,13 @@ void APTrade::onTradeCanceled(APORDERID orderID, APSYSTEMID sysID)
 	}
 }
 
+void APTrade::onFailed(APORDERID orderID) 
+{
+	onCanceled(orderID);
+}
+
 void APTrade::onFundChanged(APASSETID instrumentID, APTradeType type, double variableFund, APORDERID orderID, APTradeDirection direction) {
-	//
+	// todo: implement later
 }
 
 bool APTrade::getOrderInfo(APORDERID orderID, APTradeOrderInfo& orderInfo)
@@ -245,6 +258,74 @@ bool APTrade::getOrderInfo(APORDERID orderID, APTradeOrderInfo& orderInfo)
 void APTrade::setOrderIDBase(APORDERID base)
 {
 	m_idAccumulator->setBase(base);
+}
+
+void APTrade::queryOrder(APORDERID localOrderID)
+{
+#ifdef USE_CTP
+	if (m_orderRecordInfo.find(localOrderID) == m_orderRecordInfo.end()) {
+		return;
+	}
+	APOrderRecordInfo& ori = m_orderRecordInfo[localOrderID];
+	APFuturesCTPTraderAgent::getInstance()->reqQryOrder(ori.instrumentID, ori.sysID);
+#endif
+}
+
+void APTrade::onQueryOrder(APORDERID localOrderID)
+{
+#ifdef USE_CTP
+	if (m_orderRecordInfo.find(localOrderID) != m_orderRecordInfo.end()) {
+		m_orderRecordInfo.erase(localOrderID);
+	}
+	
+	APOrderRecordInfo& ori = m_orderRecordInfo[localOrderID];
+	APTradeOrderInfo toi = APFuturesCTPTraderAgent::getInstance()->getOrderInfo(localOrderID);
+	toi.positionCtrlID = ori.positionCtrlID;
+	m_localOrders[localOrderID] = toi;	
+
+	bool orderChanged = false;
+	if (ori.state != toi.state) {
+		orderChanged = true;
+	}
+	else if (ori.volumeSurplus != toi.volumeSurplus) {
+		orderChanged = true;
+	}
+
+	if (orderChanged) {
+		// do not query trade, use order comparision first
+		long deltaVolume = ori.volumeSurplus - toi.volumeSurplus;
+		if (deltaVolume > 0) {
+			onTraded(toi.instrumentID, toi.type, toi.price, deltaVolume, localOrderID, toi.sysID, toi.direction);
+		}
+		// query trade
+		//std::string curDate = APTimeUtility::getDate();
+		//APFuturesCTPTraderAgent::getInstance()->reqQryTrade(toi.tradeID, APTimeUtility::getDateInDateTime(ori.recordTime), curDate);
+		onOrderStatusChanged(toi.instrumentID, toi.type, localOrderID, toi.volumeSurplus, toi.volumeTraded, 
+							toi.state, toi.sysID, toi.tradeID, toi.direction);
+	}
+	else {
+		if (toi.state == OS_AllTraded || toi.state == OS_PartTradedNotQueueing) {
+			APPositionCtrl* posCtrl = getPositionCtrlByOrder(localOrderID);
+			if (posCtrl != NULL) {
+				posCtrl->onCompleteOrder(localOrderID, toi.type);
+			}
+			removeLocalOrder(localOrderID);
+		}
+	}
+#endif
+}
+
+void APTrade::onQueryOrderFailed(APORDERID localOrderID)
+{
+	if (m_orderRecordInfo.find(localOrderID) != m_orderRecordInfo.end()) {
+		APOrderRecordInfo& ori = m_orderRecordInfo[localOrderID];
+		APPositionCtrl* posCtrl = getPositionCtrlByOrder(ori.positionCtrlID);
+		if (posCtrl != NULL) {
+			posCtrl->onOrderOutdated(localOrderID);
+		}
+		
+		m_orderRecordInfo.erase(localOrderID);
+	}
 }
 
 APORDERID APTrade::generateOrderID()

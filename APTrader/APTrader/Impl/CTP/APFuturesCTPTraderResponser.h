@@ -1,5 +1,5 @@
 #pragma once
-#include "../../APMarco.h"
+#include "../../APMacro.h"
 
 #ifdef USE_CTP
 #include "ThostFtdcTraderApi.h"
@@ -384,15 +384,6 @@ public:
 
 protected:
 	bool isErrorRspInfo(CThostFtdcRspInfoField * pRspInfo);
-
-	void onOrderRejected(CThostFtdcOrderField * pOrder);
-	void onOrderAccepted(CThostFtdcOrderField * pOrder);
-	void onOrderQueued(CThostFtdcOrderField * pOrder);
-	void onOrderAllTraded(CThostFtdcOrderField * pOrder);
-	void onOrderPartiallyTraded(CThostFtdcOrderField * pOrder);
-	void onOrderIOCTraded(CThostFtdcOrderField * pOrder);
-	void onOrderCanceled(CThostFtdcOrderField * pOrder);
-	void onOrderFailed(CThostFtdcOrderField * pOrder);
 };
 
 #endif

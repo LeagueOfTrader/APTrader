@@ -25,6 +25,8 @@ enum APTradeType {
 	TT_Close,
 	//TT_CancelOpen,
 	//TT_CancelClose,
+	TT_CloseYesterday,
+	TT_CloseToday,
 	TT_Lock, // lock position, only for futures
 	TT_Num
 };
@@ -90,15 +92,18 @@ enum APOrderPriceType {
 	OPT_Num
 };
 
-enum APTradeState {
-	TS_Apply,
-	TS_Ordered,
-	TS_New,
-	TS_PartiallyFilled,
-	TS_Filled,
-	TS_Canceled,
-	TS_None,
-	TS_Num
+enum APOrderState {
+	OS_None,
+	OS_NotTouched,
+	OS_Touched,
+	OS_NoTradeQueueing,
+	OS_NoTradeNotQueueing,
+	OS_PartTradedQueueing,
+	OS_AllTraded,	
+	OS_PartTradedNotQueueing,	
+	OS_Canceled,	
+	OS_Unknown,
+	OS_Num
 };
 
 enum APOrderVolumeCondition {

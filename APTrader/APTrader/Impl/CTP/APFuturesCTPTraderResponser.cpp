@@ -46,15 +46,14 @@ void APFuturesCTPTraderResponser::OnRspUserLogin(CThostFtdcRspUserLoginField * p
 	APFuturesCTPTraderAgent::getInstance()->setFrontID(pRspUserLogin->FrontID);
 	APFuturesCTPTraderAgent::getInstance()->setSessionID(pRspUserLogin->SessionID);
 
-	APFuturesCTPTraderAgent::getInstance()->reqSettlementInfoConfirm();
-	APFuturesCTPTraderAgent::getInstance()->reqQryTradingAccount();
+	APFuturesCTPTraderAgent::getInstance()->reqSettlementInfoConfirm();	
 
 	APFuturesCTPTraderAgent::getInstance()->onLogin();
-	APTrade* trade = APTradeManager::getInstance()->getTradeInstance();
-	if (trade != NULL) {
-		int maxOrderID = atoi(pRspUserLogin->MaxOrderRef);
-		trade->setOrderIDBase(maxOrderID);
-	}
+	//APTrade* trade = APTradeManager::getInstance()->getTradeInstance();
+	//if (trade != NULL) {
+	//	int maxOrderID = atoi(pRspUserLogin->MaxOrderRef);
+	//	trade->setOrderIDBase(maxOrderID);
+	//}
 }
 
 void APFuturesCTPTraderResponser::OnRspUserLogout(CThostFtdcUserLogoutField * pUserLogout, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
@@ -72,8 +71,12 @@ void APFuturesCTPTraderResponser::OnRspTradingAccountPasswordUpdate(CThostFtdcTr
 
 void APFuturesCTPTraderResponser::OnRspOrderInsert(CThostFtdcInputOrderField * pInputOrder, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
-	if (pRspInfo != NULL) {
-		// on trade error
+	if (isErrorRspInfo(pRspInfo)) {
+		return;
+	}
+
+	if (pInputOrder != NULL) {
+		pInputOrder->OrderRef;
 	}
 }
 
@@ -96,6 +99,11 @@ void APFuturesCTPTraderResponser::OnRspQueryMaxOrderVolume(CThostFtdcQueryMaxOrd
 
 void APFuturesCTPTraderResponser::OnRspSettlementInfoConfirm(CThostFtdcSettlementInfoConfirmField * pSettlementInfoConfirm, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
+	if (isErrorRspInfo(pRspInfo)) {
+		return;
+	}
+
+	APFuturesCTPTraderAgent::getInstance()->reqQryTradingAccount();
 }
 
 void APFuturesCTPTraderResponser::OnRspRemoveParkedOrder(CThostFtdcRemoveParkedOrderField * pRemoveParkedOrder, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
@@ -144,12 +152,19 @@ void APFuturesCTPTraderResponser::OnRspCombActionInsert(CThostFtdcInputCombActio
 
 void APFuturesCTPTraderResponser::OnRspQryOrder(CThostFtdcOrderField * pOrder, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
-	// todo: qry order
-	if (isErrorRspInfo(pRspInfo) || pOrder == NULL) {
+	if (isErrorRspInfo(pRspInfo)) {
+		if (pOrder != NULL) {
+			APFuturesCTPTraderAgent::getInstance()->onQryOrderFailed(atoi(pOrder->OrderLocalID));
+		}
 		return;
 	}
 
-	//CThostFtdcOrderField
+	if (pOrder == NULL) {
+		return;
+	}
+
+	APORDERID localID = atoi(pOrder->OrderLocalID);
+	APFuturesCTPTraderAgent::getInstance()->onQryOrder(localID, pOrder);
 }
 
 void APFuturesCTPTraderResponser::OnRspQryTrade(CThostFtdcTradeField * pTrade, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
@@ -159,7 +174,6 @@ void APFuturesCTPTraderResponser::OnRspQryTrade(CThostFtdcTradeField * pTrade, C
 
 void APFuturesCTPTraderResponser::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField * pInvestorPosition, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
-	// 
 	if (isErrorRspInfo(pRspInfo) || pInvestorPosition == NULL) {
 		return;
 	}
@@ -220,7 +234,7 @@ void APFuturesCTPTraderResponser::OnRspQryTransferBank(CThostFtdcTransferBankFie
 void APFuturesCTPTraderResponser::OnRspQryInvestorPositionDetail(CThostFtdcInvestorPositionDetailField * pInvestorPositionDetail, 
 																	CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
-	//
+	// ÔÝÊ±²»¿¼ÂÇ
 }
 
 void APFuturesCTPTraderResponser::OnRspQryNotice(CThostFtdcNoticeField * pNotice, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
@@ -350,55 +364,27 @@ void APFuturesCTPTraderResponser::OnRtnOrder(CThostFtdcOrderField * pOrder)
 		return;
 	}
 
-	TThostFtdcOrderStatusType orderStatus = pOrder->OrderStatus;
-	switch (orderStatus) {
-	case THOST_FTDC_OST_AllTraded:
-		onOrderAllTraded(pOrder);
-		break;
-	case THOST_FTDC_OST_PartTradedQueueing:
-		onOrderPartiallyTraded(pOrder);
-		break;
-	case THOST_FTDC_OST_PartTradedNotQueueing:
-		onOrderIOCTraded(pOrder);
-		break;
-	case THOST_FTDC_OST_NoTradeQueueing:
-		onOrderQueued(pOrder);
-		break;
-	case THOST_FTDC_OST_NoTradeNotQueueing:
-		// ioc not traded
-		onOrderFailed(pOrder);
-		break;
-	case THOST_FTDC_OST_Canceled:
-		onOrderCanceled(pOrder);
-		break;
-	case THOST_FTDC_OST_Unknown:
-		//
-		break;
-	case THOST_FTDC_OST_NotTouched:
-		onOrderRejected(pOrder);
-		break;
-	case THOST_FTDC_OST_Touched:
-		onOrderAccepted(pOrder);
-		break;
-	default:
-		break;
-	}
+	APFuturesCTPTraderAgent::getInstance()->onRtnOrder(pOrder);
 }
 
 void APFuturesCTPTraderResponser::OnRtnTrade(CThostFtdcTradeField * pTrade)
 {
-	//
+	if (pTrade == NULL) {
+		return;
+	}
+
+	APFuturesCTPTraderAgent::getInstance()->onRtnTrade(pTrade);
 }
 
 void APFuturesCTPTraderResponser::OnErrRtnOrderInsert(CThostFtdcInputOrderField * pInputOrder, CThostFtdcRspInfoField * pRspInfo)
 {
-	const char* strOrderID = pInputOrder->OrderRef;
-	APORDERID localID = atoi(strOrderID);
-	//
+	APORDERID localID = atoi(pInputOrder->OrderRef);
+	APFuturesCTPTraderAgent::getInstance()->onTradeFailed(localID);
 }
 
 void APFuturesCTPTraderResponser::OnErrRtnOrderAction(CThostFtdcOrderActionField * pOrderAction, CThostFtdcRspInfoField * pRspInfo)
 {
+	// cancel failed
 }
 
 void APFuturesCTPTraderResponser::OnRtnInstrumentStatus(CThostFtdcInstrumentStatusField * pInstrumentStatus)
@@ -601,42 +587,6 @@ bool APFuturesCTPTraderResponser::isErrorRspInfo(CThostFtdcRspInfoField * pRspIn
 	}
 
 	return bResult;
-}
-
-void APFuturesCTPTraderResponser::onOrderRejected(CThostFtdcOrderField * pOrder)
-{
-	APTrade* trade = APTradeManager::getInstance()->getTradeInstance();
-	if (trade != NULL) {
-		//
-	}
-}
-
-void APFuturesCTPTraderResponser::onOrderAccepted(CThostFtdcOrderField * pOrder)
-{
-}
-
-void APFuturesCTPTraderResponser::onOrderQueued(CThostFtdcOrderField * pOrder)
-{
-}
-
-void APFuturesCTPTraderResponser::onOrderAllTraded(CThostFtdcOrderField * pOrder)
-{
-}
-
-void APFuturesCTPTraderResponser::onOrderPartiallyTraded(CThostFtdcOrderField * pOrder)
-{
-}
-
-void APFuturesCTPTraderResponser::onOrderIOCTraded(CThostFtdcOrderField * pOrder)
-{
-}
-
-void APFuturesCTPTraderResponser::onOrderCanceled(CThostFtdcOrderField * pOrder)
-{
-}
-
-void APFuturesCTPTraderResponser::onOrderFailed(CThostFtdcOrderField * pOrder)
-{
 }
 
 #endif

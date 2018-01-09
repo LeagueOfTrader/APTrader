@@ -163,7 +163,7 @@
     <ClInclude Include="Monitor\APQuotationMonitor.h" />
     <ClInclude Include="Common\RefCountObject.h" />
     <ClInclude Include="PositionCtrl\APFuturesCombinationPosCtrl.h" />
-    <ClInclude Include="APMarco.h" />
+    <ClInclude Include="APMacro.h" />
     <ClInclude Include="APMarketDataManager.h" />
     <ClInclude Include="Impl\CTP\APFuturesCTPAgent.h" />
     <ClInclude Include="Impl\CTP\APFuturesCTPTraderAgent.h" />

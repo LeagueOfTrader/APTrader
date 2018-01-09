@@ -1,4 +1,4 @@
-#include "APMarco.h"
+#include "APMacro.h"
 #include "APPositionCtrl.h"
 #include "APTradeManager.h"
 #include "APGlobalConfig.h"
@@ -284,6 +284,29 @@ void APPositionCtrl::onCompleteOrder(APORDERID orderID, APTradeType type)
 	}
 	else if (type == TT_Close) {
 		m_closeOrderList.remove(orderID);
+	}
+}
+
+void APPositionCtrl::onOrderOutdated(APORDERID orderID)
+{
+	bool removed = false;
+	std::list<APORDERID>::iterator it;
+	for (it = m_openOrderList.begin(); it != m_openOrderList.end(); it++) {
+		APORDERID& id = *it;
+		if (id == orderID) {
+			removed = true;
+			m_openOrderList.erase(it);
+			break;
+		}
+	}
+	if (!removed) {
+		for (it = m_closeOrderList.begin(); it != m_closeOrderList.end(); it++) {
+			APORDERID& id = *it;
+			if (id == orderID) {
+				m_closeOrderList.erase(it);
+				break;
+			}
+		}
 	}
 }
 

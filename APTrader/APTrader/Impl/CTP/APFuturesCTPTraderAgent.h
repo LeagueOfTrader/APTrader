@@ -1,5 +1,5 @@
 #pragma once
-#include "../../APMarco.h"
+#include "../../APMacro.h"
 
 #ifdef USE_CTP
 
@@ -12,6 +12,7 @@
 #include "../../APTypes.h"
 #include <map>
 #include <vector>
+#include "../../APTrade.h"
 
 class APFuturesCTPTraderAgent : public APFuturesCTPAgent, public Singleton<APFuturesCTPTraderAgent>
 {
@@ -35,6 +36,8 @@ public:
 
 	void setFrontID(TThostFtdcFrontIDType frontID);
 	void setSessionID(TThostFtdcSessionIDType sessionID);
+	void setMaxOrderRef(int id);
+	int getMaxOrderRef();
 
 	// 投资者结算结果确认
 	int reqSettlementInfoConfirm();
@@ -46,7 +49,7 @@ public:
 	int reqQryInvestorPosition(APASSETID instrumentID);
 	//	订单查询
 	int reqQryOrder(APASSETID instrumentID, APSYSTEMID sysID);
-	int reqQryTrade(std::string tradeID);
+	int reqQryTrade(std::string tradeID, std::string startDate = "", std::string endDate = "");
 
 	int reqQryInstrumentCommissionRate(APASSETID instrumentID);
 	int reqQryInstrumentMarginRate(APASSETID instrumentID);
@@ -54,6 +57,22 @@ public:
 	// response	
 	void onQryInstrumentPositionFinished(APASSETID instrumentID);
 	void onQryInstrumentPosition(APASSETID instrumentID, CThostFtdcInvestorPositionField* positionInfo);
+
+	// order & trade
+	void onRtnOrder(CThostFtdcOrderField* order);
+	void onRtnTrade(CThostFtdcTradeField* tradeInfo);
+
+	void onQryOrder(APORDERID localOrderID, CThostFtdcOrderField* pOrderInfo);
+	void onQryOrderFinished(APORDERID localOrderID);
+	void onQryOrderFailed(APORDERID localOrderID);
+	APTradeOrderInfo getOrderInfo(APORDERID orderID);
+
+	void onQryTrade(APORDERID localOrderID, CThostFtdcTradeField* pTradeInfo);
+	void onQryTradeFinished(APORDERID localOrderID);
+	void onQryTradeFailed(APORDERID localOrderID);
+	std::vector<APTradeDetailInfo> getTradeInfo(APORDERID localOrderID, std::string startTime = "", std::string endTime = "");
+
+	void onTradeFailed(APORDERID localID);
 
 private:
 	CThostFtdcTraderApi* m_traderApi;
@@ -63,6 +82,10 @@ private:
 	std::string m_tradingDay;
 
 	std::map<APASSETID, std::vector<CThostFtdcInvestorPositionField>> m_positionInfo;
+	std::map<APORDERID, CThostFtdcOrderField> m_orderInfo;
+	std::map<APORDERID, std::vector<CThostFtdcTradeField>> m_tradeInfo;
+
+	int m_maxOrderRef;
 };
 
 #endif

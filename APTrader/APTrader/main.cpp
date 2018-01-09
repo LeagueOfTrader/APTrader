@@ -1,5 +1,5 @@
 #pragma once
-#include "APMarco.h"
+#include "APMacro.h"
 #include "Strategy/APStandardGridStrategy.h"
 #include "APFramework.h"
 #include "APStrategyManager.h"

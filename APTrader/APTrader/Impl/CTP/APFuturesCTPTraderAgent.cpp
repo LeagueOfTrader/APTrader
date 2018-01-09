@@ -1,6 +1,8 @@
 #include "APFuturesCTPTraderAgent.h"
 #include "../../Utils/APLog.h"
 #include "../../APAccountAssets.h"
+#include "../../APTradeManager.h"
+#include "../../Utils/APTimeUtility.h"
 
 #ifdef USE_CTP
 
@@ -168,12 +170,50 @@ TThostFtdcContingentConditionType convertOrderContingentCondition(APOrderConting
 	return ret;
 }
 
+// parse
+APOrderState parseOrderState(TThostFtdcOrderStatusType orderStatus) {
+	APOrderState orderState = OS_None;
+	switch (orderStatus) {
+	case THOST_FTDC_OST_AllTraded:
+		orderState = OS_AllTraded;
+		break;
+	case THOST_FTDC_OST_PartTradedQueueing:
+		orderState = OS_PartTradedQueueing;
+		break;
+	case THOST_FTDC_OST_PartTradedNotQueueing:
+		orderState = OS_PartTradedNotQueueing;
+		break;
+	case THOST_FTDC_OST_NoTradeQueueing:
+		orderState = OS_NoTradeQueueing;
+		break;
+	case THOST_FTDC_OST_NoTradeNotQueueing:
+		orderState = OS_NoTradeNotQueueing;
+		break;
+	case THOST_FTDC_OST_Canceled:
+		orderState = OS_Canceled;
+		break;
+	case THOST_FTDC_OST_Unknown:
+		orderState = OS_Unknown;
+		break;
+	case THOST_FTDC_OST_NotTouched:
+		orderState = OS_NotTouched;
+		break;
+	case THOST_FTDC_OST_Touched:
+		orderState = OS_Touched;
+		break;
+	default:
+		break;
+	}
+	return orderState;
+}
+
 const std::string tradeFlowPath = "Data/CTP/tradeflow/";
 
 APFuturesCTPTraderAgent::APFuturesCTPTraderAgent()
 {
 	m_traderApi = NULL;
 	m_tradingDay = "";
+	m_maxOrderRef = 0;
 }
 
 
@@ -325,6 +365,12 @@ void APFuturesCTPTraderAgent::applyOrder(APTradeType tradeType, APASSETID instru
 	else if (tradeType == TT_Close) {
 		order.CombOffsetFlag[0] = THOST_FTDC_OF_Close;
 	}
+	else if (tradeType == TT_CloseToday) {
+		order.CombOffsetFlag[0] = THOST_FTDC_OF_CloseToday;
+	}
+	else if (tradeType == TT_CloseYesterday) {
+		order.CombOffsetFlag[0] = THOST_FTDC_OF_CloseYesterday;
+	}
 	else {
 		// error type
 		return;
@@ -408,6 +454,16 @@ void APFuturesCTPTraderAgent::setSessionID(TThostFtdcSessionIDType sessionID)
 	m_sessionID = sessionID;
 }
 
+void APFuturesCTPTraderAgent::setMaxOrderRef(int id)
+{
+	m_maxOrderRef = id;
+}
+
+int APFuturesCTPTraderAgent::getMaxOrderRef()
+{
+	return m_maxOrderRef;
+}
+
 int APFuturesCTPTraderAgent::reqSettlementInfoConfirm()
 {
 	if (m_traderApi == NULL) {
@@ -486,7 +542,7 @@ int APFuturesCTPTraderAgent::reqQryOrder(APASSETID instrumentID, APSYSTEMID sysI
 	return ret;
 }
 
-int APFuturesCTPTraderAgent::reqQryTrade(std::string tradeID)
+int APFuturesCTPTraderAgent::reqQryTrade(std::string tradeID, std::string startDate, std::string endDate)
 {
 	if (m_traderApi == NULL) {
 		return -1;
@@ -495,6 +551,15 @@ int APFuturesCTPTraderAgent::reqQryTrade(std::string tradeID)
 	CThostFtdcQryTradeField req;
 	memset(&req, 0, sizeof(req));
 	strcpy(req.TradeID, tradeID.c_str());
+
+	if (startDate.length() > 0) {
+		strcpy(req.TradeTimeStart, startDate.c_str());
+	}
+
+	if (endDate.length() > 0) {
+		strcpy(req.TradeTimeEnd, endDate.c_str());
+	}
+
 	int ret = m_traderApi->ReqQryTrade(&req, genReqID());
 	return ret;
 }
@@ -548,6 +613,255 @@ void APFuturesCTPTraderAgent::onQryInstrumentPosition(APASSETID instrumentID, CT
 	}
 
 	m_positionInfo[instrumentID].push_back(*positionInfo);
+}
+
+void APFuturesCTPTraderAgent::onRtnOrder(CThostFtdcOrderField * order)
+{
+	if (order == NULL) {
+		return;
+	}
+
+	if (APTradeManager::getInstance()->inited() == false) {
+		return;
+	}
+
+	APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
+	if (trader == NULL) {
+		return;
+	}
+
+	std::string instrumentID = order->InstrumentID;
+	APTradeType tradeType = TT_Num;
+	if (order->CombOffsetFlag[0] == THOST_FTDC_OF_Open) {
+		tradeType = TT_Open;
+	}
+	else if (order->CombOffsetFlag[0] == THOST_FTDC_OF_Close
+			|| order->CombOffsetFlag[0] == THOST_FTDC_OF_CloseToday
+			|| order->CombOffsetFlag[0] == THOST_FTDC_OF_CloseYesterday
+			|| order->CombOffsetFlag[0] == THOST_FTDC_OF_ForceClose) {
+		tradeType = TT_Close; // 暂时只考虑普通平仓
+	}
+
+	APORDERID localOrderID = atoi(order->OrderLocalID);
+	APSYSTEMID sysOrderID = order->OrderSysID;	
+	APOrderState orderState = parseOrderState(order->OrderStatus);
+	APTradeDirection direction = TD_Buy;
+	if (order->Direction == THOST_FTDC_D_Buy) {
+		direction = TD_Buy;
+	}
+	else if(order->Direction == THOST_FTDC_D_Sell){
+		direction = TD_Sell;
+	}
+	long volumeTotal = order->VolumeTotal;
+	long volumeTraded = order->VolumeTraded;
+	APSYSTEMID tradeID = order->TraderID;
+
+	trader->onOrderStatusChanged(instrumentID, tradeType, localOrderID, volumeTotal, volumeTraded, 
+								orderState, sysOrderID, tradeID, direction);
+}
+
+void APFuturesCTPTraderAgent::onRtnTrade(CThostFtdcTradeField * info)
+{
+	if (info == NULL) {
+		return;
+	}
+
+	if (APTradeManager::getInstance()->inited() == false) {
+		return;
+	}
+
+	APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
+	if (trader == NULL) {
+		return;
+	}
+
+	std::string instrumentID = info->InstrumentID;
+
+	APTradeType tradeType = TT_Num;
+	if (info->OffsetFlag == THOST_FTDC_OF_Open) {
+		tradeType = TT_Open;
+	}
+	else if (info->OffsetFlag == THOST_FTDC_OF_Close
+		|| info->OffsetFlag == THOST_FTDC_OF_CloseToday
+		|| info->OffsetFlag == THOST_FTDC_OF_CloseYesterday
+		|| info->OffsetFlag == THOST_FTDC_OF_ForceClose) {
+		tradeType = TT_Close; // 暂时只考虑普通平仓
+	}
+
+	double price = info->Price;
+	long volume = info->Volume;
+
+	APORDERID orderID = atoi(info->OrderLocalID);
+	APSYSTEMID sysID = info->OrderSysID;
+	APTradeDirection direction = TD_Buy;
+	if (info->Direction == THOST_FTDC_D_Buy) {
+		direction = TD_Buy;
+	}
+	else if (info->Direction == THOST_FTDC_D_Sell) {
+		direction = TD_Sell;
+	}
+
+	trader->onTraded(instrumentID, tradeType, price, volume, orderID, sysID, direction);
+}
+
+void APFuturesCTPTraderAgent::onQryOrder(APORDERID localOrderID, CThostFtdcOrderField * pOrderInfo)
+{
+	if (pOrderInfo == NULL) {
+		return;
+	}
+
+	m_orderInfo[localOrderID] = *pOrderInfo;
+}
+
+void APFuturesCTPTraderAgent::onQryOrderFinished(APORDERID orderID)
+{
+	if (APTradeManager::getInstance()->inited() == false) {
+		return;
+	}
+	APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
+	if (trader == NULL) {
+		return;
+	}
+
+	trader->onQueryOrder(orderID);
+}
+
+void APFuturesCTPTraderAgent::onQryOrderFailed(APORDERID orderID)
+{
+	if (APTradeManager::getInstance()->inited() == false) {
+		return;
+	}
+	APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
+	if (trader == NULL) {
+		return;
+	}
+
+	trader->onQueryOrderFailed(orderID);
+}
+
+APTradeOrderInfo APFuturesCTPTraderAgent::getOrderInfo(APORDERID orderID)
+{
+	APTradeOrderInfo info;
+	memset(&info, 0, sizeof(info));
+	if (m_orderInfo.find(orderID) != m_orderInfo.end()) {
+		CThostFtdcOrderField& of = m_orderInfo[orderID];
+		info.instrumentID = of.InstrumentID;
+		if (of.Direction == THOST_FTDC_D_Buy) {
+			info.direction = TD_Buy;
+		}
+		else if (of.Direction == THOST_FTDC_D_Sell) {
+			info.direction = TD_Sell;
+		}
+		info.orderID = orderID;
+		info.positionCtrlID = 0;
+		info.price = of.LimitPrice;
+		info.state = parseOrderState(of.OrderStatus);
+		info.sysID = of.OrderSysID;
+		info.tradeID = of.TraderID;
+		if (of.CombOffsetFlag[0] == THOST_FTDC_OF_Open) {
+			info.type = TT_Open;
+		}
+		else if (of.CombOffsetFlag[0] == THOST_FTDC_OF_Close
+				|| of.CombOffsetFlag[0] == THOST_FTDC_OF_CloseYesterday
+				|| of.CombOffsetFlag[0] == THOST_FTDC_OF_CloseToday) {
+			info.type = TT_Close; // temp
+		}
+		info.volume = of.VolumeTotalOriginal;
+		info.volumeSurplus = of.VolumeTotal;
+		info.volumeTraded = of.VolumeTraded;
+	}
+	
+	return info;
+}
+
+void APFuturesCTPTraderAgent::onQryTrade(APORDERID localOrderID, CThostFtdcTradeField * pTradeInfo)
+{
+	if (pTradeInfo == NULL) {
+		return;
+	}
+
+	if (m_tradeInfo.find(localOrderID) == m_tradeInfo.end()) {
+		std::vector<CThostFtdcTradeField> tradeArr;
+		m_tradeInfo[localOrderID] = tradeArr;
+	}
+
+	m_tradeInfo[localOrderID].push_back(*pTradeInfo);
+}
+
+void APFuturesCTPTraderAgent::onQryTradeFinished(APORDERID localOrderID)
+{
+	//
+}
+
+void APFuturesCTPTraderAgent::onQryTradeFailed(APORDERID localOrderID)
+{
+	//
+}
+
+std::vector<APTradeDetailInfo> APFuturesCTPTraderAgent::getTradeInfo(APORDERID localOrderID, std::string startTime, std::string endTime)
+{
+	std::vector<APTradeDetailInfo> tradeInfo;
+	if (m_tradeInfo.find(localOrderID) != m_tradeInfo.end()) {
+		std::vector<CThostFtdcTradeField>& tradeArr = m_tradeInfo[localOrderID];
+		for (int i = 0; i < tradeArr.size(); i++) {
+			CThostFtdcTradeField& tf = tradeArr[i];
+			std::string tradeDate = tf.TradeDate;
+			std::string tradeTime = tf.TradeTime;
+			std::string tradeDateTime = tradeDate + tradeTime;
+			if (startTime.length() > 0) {
+				if (APTimeUtility::compareDateTime(tradeDateTime, startTime) < 0) {
+					continue;
+				}
+			}
+			if (endTime.length() > 0) {
+				if (APTimeUtility::compareDateTime(tradeDateTime, endTime) > 0) {
+					continue;
+				}
+			}
+
+			APTradeDetailInfo tdi;
+			memset(&tdi, 0, sizeof(tdi));
+			tdi.dateTime = tradeDateTime;
+			if (tf.OffsetFlag == THOST_FTDC_OF_Open) {
+				tdi.tradeType = TT_Open;
+			}
+			else if (tf.OffsetFlag == THOST_FTDC_OF_Close
+				|| tf.OffsetFlag == THOST_FTDC_OF_CloseToday
+				|| tf.OffsetFlag == THOST_FTDC_OF_CloseYesterday
+				|| tf.OffsetFlag == THOST_FTDC_OF_ForceClose) {
+				tdi.tradeType = TT_Close; // 暂时只考虑普通平仓
+			}
+
+			tdi.price = tf.Price;
+			tdi.volume = tf.Volume;
+
+			tdi.localID = atoi(tf.OrderLocalID);
+			tdi.sysID = tf.OrderSysID;
+			APTradeDirection direction = TD_Buy;
+			if (tf.Direction == THOST_FTDC_D_Buy) {
+				direction = TD_Buy;
+			}
+			else if (tf.Direction == THOST_FTDC_D_Sell) {
+				direction = TD_Sell;
+			}
+
+			tradeInfo.push_back(tdi);
+		}
+	}
+	return tradeInfo;
+}
+
+void APFuturesCTPTraderAgent::onTradeFailed(APORDERID localID)
+{
+	if (APTradeManager::getInstance()->inited() == false) {
+		return;
+	}
+	APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
+	if (trader == NULL) {
+		return;
+	}
+
+	trader->onFailed(localID);
 }
 
 //void APFuturesCTPTraderAgent::onQryInstrumentPosition(CThostFtdcInvestorPositionField * pInvestorPosition)

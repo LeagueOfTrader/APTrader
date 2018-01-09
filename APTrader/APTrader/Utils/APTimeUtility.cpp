@@ -127,6 +127,21 @@ UINT APTimeUtility::getTimestamp()
 	return t;
 }
 
+std::string APTimeUtility::getDate()
+{
+	SYSTEMTIME sys;
+	GetLocalTime(&sys);
+	char strDate[64];
+	sprintf(strDate, "%4d%2d%2d", sys.wYear, sys.wMonth, sys.wDay);
+	std::string date = strDate;
+	return date;
+}
+
+std::string APTimeUtility::getDateInDateTime(std::string dateTime)
+{
+	return dateTime.substr(0, 8);
+}
+
 std::string APTimeUtility::getDateTime()
 {
 	SYSTEMTIME sys;

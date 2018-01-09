@@ -71,6 +71,7 @@ public:
 	void bindTrade(APTrade* trade);
 
 	void onCompleteOrder(APORDERID orderID, APTradeType type);
+	void onOrderOutdated(APORDERID orderID);
 
 	void save();
 	void load();

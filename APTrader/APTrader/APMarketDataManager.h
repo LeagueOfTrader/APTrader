@@ -1,5 +1,5 @@
 #pragma once
-#include "APMarco.h"
+#include "APMacro.h"
 
 #ifdef USE_CTP
 	#include "Quotation/APFuturesMarketQuotations.h"

@@ -20,9 +20,11 @@ public:
 
 	static UINT getTimestamp();
 
+	static std::string getDate();
+	static std::string getDateInDateTime(std::string dateTime);
 	static std::string getDateTime();
 	static std::string getLastFutureTransactionDay();
-	int compareDateTime(std::string dt0, std::string dt1);
+	static int compareDateTime(std::string dt0, std::string dt1);
 	
 	static std::string calcDateByDeltaDays(std::string srcDate, int deltaDays);
 	static UINT getYearInDateTime(std::string dateTime);
