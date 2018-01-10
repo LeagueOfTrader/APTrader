@@ -80,18 +80,18 @@ APTrade * APObjectFactory::newTrade(APFinancialInstrumentType marketType)
 	return trader;
 }
 
-APQuotationDecision * APObjectFactory::newQuotationDecision(APQuotationDecisionType type, APASSETID srcID, APASSETID targetID, double param)
+APQuotationDecision * APObjectFactory::newQuotationDecision(APQuotationDecisionType type, APASSETID srcID, APASSETID targetID, double upper, double lower)
 {
 	APQuotationDecision* decision = NULL;
 	switch (type) {
 	case QDT_Single:
-		decision = new APSingleQuotationDecision(srcID);
+		decision = new APSingleQuotationDecision(srcID, upper, lower);
 		break;
 	case QDT_PriceMargin:
-		decision = new APPriceMarginQuotationDecision(srcID, targetID, param);
+		decision = new APPriceMarginQuotationDecision(srcID, targetID, upper, lower);
 		break;
 	case QDT_PriceRatio:
-		decision = new APPriceRatioQuotationDecision(srcID, targetID, param);
+		decision = new APPriceRatioQuotationDecision(srcID, targetID, upper, lower);
 		break;
 	case QDT_SimSingle:
 		decision = new APSimSingleQuotationDecision(srcID);

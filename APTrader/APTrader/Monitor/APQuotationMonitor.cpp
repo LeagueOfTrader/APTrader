@@ -84,6 +84,10 @@ void APQuotationMonitor::update()
 {
 	if (m_quotationDecision != NULL) {
 		double curValue = m_quotationDecision->getValueReference();
+
+		if (!m_quotationDecision->isValueRefValid(curValue)) {
+			return;
+		}
 		if (curValue < 0.0) {
 			return;
 		}
@@ -229,13 +233,13 @@ void APQuotationMonitor::initQuotationDecision(std::string info)
 	jr.initWithString(info);
 	APQuotationDecisionType type = (APQuotationDecisionType)jr.getIntValue("QuotationDecisionType");
 	std::string srcID = jr.getStrValue("SrcID");
-	if (jr.hasMember("TargetID")) {
-		std::string targetID = jr.getStrValue("TargetID");
-		if (jr.hasMember("Param")) {
-			double param = jr.getDoubleValue("Param");
-			m_quotationDecision = APObjectFactory::newQuotationDecision(type, srcID, targetID, param);
-		}
-	}
+
+	std::string targetID = jr.getStrValue("TargetID");
+		
+	double upper = jr.getDoubleValue("UpperLimit");
+	double lower = jr.getDoubleValue("LowerLimit");
+	m_quotationDecision = APObjectFactory::newQuotationDecision(type, srcID, targetID, upper, lower);
+
 }
 
 void APQuotationMonitor::initFixGrids(std::string info)

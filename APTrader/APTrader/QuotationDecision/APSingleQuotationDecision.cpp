@@ -8,7 +8,7 @@ APSingleQuotationDecision::APSingleQuotationDecision()
 	m_quotation = NULL;
 }
 
-APSingleQuotationDecision::APSingleQuotationDecision(APASSETID instrumentID)
+APSingleQuotationDecision::APSingleQuotationDecision(APASSETID instrumentID, double upper, double lower) : APQuotationDecision(upper, lower)
 {
 	m_quotation = APMarketDataMgr->subscribeInstrument(instrumentID);
 }

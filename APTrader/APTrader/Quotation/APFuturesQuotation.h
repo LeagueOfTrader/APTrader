@@ -17,7 +17,7 @@ public:
 
 private:
 #ifdef USE_CTP
-	void parseCTPData(CThostFtdcDepthMarketDataField *data);
+	void parseCTPData(const CThostFtdcDepthMarketDataField& data);
 #endif
 
 private:

@@ -12,7 +12,8 @@
             "QuotationDecisionType": 101,
             "SrcID": "rb1805",
             "TargetID": "0",
-            "Param": 0
+            "UpperLimit": 10000,
+			"LowerLimit": 100
         },
         "Grids": {
             "Direction": "Sell",

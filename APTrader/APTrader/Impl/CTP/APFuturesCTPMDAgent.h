@@ -26,7 +26,7 @@ public:
 	bool subscribeInstrument(APASSETID instrumentID);
 	bool unSubscribeInstrument(APASSETID instrumentID);
 
-	CThostFtdcDepthMarketDataField* getMarketData(APASSETID instrumentID);
+	bool getMarketData(APASSETID instrumentID, CThostFtdcDepthMarketDataField& data);
 
 	void onGetMarketData(CThostFtdcDepthMarketDataField* data);
 
@@ -35,7 +35,7 @@ private:
 	APFuturesCTPMDResponser* m_mdResponser;
 
 	std::set<APASSETID> m_subscribedInstruments;
-	std::map<APASSETID, CThostFtdcDepthMarketDataField*> m_marketData;
+	std::map<APASSETID, CThostFtdcDepthMarketDataField> m_marketData;
 };
 
 #endif

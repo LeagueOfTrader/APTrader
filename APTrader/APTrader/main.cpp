@@ -47,16 +47,16 @@ void main() {
 	//---------------------------------------------------------------------------------
 	
 	//// ---- monitor ----
-	//APMonitorFramework* framework = APMonitorFramework::getInstance();
-	////std::thread frameworkThread(frameworkLoop);
-	//framework->init();
+	APMonitorFramework* framework = APMonitorFramework::getInstance();
+	//std::thread frameworkThread(frameworkLoop);
+	framework->init();
 
-	//while (!framework->inited()) {
-	//}
+	while (!framework->inited()) {
+	}
 
-	//while (!framework->finished()) {
-	//	framework->update(0.0);
-	//}
+	while (!framework->finished()) {
+		framework->update(0.0);
+	}
 
-	//framework->exit();
+	framework->exit();
 }

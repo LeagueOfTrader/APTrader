@@ -9,7 +9,7 @@ class APPriceMarginQuotationDecision :
 	public APQuotationDecision
 {
 public:
-	APPriceMarginQuotationDecision(APASSETID srcInstrumentID, APASSETID targetInstrumentID, double priceDiff);
+	APPriceMarginQuotationDecision(APASSETID srcInstrumentID, APASSETID targetInstrumentID, double upper, double lower);
 	~APPriceMarginQuotationDecision();
 
 	virtual double getValueReference();

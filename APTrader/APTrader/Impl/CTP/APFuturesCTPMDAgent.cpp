@@ -105,13 +105,14 @@ bool APFuturesCTPMDAgent::unSubscribeInstrument(APASSETID instrumentID)
 	return ret;
 }
 
-CThostFtdcDepthMarketDataField * APFuturesCTPMDAgent::getMarketData(APASSETID instrumentID)
+bool APFuturesCTPMDAgent::getMarketData(APASSETID instrumentID, CThostFtdcDepthMarketDataField& data)
 {
 	if(m_marketData.find(instrumentID) == m_marketData.end()){
-		return NULL;
+		return false;
 	}
 
-	return m_marketData[instrumentID];
+	data = m_marketData[instrumentID];
+	return true;
 }
 
 void APFuturesCTPMDAgent::onGetMarketData(CThostFtdcDepthMarketDataField * data)
@@ -121,9 +122,6 @@ void APFuturesCTPMDAgent::onGetMarketData(CThostFtdcDepthMarketDataField * data)
 	}
 
 	APASSETID instrumentID = data->InstrumentID;
-	if (m_marketData.find(instrumentID) == m_marketData.end()) {
-		m_marketData[instrumentID] = new CThostFtdcDepthMarketDataField();
-	}
 
-	memcpy(m_marketData[instrumentID], data, sizeof(CThostFtdcDepthMarketDataField));
+	m_marketData[instrumentID] = *data;
 }

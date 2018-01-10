@@ -111,13 +111,14 @@ void APStrategy::initQuotationDecision(std::string quotationInfo)
 	jr.initWithString(quotationInfo);
 	APQuotationDecisionType type = (APQuotationDecisionType)jr.getIntValue("QuotationDecisionType");
 	std::string srcID = jr.getStrValue("SrcID");
-	if (jr.hasMember("TargetID")) {
-		std::string targetID = jr.getStrValue("TargetID");	
-		if (jr.hasMember("Param")) {
-			double param = jr.getDoubleValue("Param");
-			m_quotationDecision = APObjectFactory::newQuotationDecision(type, srcID, targetID, param);
-		}
-	}
+	
+	std::string targetID = jr.getStrValue("TargetID");	
+
+	double upper = jr.getDoubleValue("UpperLimit");
+	double lower = jr.getDoubleValue("LowerLimit");
+	m_quotationDecision = APObjectFactory::newQuotationDecision(type, srcID, targetID, upper, lower);
+		
+	
 }
 
 void APStrategy::setInstrumentID(APASSETID instrumentID)

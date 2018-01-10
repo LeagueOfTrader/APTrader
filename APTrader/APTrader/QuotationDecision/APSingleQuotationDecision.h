@@ -10,7 +10,7 @@ class APSingleQuotationDecision :
 {
 public:
 	APSingleQuotationDecision();
-	APSingleQuotationDecision(APASSETID instrumentID);
+	APSingleQuotationDecision(APASSETID instrumentID, double upper, double lower);
 	~APSingleQuotationDecision();
 
 	virtual double getValueReference();

@@ -9,7 +9,7 @@ class APPriceRatioQuotationDecision :
 	public APQuotationDecision
 {
 public:
-	APPriceRatioQuotationDecision(APASSETID srcInstrumentID, APASSETID targetInstrumentID, double priceRatio);
+	APPriceRatioQuotationDecision(APASSETID srcInstrumentID, APASSETID targetInstrumentID, double upper, double lower);
 	~APPriceRatioQuotationDecision();
 
 	virtual double getValueReference();

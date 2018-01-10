@@ -2,11 +2,13 @@
 #include "../APInstrumentQuotation.h"
 #include "../APMarketDataManager.h"
 
-APPriceRatioQuotationDecision::APPriceRatioQuotationDecision(APASSETID srcInstrumentID, APASSETID targetInstrumentID, double priceRatio)
+APPriceRatioQuotationDecision::APPriceRatioQuotationDecision(APASSETID srcInstrumentID, APASSETID targetInstrumentID, 
+															double upper, double lower)
+															: APQuotationDecision(upper, lower)
 {
 	m_srcQuotation = APMarketDataMgr->subscribeInstrument(srcInstrumentID);
 	m_targetQuotation = APMarketDataMgr->subscribeInstrument(targetInstrumentID);
-	m_priceRatio = priceRatio;
+	m_priceRatio = -DBL_MAX;
 }
 
 
@@ -29,8 +31,8 @@ double APPriceRatioQuotationDecision::getValueReference()
 		&& m_srcQuotation->isValid() && m_targetQuotation->isValid()) {
 		double srcPrice = m_srcQuotation->getCurPrice();
 		double targetPrice = m_targetQuotation->getCurPrice();
-		return targetPrice / srcPrice;
+		m_priceRatio = targetPrice / srcPrice;
 	}
 
-	return -DBL_MAX;
+	return m_priceRatio;
 }

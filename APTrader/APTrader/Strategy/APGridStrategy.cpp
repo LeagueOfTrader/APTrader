@@ -47,6 +47,9 @@ void APGridStrategy::update()
 {
 	if (m_quotationDecision != NULL) {
 		double curValue = m_quotationDecision->getValueReference();
+		if (!m_quotationDecision->isValueRefValid(curValue)) {
+			return;
+		}
 
 		m_curIndex = 0;
 		goTrendGrid(curValue);
