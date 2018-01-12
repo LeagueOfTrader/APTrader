@@ -70,6 +70,13 @@ void APStrategy::init(std::string strategyInfo)
 //	m_positionCtrl = positionCtrl;
 //}
 
+void APStrategy::exit()
+{
+	if (m_positionCtrl != NULL) {
+		m_positionCtrl->save();
+	}
+}
+
 void APStrategy::setPriority(UINT priority)
 {
 	m_priority = priority;

@@ -74,7 +74,7 @@ void APSimFuturesTrade::onFundChanged(APASSETID instrumentID, APTradeType type, 
 
 //void APSimFuturesTrade::onTradeDealt(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction)
 //{
-//	//APORDERID orderID = UNDISTURBED_ORDER_ID;
+//	//APORDERID orderID = INVALID_ORDER_ID;
 //	//if (type == TT_Open || type == TT_Close) {
 //	//	orderID = findOrder(instrumentID, type, price, direction);
 //	//	if (orderID >= 0) {

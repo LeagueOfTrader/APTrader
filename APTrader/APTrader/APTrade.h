@@ -7,9 +7,10 @@
 #include <list>
 #include "APTypes.h"
 #include <set>
+#include "Utils/APRedisSerializedObject.h"
 
-#define UNDISTURBED_ORDER_ID 0
-#define MATCH_ANY_ORDER_ID 0xFEEEFEEE
+//#define INVALID_ORDER_ID 0
+//#define MATCH_ANY_ORDER_ID 0xFEEEFEEE
 
 class APPositionCtrl;
 class APIntAccumulator;
@@ -95,7 +96,7 @@ struct APTradeOrderInfo {
 	}
 };
 
-class APTrade
+class APTrade : public APRedisSerializedObject
 {
 public:
 	APTrade();
@@ -166,6 +167,12 @@ protected:
 	APORDERID generateOrderID();
 	void removeLocalOrder(APORDERID orderID);
 	APSYSTEMID getSysIDByOrder(APORDERID orderID);	
+
+	// serialize
+	virtual std::string serialize();
+	virtual void deserialize(std::string str);
+	virtual std::string generateRedisKey();
+	APOrderRecordInfo convertOrderInfo(APTradeOrderInfo& info);
 
 private:
 	std::vector<UINT> getRelatedOrders(APPositionCtrl* pc);

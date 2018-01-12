@@ -13,6 +13,7 @@ public:
 	~APTradeManager();
 
 	void init();
+	void exit();
 	void setTradeInstance(APTrade* tradeInstance);
 
 	APTrade* getTradeInstance();

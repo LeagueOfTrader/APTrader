@@ -17,7 +17,7 @@ public:
 
 	virtual void init(std::string positionInfo) = 0;
 
-	virtual void syncPositionStatus();	
+	//virtual void syncPositionStatus();	
 
 	void setInstrumentID(APASSETID instrumentID);
 	APTradeDirection getTradeDirection();
@@ -44,6 +44,8 @@ public:
 	long getMarginPosition();
 	long getHoldPosition();
 	long getFrozenPosition();
+
+	long getForeseeableHoldPosition();
 	//void unfreezePosition(long position = -1);
 
 	virtual std::vector<APPositionData> getHoldPositionDetail();
@@ -73,8 +75,7 @@ public:
 	void onCompleteOrder(APORDERID orderID, APTradeType type);
 	void onOrderOutdated(APORDERID orderID);
 
-	void save();
-	void load();
+	virtual void syncPosition();
 
 protected:
 	virtual void open(APTradeDirection direction, double price, long volume) = 0;
@@ -87,12 +88,14 @@ protected:
 	virtual void cancelAll();
 	void cancel(APORDERID orderID);
 	
-	virtual void onSyncPositionStatus(const APPositionData& data);
+	//virtual void onSyncPositionStatus(const APPositionData& data);
 
 	virtual void initWithData(std::string positionInfo);
 
+	// serialize
 	virtual std::string serialize();
 	virtual void deserialize(std::string str);
+	virtual std::string generateRedisKey();
 
 protected:
 	long m_openOrdersPosition; // ¿ª²Ö¶³½áÁ¿
@@ -130,6 +133,8 @@ protected:
 	std::string m_tag;
 
 	int m_priority;
+
+	std::mutex m_positionMutex;
 
 public:
 	friend class APPositionManager;

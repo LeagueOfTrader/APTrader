@@ -177,11 +177,9 @@ bool APTransferPositionStrategy::canTransferWithCurrentPrice()
 void APTransferPositionStrategy::onFinishTransfer()
 {
 	// set parent strategy's new instrumentID, also position ctrl's instrumentID and sync positionCtrl's status
-
-
 	if (m_positionCtrl != NULL) {
 		m_positionCtrl->setInstrumentID(m_targetContractID);
-		m_positionCtrl->syncPositionStatus();
+		//m_positionCtrl->syncPositionStatus();
 	}
 	// detach from parent strategy -- or generate new delivery date
 	APStrategy* parentStrategy = getParent();

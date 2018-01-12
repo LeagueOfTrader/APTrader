@@ -133,5 +133,5 @@ enum APOrderContingentCondition {
 	OCC_Num
 };
 
-const unsigned int INVALID_TRADE_ORDER_ID = 0;
+const unsigned int INVALID_ORDER_ID = 0;
 const double MARKET_ORDER_PRICE = -0.00999;

@@ -89,8 +89,10 @@ void APFuturesCombinationPosCtrl::openPosition(APTradeDirection direction, doubl
 	m_curOpenOperation.setTarget(volume * m_prUnitVol, volume * m_coUnitVol, volume);
 	openPrPosition();
 
+	m_positionMutex.lock();
 	m_availablePosition -= volume;
 	m_openOrdersPosition += volume;
+	m_positionMutex.unlock();
 }
 
 void APFuturesCombinationPosCtrl::closePosition(APTradeDirection direction, double price, long volume)
@@ -102,13 +104,15 @@ void APFuturesCombinationPosCtrl::closePosition(APTradeDirection direction, doub
 	m_curCloseOperation.setTarget(volume * m_prUnitVol, volume * m_coUnitVol, volume);
 	closePrPosition();
 
+	m_positionMutex.lock();
 	m_holdPosition -= volume;
 	m_closeOrdersPosition += volume;
+	m_positionMutex.unlock();
 }
 
 void APFuturesCombinationPosCtrl::openFullPosition(APTradeDirection direction, double price)
 {
-	openPosition(direction, price, m_availablePosition);
+	openPosition(direction, price, m_availablePosition);	
 }
 
 void APFuturesCombinationPosCtrl::closeOffPosition(APTradeDirection direction, double price)
@@ -146,6 +150,7 @@ void APFuturesCombinationPosCtrl::onTradeDealt(APASSETID instrumentID, APTradeTy
 {
 	switch (type) {
 	case TT_Open:
+		m_positionMutex.lock();
 		if (instrumentID == m_instrumentID) {
 			// pr traded
 			m_curOpenOperation.prVolume += deltaVolume;
@@ -163,11 +168,12 @@ void APFuturesCombinationPosCtrl::onTradeDealt(APASSETID instrumentID, APTradeTy
 				m_availablePosition += m_curOpenOperation.groupCount;
 				m_openOrdersPosition -= m_curOpenOperation.groupCount;
 				m_curOpenOperation.reset();
-			}
+			}			
 		}
-		
+		m_positionMutex.unlock();
 		break;
 	case TT_Close:
+		m_positionMutex.lock();
 		if (instrumentID == m_instrumentID) {
 			// pr traded
 			m_curCloseOperation.prVolume += deltaVolume;
@@ -188,7 +194,7 @@ void APFuturesCombinationPosCtrl::onTradeDealt(APASSETID instrumentID, APTradeTy
 				m_curOpenOperation.reset();
 			}
 		}
-
+		m_positionMutex.unlock();
 		break;
 	default:
 		break;
@@ -200,18 +206,22 @@ void APFuturesCombinationPosCtrl::onTradeCanceled(APASSETID instrumentID, APTrad
 	switch (type) {
 	case TT_Open:
 		if (instrumentID == m_instrumentID) {
+			m_positionMutex.lock();
 			m_availablePosition += m_curOpenOperation.groupCount;
 			m_openOrdersPosition -= m_curOpenOperation.groupCount;
 			m_openOrderList.remove(orderID);
 			m_curOpenOperation.reset();
+			m_positionMutex.unlock();
 		}
 		break;
 	case TT_Close:
 		if (instrumentID == m_instrumentID) {
+			m_positionMutex.lock();
 			m_marginPosition += m_curCloseOperation.groupCount;
 			m_closeOrdersPosition -= m_curCloseOperation.groupCount;
 			m_closeOrderList.remove(orderID);
 			m_curCloseOperation.reset();
+			m_positionMutex.unlock();
 		}
 		
 		break;

@@ -16,6 +16,7 @@ public:
 	virtual void init(std::string strategyInfo);
 	virtual void update() = 0;
 	virtual void alert() = 0;
+	void exit();
 
 	void setPriority(UINT priority);
 	UINT getPriority();

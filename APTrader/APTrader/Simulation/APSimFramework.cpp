@@ -44,7 +44,7 @@ void APSimFramework::init() {
 
 void APSimFramework::postInit() {
 	for (int i = 0; i < m_simStrategies.size(); i++) {		
-		APStrategyManager::getInstance()->runStrategy("Data/" + m_simStrategies[i]);
+		APStrategyManager::getInstance()->runStrategy(m_simStrategies[i]);
 	}
 }
 

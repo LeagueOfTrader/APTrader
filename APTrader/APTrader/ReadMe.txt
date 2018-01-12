@@ -9,6 +9,9 @@ CTP:
 	TraderAgent
 
 Local:
+	GlobalSetting
+	MarketData
+	APRedisAgent
 	AccountAssets
 	TraderManager
 	StrategyManager

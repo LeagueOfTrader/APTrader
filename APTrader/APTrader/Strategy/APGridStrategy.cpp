@@ -126,8 +126,9 @@ void APGridStrategy::goTrendGrid(double value) // , std::vector<APGridData>& ope
 
 		m_curIndex = -(i + 1);
 
-		if (m_positionCtrl->getHoldPosition() + m_positionCtrl->getOpenOrderedPosition() < m_openGrids[i].position) {
-			long volume = m_openGrids[i].position - (m_positionCtrl->getHoldPosition() + m_positionCtrl->getOpenOrderedPosition());
+		long amount = m_positionCtrl->getForeseeableHoldPosition();
+		if (amount < m_openGrids[i].position) {
+			long volume = m_openGrids[i].position - amount;
 			m_positionCtrl->openPosition(m_direction, m_openGrids[i].price, volume);
 		}
 	}

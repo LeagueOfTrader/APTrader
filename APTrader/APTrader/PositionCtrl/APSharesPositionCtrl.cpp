@@ -26,7 +26,7 @@ void APSharesPositionCtrl::init(std::string positionInfo)
 void APSharesPositionCtrl::open(APTradeDirection direction, double price, long volume)
 {
 	APORDERID orderID = m_trade->open(m_instrumentID, direction, price, volume, this);
-	if (orderID != INVALID_TRADE_ORDER_ID) {
+	if (orderID != INVALID_ORDER_ID) {
 		m_openOrderList.push_back(orderID);
 	}
 }
@@ -34,7 +34,7 @@ void APSharesPositionCtrl::open(APTradeDirection direction, double price, long v
 void APSharesPositionCtrl::close(APTradeDirection direction, double price, long volume)
 {
 	APORDERID orderID = m_trade->close(m_instrumentID, direction, price, volume, this);
-	if (orderID != INVALID_TRADE_ORDER_ID) {
+	if (orderID != INVALID_ORDER_ID) {
 		m_closeOrderList.push_back(orderID);
 	}
 }

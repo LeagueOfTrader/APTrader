@@ -123,6 +123,7 @@ void APFuturesPositionCtrl::cancel(APTradeType type)
 
 void APFuturesPositionCtrl::onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTradeDirection direction)
 {
+	m_positionMutex.lock();
 	switch (type) {
 	case TT_Open:
 		m_holdPosition += deltaVolume;
@@ -137,10 +138,12 @@ void APFuturesPositionCtrl::onTradeDealt(APASSETID instrumentID, APTradeType typ
 	default:
 		break;
 	}
+	m_positionMutex.unlock();
 }
 
 void APFuturesPositionCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction)
 {
+	m_positionMutex.lock();
 	switch (type) {
 	case TT_Open:
 		m_marginPosition += volume;
@@ -155,6 +158,7 @@ void APFuturesPositionCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType 
 	default:
 		break;
 	}
+	m_positionMutex.unlock();
 }
 
 void APFuturesPositionCtrl::setInstrumentID(APASSETID instrumentID)

@@ -37,7 +37,7 @@ private:
 	int getGridIndex(std::vector<double>& grids, double value, bool reverse = false);
 	int getCurTrendGridIndex(std::vector<double>& grids, double value, bool open);
 
-	void payAttention(std::string content, double value, APMonitorPriorityLevel lv = MPL_None);
+	virtual void payAttention(std::string content, double value, APMonitorPriorityLevel lv = MPL_None);
 
 	void initQuotationDecision(std::string info);
 	void initFixGrids(std::string info);

@@ -1,8 +1,10 @@
 #include "APTrade.h"
 #include "APPositionCtrl.h"
 #include "APPositionManager.h"
-#include "./Utils/APIntAccumulator.h"
-#include "./Utils/APTimeUtility.h"
+#include "Utils/APIntAccumulator.h"
+#include "Utils/APTimeUtility.h"
+#include "3rdParty/jsoncpp/include/json/writer.h"
+#include "Utils/APJsonReader.h"
 
 #include "APMacro.h"
 
@@ -27,7 +29,7 @@ APTrade::~APTrade()
 
 APORDERID APTrade::open(APASSETID instrumentID, APTradeDirection direction, double price, long volume, APPositionCtrl* pc, APOrderTimeCondition ot) {
 	if (pc == NULL) {
-		return INVALID_TRADE_ORDER_ID;
+		return INVALID_ORDER_ID;
 	}
 
 	APORDERID orderID = generateOrderID();
@@ -41,7 +43,7 @@ APORDERID APTrade::open(APASSETID instrumentID, APTradeDirection direction, doub
 
 APORDERID APTrade::close(APASSETID instrumentID, APTradeDirection direction, double price, long volume, APPositionCtrl* pc, APOrderTimeCondition ot) {
 	if (pc == NULL) {
-		return INVALID_TRADE_ORDER_ID;
+		return INVALID_ORDER_ID;
 	}
 
 	APORDERID orderID = generateOrderID();
@@ -56,7 +58,7 @@ APORDERID APTrade::close(APASSETID instrumentID, APTradeDirection direction, dou
 APORDERID APTrade::open(APASSETID instrumentID, APTradeDirection direction, APOrderPriceType orderPriceType, double price, APPositionCtrl * pc, APOrderTimeCondition orderTimeCondition, std::string date, APOrderVolumeCondition orderVolumeCondition, long volume, long minVolume, APOrderContingentCondition orderContingentCondition, double stopPrice)
 {
 	if (pc == NULL) {
-		return INVALID_TRADE_ORDER_ID;
+		return INVALID_ORDER_ID;
 	}
 
 	APORDERID orderID = generateOrderID();
@@ -74,7 +76,7 @@ APORDERID APTrade::open(APASSETID instrumentID, APTradeDirection direction, APOr
 APORDERID APTrade::close(APASSETID instrumentID, APTradeDirection direction, APOrderPriceType orderPriceType, double price, APPositionCtrl * pc, APOrderTimeCondition orderTimeCondition, std::string date, APOrderVolumeCondition orderVolumeCondition, long volume, long minVolume, APOrderContingentCondition orderContingentCondition, double stopPrice)
 {
 	if (pc == NULL) {
-		return INVALID_TRADE_ORDER_ID;
+		return INVALID_ORDER_ID;
 	}
 
 	APORDERID orderID = generateOrderID();
@@ -116,7 +118,7 @@ void APTrade::cancel(APASSETID instrumentID, APTradeType type, APTradeDirection 
 
 	for (int i = 0; i < cancelOrders.size(); i++) {
 		UINT orderID = cancelOrders[i];
-		if (orderID != UNDISTURBED_ORDER_ID) {
+		if (orderID != INVALID_ORDER_ID) {
 			cancel(orderID);
 		}
 	}
@@ -145,7 +147,7 @@ void APTrade::cancel(APASSETID instrumentID, APTradeType type, APPositionCtrl * 
 
 	for (int i = 0; i < cancelOrders.size(); i++) {
 		UINT orderID = cancelOrders[i];
-		if (orderID != UNDISTURBED_ORDER_ID) {
+		if (orderID != INVALID_ORDER_ID) {
 			cancel(orderID);
 		}
 	}
@@ -173,7 +175,7 @@ void APTrade::cancelAll(APASSETID instrumentID, APPositionCtrl * pc)
 
 	for (int i = 0; i < cancelOrders.size(); i++) {
 		UINT orderID = cancelOrders[i];
-		if (orderID != UNDISTURBED_ORDER_ID) {
+		if (orderID != INVALID_ORDER_ID) {
 			cancel(orderID);
 		}
 	}
@@ -364,6 +366,82 @@ APSYSTEMID APTrade::getSysIDByOrder(APORDERID orderID)
 		sysID = m_localOrders[orderID].sysID;
 	}
 	return sysID;
+}
+
+std::string APTrade::serialize()
+{
+	Json::Value v;
+	Json::Value arr;
+	v["LocalOrders"] = arr;
+	std::map<APORDERID, APTradeOrderInfo>::iterator it;
+	int index = 0;
+	for (it = m_localOrders.begin(); it != m_localOrders.end(); it++) {
+		APTradeOrderInfo& oi = it->second;
+		APOrderRecordInfo ori = convertOrderInfo(oi);
+		Json::Value rec;
+		rec["Direction"] = (int)ori.direction;
+		rec["LocalID"] = ori.localID;
+		rec["InstrumentID"] = ori.instrumentID;
+		rec["RecordTime"] = ori.recordTime;
+		rec["State"] = (int)ori.state;
+		rec["SysID"] = ori.sysID;
+		rec["VolumeSurplus"] = ori.volumeSurplus;
+		arr[index++] = rec;
+	}
+	return std::string();
+}
+
+void APTrade::deserialize(std::string str)
+{
+	APJsonReader jr;
+	jr.initWithString(str);
+
+	m_orderRecordInfo.clear();
+
+	int count = jr.getArraySize("LocalOrders");
+	for (int i = 0; i < count; i++) {
+		APOrderRecordInfo ori;
+		memset(&ori, 0, sizeof(ori));
+		std::string ordStr = jr.getArrayObjValue("LocalOrders", i);
+		Json::Reader recReader;
+		
+		Json::Value rec;
+		recReader.parse(ordStr, rec);
+
+		ori.direction = (APTradeDirection)rec["Direction"].asInt();
+		ori.localID = rec["LocalID"].asInt();
+		ori.instrumentID = rec["InstrumentID"].asString();
+		ori.recordTime = rec["RecordTime"].asString();
+		ori.state = (APOrderState)rec["State"].asInt();
+		ori.sysID = rec["SysID"].asString();
+		ori.volumeSurplus = rec["VolumeSurplus"].asInt();
+
+		m_orderRecordInfo[ori.localID] = ori;
+	}
+}
+
+std::string APTrade::generateRedisKey()
+{
+	std::string redisKey = APAccountAssets::getInstance()->getInterfaceType() + ":"
+		+ APAccountAssets::getInstance()->getAccountID() + ":Trade:RecordOrders";
+
+	return redisKey;
+}
+
+APOrderRecordInfo APTrade::convertOrderInfo(APTradeOrderInfo & info)
+{
+	APOrderRecordInfo record;
+	memset(&record, 0, sizeof(record));
+
+	record.direction = info.direction;
+	record.instrumentID = info.instrumentID;
+	record.localID = info.orderID;
+	record.recordTime = APTimeUtility::getDateTime();
+	record.state = info.state;
+	record.sysID = info.sysID;
+	record.volumeSurplus = info.volumeSurplus;
+	
+	return record;
 }
 
 std::vector<APORDERID> APTrade::getRelatedOrders(APPositionCtrl * pc)

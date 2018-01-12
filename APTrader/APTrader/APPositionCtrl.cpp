@@ -17,7 +17,6 @@ APPositionCtrl::APPositionCtrl()
 	m_priority = 1;
 }
 
-
 APPositionCtrl::~APPositionCtrl()
 {
 	if (m_quotation != NULL) {
@@ -124,6 +123,14 @@ long APPositionCtrl::getMarginPosition()
 long APPositionCtrl::getFrozenPosition()
 {
 	return m_frozenPosition;
+}
+
+long APPositionCtrl::getForeseeableHoldPosition()
+{
+	m_positionMutex.lock();
+	long amount = m_holdPosition + m_openOrdersPosition;
+	m_positionMutex.unlock();
+	return amount;
 }
 
 //void APPositionCtrl::unfreezePosition(long position)
@@ -310,45 +317,34 @@ void APPositionCtrl::onOrderOutdated(APORDERID orderID)
 	}
 }
 
-void APPositionCtrl::save()
+void APPositionCtrl::syncPosition()
 {
-	std::string redisKey = APAccountAssets::getInstance()->getInterfaceType() + ":"
-							+ APAccountAssets::getInstance()->getAccountID() + ":"
-							+ m_tag;
-	archive(redisKey);
+	APAccountAssets::getInstance()->verifyPosition(m_instrumentID, m_directionType, this);
 }
 
-void APPositionCtrl::load()
-{
-	std::string redisKey = APAccountAssets::getInstance()->getInterfaceType() + ":"
-							+ APAccountAssets::getInstance()->getAccountID() + ":"
-							+ m_tag;
-	unarchive(redisKey);
-}
-
-void APPositionCtrl::onSyncPositionStatus(const APPositionData & pd)
-{
-	//m_marginPosition = m_maxPosition - pd.holdPosition;
-	//m_frozenPosition = pd.frozenPosition;
-	//m_availablePosition = pd.holdPosition;
-	//m_openOrdersPosition = pd.openOrdersPosition;
-	//m_closeOrdersPosition = pd.closeOrdersPosition;
-}
-
-void APPositionCtrl::syncPositionStatus()
-{
-	//APPositionData pd;
-	//if (APAccountAssets::getInstance()->getPositionData(m_instrumentID, m_directionType, pd)) {
-	//	onSyncPositionStatus(pd);
-	//}
-	//else {
-	//	m_marginPosition = m_maxPosition;
-	//	m_frozenPosition = 0;
-	//	m_availablePosition = 0;
-	//	m_openOrdersPosition = 0;
-	//	m_closeOrdersPosition = 0;
-	//}
-}
+//void APPositionCtrl::onSyncPositionStatus(const APPositionData & pd)
+//{
+//	//m_marginPosition = m_maxPosition - pd.holdPosition;
+//	//m_frozenPosition = pd.frozenPosition;
+//	//m_availablePosition = pd.holdPosition;
+//	//m_openOrdersPosition = pd.openOrdersPosition;
+//	//m_closeOrdersPosition = pd.closeOrdersPosition;
+//}
+//
+//void APPositionCtrl::syncPositionStatus()
+//{
+//	//APPositionData pd;
+//	//if (APAccountAssets::getInstance()->getPositionData(m_instrumentID, m_directionType, pd)) {
+//	//	onSyncPositionStatus(pd);
+//	//}
+//	//else {
+//	//	m_marginPosition = m_maxPosition;
+//	//	m_frozenPosition = 0;
+//	//	m_availablePosition = 0;
+//	//	m_openOrdersPosition = 0;
+//	//	m_closeOrdersPosition = 0;
+//	//}
+//}
 
 void APPositionCtrl::initWithData(std::string positionInfo)
 {
@@ -369,10 +365,19 @@ void APPositionCtrl::initWithData(std::string positionInfo)
 #else 
 	m_quotation = NULL;
 #endif // !_DEBUG
-
 	
-
-	syncPositionStatus();
+	// load & sync data
+	load();
+	syncPosition();
+	if (m_trade != NULL) {
+		std::list<APORDERID>::iterator it;
+		for (it = m_openOrderList.begin(); it != m_openOrderList.end(); it++) {
+			m_trade->bindOrder(*it, this);
+		}
+		for (it = m_closeOrderList.begin(); it != m_closeOrderList.end(); it++) {
+			m_trade->bindOrder(*it, this);
+		}
+	}
 }
 
 std::string APPositionCtrl::serialize()
@@ -433,6 +438,14 @@ void APPositionCtrl::deserialize(std::string str)
 
 	std::string dateTime = jr.getStrValue("DateTime");
 	//todo: if beyond last transaction day, change yd hold and td hold
+}
+
+std::string APPositionCtrl::generateRedisKey()
+{
+	std::string redisKey = APAccountAssets::getInstance()->getInterfaceType() + ":"
+		+ APAccountAssets::getInstance()->getAccountID() + ":Position:"
+		+ m_tag;
+	return redisKey;
 }
 
 void APPositionCtrl::cancel(APTradeType type, double price, APTradeDirection direction)

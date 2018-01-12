@@ -4,15 +4,30 @@
 #include "Utils/APJsonReader.h"
 #include "Utils/APIntAccumulator.h"
 
+
+std::string strategyStartupFile = "Data/Strategy/startup.cfg";
+std::string strategyPath = "Data/Strategy/";
+
 APStrategyManager::APStrategyManager()
 {
 	m_idAccumulator = new APIntAccumulator();
 }
 
-
 APStrategyManager::~APStrategyManager()
 {
 	delete m_idAccumulator;
+}
+
+void APStrategyManager::init()
+{
+	APJsonReader jr;
+	jr.initWithFile(strategyStartupFile);
+
+	int count = jr.getArraySize("Strategies");
+	for (int i = 0; i < count; i++) {
+		std::string strategyName = jr.getArrayStrValue("Strategies", i);
+		//
+	}
 }
 
 void APStrategyManager::update()
@@ -24,15 +39,35 @@ void APStrategyManager::update()
 	}
 }
 
-APStrategy * APStrategyManager::runStrategy(std::string strategyFile)
+void APStrategyManager::exit()
 {
-	if (m_strategies.find(strategyFile) != m_strategies.end()) {
-		return m_strategies[strategyFile];
+	std::map<std::string, APStrategy*>::iterator it = m_strategies.begin();
+	for (; it != m_strategies.end(); it++) {
+		APStrategy* strategy = it->second;
+		strategy->exit();
+	}
+}
+
+APStrategy * APStrategyManager::runStrategy(std::string strategyName)
+{
+	if (m_strategies.find(strategyName) != m_strategies.end()) {
+		return m_strategies[strategyName];
 	}
 
-	APStrategy* strategy = createStrategy(strategyFile);
-	m_strategies[strategyFile] = strategy;
+	std::string filename = makeUpStrategyFileName(strategyName);
+	APStrategy* strategy = createStrategy(filename);
+	m_strategies[strategyName] = strategy;
 	return strategy;
+}
+
+void APStrategyManager::stopStrategy(std::string strategyName)
+{
+	if (m_strategies.find(strategyName) == m_strategies.end()) {
+		return;
+	}
+
+	m_strategies[strategyName]->exit();
+	m_strategies.erase(strategyName);
 }
 
 APStrategy * APStrategyManager::createStrategy(std::string strategyFile)
@@ -49,4 +84,9 @@ APStrategy * APStrategyManager::createStrategy(std::string strategyFile)
 	strategy->init(strategyInfo);
 	strategy->setID(m_idAccumulator->generateID());
 	return strategy;
+}
+
+std::string APStrategyManager::makeUpStrategyFileName(std::string strategyName)
+{
+	return strategyPath + strategyName + ".cfg";
 }

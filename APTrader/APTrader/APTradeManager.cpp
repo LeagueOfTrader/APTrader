@@ -23,10 +23,7 @@ APTradeManager::~APTradeManager()
 
 void APTradeManager::init()
 {
-	m_trader = APObjectFactory::newTrade(APGlobalConfig::getInstance()->getInstrumentType());
-	if (m_trader != NULL) {
-		m_inited = true;
-	}
+	m_trader = APObjectFactory::newTrade(APGlobalConfig::getInstance()->getInstrumentType());	
 
 #ifdef USE_CTP
 	int maxOrderRef = APFuturesCTPTraderAgent::getInstance()->getMaxOrderRef();
@@ -34,6 +31,19 @@ void APTradeManager::init()
 		m_trader->setOrderIDBase(maxOrderRef);
 	}
 #endif
+	
+	if (m_trader != NULL) {
+		m_trader->load();
+		m_inited = true;
+	}
+}
+
+void APTradeManager::exit()
+{
+	if (m_trader != NULL)
+	{
+		m_trader->save();
+	}
 }
 
 void APTradeManager::setTradeInstance(APTrade * tradeInstance)

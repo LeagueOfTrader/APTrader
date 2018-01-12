@@ -7,3 +7,7 @@
 //#ifndef SIM
 //#define SIM
 //#endif
+
+#ifdef TRADER_API_EXPORT
+#define TRADER_API __declspec(dllexport)
+#endif

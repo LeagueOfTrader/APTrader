@@ -12,11 +12,18 @@ public:
 	APStrategyManager();
 	~APStrategyManager();
 
+	void init();
 	void update();
-	APStrategy* runStrategy(std::string strategyFile);
+	void exit();
+
+	APStrategy* runStrategy(std::string strategyName);
+	void stopStrategy(std::string strategyName);
 
 //protected:
 	APStrategy* createStrategy(std::string strategyFile);
+
+private:
+	std::string makeUpStrategyFileName(std::string strategyName);
 
 private:
 	std::map<std::string, APStrategy*> m_strategies;
