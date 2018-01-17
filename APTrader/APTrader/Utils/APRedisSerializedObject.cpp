@@ -13,10 +13,15 @@ void APRedisSerializedObject::unarchive(std::string key)
 	deserialize(data);
 }
 
-void APRedisSerializedObject::load()
+bool APRedisSerializedObject::load()
 {
 	std::string redisKey = generateRedisKey();
-	unarchive(redisKey);
+	bool ret = APRedisAgent::getInstance()->hasKey(redisKey);
+	if (ret) {
+		unarchive(redisKey);
+	}
+
+	return ret;
 }
 
 void APRedisSerializedObject::save()

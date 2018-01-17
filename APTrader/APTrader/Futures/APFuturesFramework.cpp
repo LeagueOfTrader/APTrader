@@ -1,6 +1,6 @@
 #include "APFuturesFramework.h"
 #include "../Utils/APRedisAgent.h"
-#include "../APAccountAssets.h"
+#include "../APAccountInfo.h"
 #include "../APTradeManager.h"
 #include "../APStrategyManager.h"
 #include "../APMarketDataManager.h"
@@ -79,7 +79,7 @@ void APFuturesFramework::initLocalSystem()
 {
 	APMarketDataMgr->init();
 	APRedisAgent::getInstance()->init();
-	APAccountAssets::getInstance()->init();
+	APAccountInfo::getInstance()->init();
 	APTradeManager::getInstance()->init();
 	//
 	APStrategyManager::getInstance()->init();

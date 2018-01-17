@@ -1,6 +1,6 @@
 #include "APFuturesCTPTraderAgent.h"
 #include "../../Utils/APLog.h"
-#include "../../APAccountAssets.h"
+#include "../../APAccountInfo.h"
 #include "../../APTradeManager.h"
 #include "../../Utils/APTimeUtility.h"
 
@@ -618,7 +618,7 @@ int APFuturesCTPTraderAgent::reqQryInstrumentMarginRate(APASSETID instrumentID)
 
 void APFuturesCTPTraderAgent::onQryInstrumentPositionFinished(APASSETID instrumentID)
 {
-	APAccountAssets::getInstance()->onGetPositionData(instrumentID, m_positionInfo[instrumentID]);
+	APAccountInfo::getInstance()->onGetPositionData(instrumentID, m_positionInfo[instrumentID]);
 }
 
 void APFuturesCTPTraderAgent::onQryInstrumentPosition(APASSETID instrumentID, CThostFtdcInvestorPositionField * positionInfo)
@@ -886,7 +886,7 @@ void APFuturesCTPTraderAgent::onTradeFailed(APORDERID localID)
 
 //void APFuturesCTPTraderAgent::onQryInstrumentPosition(CThostFtdcInvestorPositionField * pInvestorPosition)
 //{
-//	APAccountAssets::getInstance()->onGetPositionData(pInvestorPosition);
+//	APAccountInfo::getInstance()->onGetPositionData(pInvestorPosition);
 //}
 
 

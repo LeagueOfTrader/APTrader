@@ -1,10 +1,11 @@
 #pragma once
 #include "APDef.h"
 #include <string>
-#include "APAccountAssets.h"
+#include "APAccountInfo.h"
 #include "APTypes.h"
 #include <list>
 #include "Utils/APRedisSerializedObject.h"
+#include "3rdParty/jsoncpp/include/json/writer.h"
 
 class APTrade;
 class APInstrumentQuotation;
@@ -75,7 +76,8 @@ public:
 	void onCompleteOrder(APORDERID orderID, APTradeType type);
 	void onOrderOutdated(APORDERID orderID);
 
-	virtual void syncPosition();
+	void syncPosition();
+	virtual void correctPosition();
 
 protected:
 	virtual void open(APTradeDirection direction, double price, long volume) = 0;
@@ -96,6 +98,7 @@ protected:
 	virtual std::string serialize();
 	virtual void deserialize(std::string str);
 	virtual std::string generateRedisKey();
+	virtual Json::Value serializeToJsonValue();
 
 protected:
 	long m_openOrdersPosition; // ¿ª²Ö¶³½áÁ¿

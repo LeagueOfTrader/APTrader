@@ -26,7 +26,7 @@ void APStrategyManager::init()
 	int count = jr.getArraySize("Strategies");
 	for (int i = 0; i < count; i++) {
 		std::string strategyName = jr.getArrayStrValue("Strategies", i);
-		//
+		runStrategy(strategyName);
 	}
 }
 

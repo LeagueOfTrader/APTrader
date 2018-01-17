@@ -1,6 +1,6 @@
 #include "APFramework.h"
 #include "APGlobalConfig.h"
-#include "APAccountAssets.h"
+#include "APAccountInfo.h"
 //#include "APMarketQuotationsManager.h"
 #include "APStrategyManager.h"
 #include "APPositionManager.h"
@@ -19,7 +19,7 @@ APFramework::~APFramework()
 //void APFramework::init()
 //{
 //	APGlobalConfig::getInstance()->init();
-//	APAccountAssets::getInstance()->init();
+//	APAccountInfo::getInstance()->init();
 //	//APMarketQuotationsManager::getInstance()->init();
 //	APTradeManager::getInstance()->init();
 //}

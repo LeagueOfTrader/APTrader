@@ -16,6 +16,7 @@ public:
 	void write(std::string key, std::string value);
 	void writeAsync(std::string key, std::string value);
 	std::string read(std::string key);
+	bool hasKey(std::string key);
 
 	void exit();
 

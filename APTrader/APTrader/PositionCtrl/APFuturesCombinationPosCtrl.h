@@ -66,6 +66,12 @@ public:
 	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type, double price, long deltaVolume, APORDERID orderID, APTradeDirection direction = TD_Buy);
 	virtual void onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
 
+	virtual void correctPosition();
+
+protected:
+	virtual Json::Value serializeToJsonValue();
+	virtual void deserialize(std::string str);
+
 private:
 	void openPrPosition();
 	void openCoPosition();
@@ -77,7 +83,7 @@ private:
 
 protected:
 	APASSETID m_coInstrumentID;
-	APTradeDirection m_coTrend;
+	APTradeDirection m_coDirectionType;
 
 	APInstrumentQuotation* m_coQuotation;
 

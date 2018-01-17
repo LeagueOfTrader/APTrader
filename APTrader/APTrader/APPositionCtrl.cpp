@@ -7,7 +7,8 @@
 #include "APMarketDataManager.h"
 #include "APPositionManager.h"
 #include "APTrade.h"
-#include "3rdParty/jsoncpp/include/json/writer.h"
+#include "APPositionRepertory.h"
+
 #include "Utils/APTimeUtility.h"
 
 APPositionCtrl::APPositionCtrl()
@@ -148,6 +149,15 @@ std::vector<APPositionData> APPositionCtrl::getHoldPositionDetail()
 	std::vector<APPositionData> holdPosList;
 	APPositionData pd;
 	memset(&pd, 0, sizeof(pd));
+	pd.instrumentID = m_instrumentID;
+	pd.direction = m_directionType;
+	pd.holdPosition = m_holdPosition;
+	if (m_directionType == TD_Buy) {
+		pd.longFrozenPosition = m_closeOrdersPosition;
+	}
+	else if (m_directionType == TD_Sell) {
+		pd.shortFrozenPosition = m_closeOrdersPosition;
+	}
 	holdPosList.push_back(pd);
 	return holdPosList;
 }
@@ -319,7 +329,40 @@ void APPositionCtrl::onOrderOutdated(APORDERID orderID)
 
 void APPositionCtrl::syncPosition()
 {
-	APAccountAssets::getInstance()->verifyPosition(m_instrumentID, m_directionType, this);
+	APAccountInfo::getInstance()->verifyPosition(m_instrumentID, m_directionType, this);
+}
+
+void APPositionCtrl::correctPosition()
+{
+	APPositionData & posData = APPositionRepertory::getInstance()->getPositionData(m_instrumentID, m_directionType);
+
+	if (m_holdPosition > posData.holdPosition) {
+		m_holdPosition = posData.holdPosition;
+		posData.holdPosition = 0;
+	}
+	else {
+		posData.holdPosition -= m_holdPosition;
+	}
+	m_availablePosition = m_holdPosition;	
+	
+	if (m_directionType == TD_Buy) {
+		if (m_closeOrdersPosition > posData.longFrozenPosition) {
+			m_closeOrdersPosition = posData.longFrozenPosition;
+			posData.longFrozenPosition = 0;
+		}
+		else {
+			posData.longFrozenPosition -= m_closeOrdersPosition;
+		}
+	}
+	else if (m_directionType == TD_Sell) {
+		if (m_closeOrdersPosition > posData.shortFrozenPosition) {
+			m_closeOrdersPosition = posData.shortFrozenPosition;
+			posData.shortFrozenPosition = 0;
+		}
+		else {
+			posData.shortFrozenPosition -= m_closeOrdersPosition;
+		}
+	}
 }
 
 //void APPositionCtrl::onSyncPositionStatus(const APPositionData & pd)
@@ -334,7 +377,7 @@ void APPositionCtrl::syncPosition()
 //void APPositionCtrl::syncPositionStatus()
 //{
 //	//APPositionData pd;
-//	//if (APAccountAssets::getInstance()->getPositionData(m_instrumentID, m_directionType, pd)) {
+//	//if (APAccountInfo::getInstance()->getPositionData(m_instrumentID, m_directionType, pd)) {
 //	//	onSyncPositionStatus(pd);
 //	//}
 //	//else {
@@ -367,8 +410,11 @@ void APPositionCtrl::initWithData(std::string positionInfo)
 #endif // !_DEBUG
 	
 	// load & sync data
-	load();
-	syncPosition();
+	bool ret = load();
+	if (ret) { 
+		syncPosition(); 
+	}
+
 	if (m_trade != NULL) {
 		std::list<APORDERID>::iterator it;
 		for (it = m_openOrderList.begin(); it != m_openOrderList.end(); it++) {
@@ -382,31 +428,7 @@ void APPositionCtrl::initWithData(std::string positionInfo)
 
 std::string APPositionCtrl::serialize()
 {
-	Json::Value v;
-	v["OpenOrdersPosition"] = m_openOrdersPosition;
-	v["CloseOrdersPosition"] = m_closeOrdersPosition;
-	v["HoldPosition"] = m_holdPosition;
-	v["AvailablePosition"] = m_availablePosition;
-	v["MarginPosition"] = m_marginPosition;
-	v["FrozenPosition"] = m_frozenPosition;
-	v["DateTime"] = APTimeUtility::getDateTime();
-
-	// array process
-	Json::Value bidArr;
-	std::list<APORDERID>::iterator it;
-	int index = 0;
-	for (it = m_openOrderList.begin(); it != m_openOrderList.end(); it++) {
-		APORDERID orderID = *it;
-		bidArr[index++] = orderID;
-	}
-	v["BidOrders"] = bidArr;
-	Json::Value askArr;
-	index = 0;
-	for (it = m_closeOrderList.begin(); it != m_closeOrderList.end(); it++) {
-		APORDERID orderID = *it;
-		askArr[index++] = orderID;
-	}
-	v["AskOrders"] = askArr;
+	Json::Value v = serializeToJsonValue();	
 
 	Json::FastWriter fw;
 	return fw.write(v);
@@ -438,14 +460,46 @@ void APPositionCtrl::deserialize(std::string str)
 
 	std::string dateTime = jr.getStrValue("DateTime");
 	//todo: if beyond last transaction day, change yd hold and td hold
+	//
 }
 
 std::string APPositionCtrl::generateRedisKey()
 {
-	std::string redisKey = APAccountAssets::getInstance()->getInterfaceType() + ":"
-		+ APAccountAssets::getInstance()->getAccountID() + ":Position:"
+	std::string redisKey = APAccountInfo::getInstance()->getInterfaceType() + ":"
+		+ APAccountInfo::getInstance()->getAccountID() + ":Position:"
 		+ m_tag;
 	return redisKey;
+}
+
+Json::Value APPositionCtrl::serializeToJsonValue()
+{
+	Json::Value v;
+	v["OpenOrdersPosition"] = m_openOrdersPosition;
+	v["CloseOrdersPosition"] = m_closeOrdersPosition;
+	v["HoldPosition"] = m_holdPosition;
+	v["AvailablePosition"] = m_availablePosition;
+	v["MarginPosition"] = m_marginPosition;
+	v["FrozenPosition"] = m_frozenPosition;
+	v["DateTime"] = APTimeUtility::getDateTime();
+
+	// array process
+	Json::Value bidArr;
+	std::list<APORDERID>::iterator it;
+	int index = 0;
+	for (it = m_openOrderList.begin(); it != m_openOrderList.end(); it++) {
+		APORDERID orderID = *it;
+		bidArr[index++] = orderID;
+	}
+	v["BidOrders"] = bidArr;
+	Json::Value askArr;
+	index = 0;
+	for (it = m_closeOrderList.begin(); it != m_closeOrderList.end(); it++) {
+		APORDERID orderID = *it;
+		askArr[index++] = orderID;
+	}
+	v["AskOrders"] = askArr;
+
+	return v;
 }
 
 void APPositionCtrl::cancel(APTradeType type, double price, APTradeDirection direction)

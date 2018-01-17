@@ -151,10 +151,12 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="APAccountAssets.h" />
+    <ClInclude Include="APAccountInfo.h" />
     <ClInclude Include="APDef.h" />
     <ClInclude Include="APFramework.h" />
     <ClInclude Include="APFundPool.h" />
+    <ClInclude Include="APPositionRepertory.h" />
+    <ClInclude Include="APStructs.h" />
     <ClInclude Include="Utils\APRedisSerializedObject.h" />
     <ClInclude Include="Common\ThreadSafeQueue.h" />
     <ClInclude Include="Utils\APRedisAgent.h" />
@@ -220,9 +222,10 @@
     <ClInclude Include="Common\Singleton.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="APAccountAssets.cpp" />
+    <ClCompile Include="APAccountInfo.cpp" />
     <ClCompile Include="APFramework.cpp" />
     <ClCompile Include="APFundPool.cpp" />
+    <ClCompile Include="APPositionRepertory.cpp" />
     <ClCompile Include="Utils\APRedisSerializedObject.cpp" />
     <ClCompile Include="Utils\APRedisAgent.cpp" />
     <ClCompile Include="Monitor\APMonitorFramework.cpp" />

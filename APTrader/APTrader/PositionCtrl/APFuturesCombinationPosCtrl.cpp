@@ -34,10 +34,10 @@ void APFuturesCombinationPosCtrl::initWithData(std::string positionInfo)
 	m_coUnitVol = jr.getIntValue("CoUnit");
 	std::string strCoTrend = jr.getStrValue("CoTrend");
 	if (strCoTrend == "Buy") {
-		m_coTrend = TD_Buy;
+		m_coDirectionType = TD_Buy;
 	}
 	else if (strCoTrend == "Sell") {
-		m_coTrend = TD_Sell;
+		m_coDirectionType = TD_Sell;
 	}
 
 #ifndef SIM
@@ -52,8 +52,27 @@ std::vector<APPositionData> APFuturesCombinationPosCtrl::getHoldPositionDetail()
 	std::vector<APPositionData> holdPosList;
 	APPositionData pd;
 	memset(&pd, 0, sizeof(pd));
+	pd.instrumentID = m_instrumentID;
+	pd.direction = m_directionType;
+	pd.holdPosition = m_prVolume;
+	if (m_directionType == TD_Buy) {
+		pd.longFrozenPosition = m_curCloseOperation.prTarget - m_curCloseOperation.prVolume;
+	}
+	else if (m_directionType == TD_Sell) {
+		pd.shortFrozenPosition = m_curCloseOperation.prTarget - m_curCloseOperation.prVolume;
+	}
 	holdPosList.push_back(pd);
+
 	memset(&pd, 0, sizeof(pd));
+	pd.instrumentID = m_coInstrumentID;
+	pd.direction = m_coDirectionType;
+	pd.holdPosition = m_coVolume;
+	if (m_directionType == TD_Buy) {
+		pd.longFrozenPosition = m_curCloseOperation.coTarget - m_curCloseOperation.coVolume;
+	}
+	else if (m_directionType == TD_Sell) {
+		pd.shortFrozenPosition = m_curCloseOperation.coTarget - m_curCloseOperation.coVolume;
+	}
 	holdPosList.push_back(pd);
 	return holdPosList;
 }
@@ -230,6 +249,27 @@ void APFuturesCombinationPosCtrl::onTradeCanceled(APASSETID instrumentID, APTrad
 	}
 }
 
+void APFuturesCombinationPosCtrl::correctPosition()
+{
+}
+
+Json::Value APFuturesCombinationPosCtrl::serializeToJsonValue()
+{
+	Json::Value v = APPositionCtrl::serializeToJsonValue();
+
+	// todo: save operation
+	//v[]
+
+	return v;
+}
+
+void APFuturesCombinationPosCtrl::deserialize(std::string str)
+{
+	APPositionCtrl::deserialize(str);
+
+	// todo: recover operation
+}
+
 void APFuturesCombinationPosCtrl::openPrPosition()
 {
 	long vol = m_curOpenOperation.prTarget;
@@ -241,7 +281,7 @@ void APFuturesCombinationPosCtrl::openCoPosition()
 {
 	long vol = m_curOpenOperation.coTarget;
 	double price = m_coQuotation->getCurPrice();
-	open(m_coInstrumentID, m_coTrend, OPT_AnyPrice, price);
+	open(m_coInstrumentID, m_coDirectionType, OPT_AnyPrice, price);
 }
 
 void APFuturesCombinationPosCtrl::closePrPosition()
@@ -255,7 +295,7 @@ void APFuturesCombinationPosCtrl::closeCoPosition()
 {
 	long vol = m_curCloseOperation.coTarget;
 	double price = m_coQuotation->getCurPrice();
-	open(m_coInstrumentID, m_coTrend, OPT_AnyPrice, price);
+	open(m_coInstrumentID, m_coDirectionType, OPT_AnyPrice, price);
 }
 
 //void APFuturesCombinationPosCtrl::onFinishOpenOperation()

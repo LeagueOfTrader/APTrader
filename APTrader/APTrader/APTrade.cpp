@@ -422,8 +422,8 @@ void APTrade::deserialize(std::string str)
 
 std::string APTrade::generateRedisKey()
 {
-	std::string redisKey = APAccountAssets::getInstance()->getInterfaceType() + ":"
-		+ APAccountAssets::getInstance()->getAccountID() + ":Trade:RecordOrders";
+	std::string redisKey = APAccountInfo::getInstance()->getInterfaceType() + ":"
+		+ APAccountInfo::getInstance()->getAccountID() + ":Trade:RecordOrders";
 
 	return redisKey;
 }

@@ -5,10 +5,7 @@
 #include "Model/APKLine.h"
 #include "Common/RefCountObject.h"
 
-struct APBidInfo {
-	double price;
-	long volume;
-};
+#include "APStructs.h"
 
 class APInstrumentQuotation : public RefCountObject
 {

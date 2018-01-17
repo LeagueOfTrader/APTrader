@@ -1,27 +1,28 @@
-#include "APAccountAssets.h"
+#include "APAccountInfo.h"
 #include "Futures/APFuturesIDSelector.h"
 #include "APGlobalConfig.h"
 #include "Utils/APTimeUtility.h"
 #include "APPositionCtrl.h"
 #include "APTradeManager.h"
+#include "APPositionRepertory.h"
 
 
 #ifdef USE_CTP
 #include "Impl/CTP/APFuturesCTPTraderAgent.h"
 #endif // USE_CTP
 
-APAccountAssets::APAccountAssets()
+APAccountInfo::APAccountInfo()
 {
 	m_inited = false;
 	m_accountID = "Default";
 	m_interfaceType = "";
 }
 
-APAccountAssets::~APAccountAssets()
+APAccountInfo::~APAccountInfo()
 {
 }
 
-void APAccountAssets::init()
+void APAccountInfo::init()
 {
 #ifdef USE_CTP
 	m_accountID = APFuturesCTPTraderAgent::getInstance()->getUserID();
@@ -29,12 +30,12 @@ void APAccountAssets::init()
 #endif
 }
 
-bool APAccountAssets::inited()
+bool APAccountInfo::inited()
 {
 	return m_inited;
 }
 
-void APAccountAssets::verifyPosition(APASSETID instrumentID, APTradeDirection dir, APPositionCtrl * posCtrl)
+void APAccountInfo::verifyPosition(APASSETID instrumentID, APTradeDirection dir, APPositionCtrl * posCtrl)
 {
 	APPositionCtrlWrapper pcw;
 	memset(&pcw, 0, sizeof(pcw));
@@ -50,23 +51,7 @@ void APAccountAssets::verifyPosition(APASSETID instrumentID, APTradeDirection di
 	m_instruments.insert(instrumentID);
 }
 
-void APAccountAssets::queryPosition(APASSETID instrumentID, APTradeDirection dir, APPositionCtrl * posCtrl)
-{
-	APPositionCtrlWrapper pcw;
-	memset(&pcw, 0, sizeof(pcw));
-	pcw.instrumentID = instrumentID;
-	pcw.direction = dir;
-	pcw.posCtrl = posCtrl;
-
-	m_distributionQuque.push(pcw);
-
-	if (m_instruments.find(instrumentID) != m_instruments.end()) {
-		return;
-	}
-	m_instruments.insert(instrumentID);
-}
-
-void APAccountAssets::processVerification()
+void APAccountInfo::processVerification()
 {
 	while (m_verificationQueue.size() > 0) {
 		const APPositionCtrlWrapper& pcw = m_verificationQueue.top();
@@ -74,15 +59,25 @@ void APAccountAssets::processVerification()
 		if (posCtrl != NULL) {
 			std::vector<APPositionData> holdPosList = posCtrl->getHoldPositionDetail();
 			if (holdPosList.size() > 0) {
-				//bool match = false;
+				bool match = false;
 				for (int i = 0; i < holdPosList.size(); i++) {
 					const APPositionData& pd = holdPosList[i];
-					if (pd.direction == TD_Buy) {
-						verifyWithStub(m_buyPositionData, pd, posCtrl);
+					match = APPositionRepertory::getInstance()->capable(pd);
+					if (!match) {
+						break;
 					}
-					else if (pd.direction == TD_Sell) {
-						verifyWithStub(m_sellPositionData, pd, posCtrl);
+				}
+
+				if (match) {
+					for (int i = 0; i < holdPosList.size(); i++) {
+						const APPositionData& pd = holdPosList[i];
+						APPositionRepertory::getInstance()->handle(pd);
 					}
+				}
+				else
+				{
+					// correct
+					posCtrl->correctPosition();
 				}
 			}
 		}
@@ -90,52 +85,24 @@ void APAccountAssets::processVerification()
 	}	
 }
 
-void APAccountAssets::verifyWithStub(std::map<APASSETID, APPositionDataStub>& stub, const APPositionData & pd, APPositionCtrl * posCtrl)
-{
-	if (posCtrl == NULL) {
-		return;
-	}
+//void APAccountInfo::verify(std::map<APASSETID, APPositionData>& data, const APPositionData & pd, APPositionCtrl * posCtrl)
+//{
+//	if (posCtrl == NULL) {
+//		return;
+//	}
+//
+//	if (data.find(pd.instrumentID) != data.end()) {
+//		if (data[pd.instrumentID].capable(pd)) {
+//			data[pd.instrumentID].handle(pd);
+//		}
+//		else {
+//			// position ctrl correction
+//			//posCtrl->
+//		}
+//	}
+//}
 
-	if (stub.find(pd.instrumentID) != stub.end()) {
-		if (stub[pd.instrumentID].capable(pd)) {
-			stub[pd.instrumentID].handle(pd);
-		}
-		else {
-			//
-		}
-	}
-}
-
-
-
-void APAccountAssets::processDistribution()
-{
-	std::vector<APPositionCtrlWrapper> distributionList;
-	while (m_distributionQuque.size() > 0) {
-		APPositionCtrlWrapper pcw = m_distributionQuque.top();
-		distributionList.push_back(pcw);
-		m_distributionQuque.pop();
-	}
-
-	for (int i = 0; i < distributionList.size(); i++) {
-		const APPositionCtrlWrapper& pcw = distributionList[i];
-		if (pcw.direction == TD_Buy) {
-			//
-		}
-		else if (pcw.direction == TD_Sell) {
-			//
-		}
-	}
-}
-
-void APAccountAssets::process()
-{
-	processVerification();
-	processDistribution();
-	m_inited = true;
-}
-
-void APAccountAssets::beginVerify()
+void APAccountInfo::beginVerify()
 {
 	std::set<APASSETID>::iterator it = m_instruments.begin();
 	while (it != m_instruments.end()) {
@@ -146,19 +113,19 @@ void APAccountAssets::beginVerify()
 	}
 }
 
-std::string APAccountAssets::getAccountID()
+std::string APAccountInfo::getAccountID()
 {
 	return m_accountID;
 }
 
-std::string APAccountAssets::getInterfaceType()
+std::string APAccountInfo::getInterfaceType()
 {
 	return m_interfaceType;
 }
 
 #ifdef USE_CTP
 
-void APAccountAssets::appendPositionInfo(APPositionData & pd, CThostFtdcInvestorPositionField & info)
+void APAccountInfo::appendPositionInfo(APPositionData & pd, CThostFtdcInvestorPositionField & info)
 {
 	pd.holdPosition += info.Position;
 	pd.longFrozenPosition += info.LongFrozen;
@@ -167,7 +134,7 @@ void APAccountAssets::appendPositionInfo(APPositionData & pd, CThostFtdcInvestor
 	pd.yesterdayPosition += info.YdPosition;
 }
 
-void APAccountAssets::onGetPositionData(APASSETID instrumentID, std::vector<CThostFtdcInvestorPositionField>& positionDataArr)
+void APAccountInfo::onGetPositionData(APASSETID instrumentID, std::vector<CThostFtdcInvestorPositionField>& positionDataArr)
 {
 	APPositionData posDataBuy;
 	memset(&posDataBuy, 0, sizeof(posDataBuy));
@@ -196,40 +163,21 @@ void APAccountAssets::onGetPositionData(APASSETID instrumentID, std::vector<CTho
 		onGetPositionData(posDataSell);
 	}
 
-	checkFinish();
+	verifyAfterCheck();
 }
 #endif
 
-void APAccountAssets::onGetPositionData(APPositionData data)
+void APAccountInfo::onGetPositionData(APPositionData data)
 {
-	APPositionDataStub localData;
-	localData.assign(data);
-	localData.remainHold = data.holdPosition;
-	localData.remainLongFrozen = data.longFrozenPosition;
-	localData.remainShortFrozen = data.shortFrozenPosition;
-
-	if (data.direction == TD_Buy) {
-		m_buyPositionData[data.instrumentID] = localData;
-	}
-	else if (data.direction == TD_Sell) {
-		m_sellPositionData[data.instrumentID] = localData;
-	}
+	APPositionRepertory::getInstance()->store(data);
 }
 
-void APAccountAssets::checkFinish()
+void APAccountInfo::verifyAfterCheck()
 {
 	bool positionDataComplete = false;
-	int reqCounts = m_instruments.size();
-	std::set<APASSETID> receivedPosData;
-	std::map<APASSETID, APPositionDataStub>::iterator it;
-	for (it = m_buyPositionData.begin(); it != m_buyPositionData.end(); it++) {
-		receivedPosData.insert(it->first);
-	}
-	for (it = m_sellPositionData.begin(); it != m_sellPositionData.end(); it++) {
-		receivedPosData.insert(it->first);
-	}
+	int reqCounts = m_instruments.size();	
 
-	if (reqCounts == receivedPosData.size()) {
+	if (reqCounts == APPositionRepertory::getInstance()->getPositionDataInstrumentsCount()) {
 		positionDataComplete = true;		
 	}
 
@@ -242,11 +190,12 @@ void APAccountAssets::checkFinish()
 	}
 	
 	if (orderDataComplete && positionDataComplete) {
-		process();
+		processVerification();
+		m_inited = true;
 	}
 }
 
-//bool APAccountAssets::getPositionData(APASSETID instrumentID, APTradeDirection direction, APPositionData & data)
+//bool APAccountInfo::getPositionData(APASSETID instrumentID, APTradeDirection direction, APPositionData & data)
 //{
 //	bool ret = false;
 //

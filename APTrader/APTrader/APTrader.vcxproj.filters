@@ -120,9 +120,6 @@
     <ClInclude Include="Strategy\APTransferPositionStrategy.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="APAccountAssets.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Simulation\APSimTradeSystem.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -217,6 +214,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="APMacro.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APAccountInfo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APPositionRepertory.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APStructs.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -380,13 +386,16 @@
     <ClCompile Include="Impl\CTP\APFuturesCTPTraderResponser.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="APAccountAssets.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Utils\APRedisAgent.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Utils\APRedisSerializedObject.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APAccountInfo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APPositionRepertory.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
