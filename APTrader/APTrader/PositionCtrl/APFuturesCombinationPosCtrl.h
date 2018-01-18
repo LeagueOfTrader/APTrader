@@ -80,6 +80,8 @@ private:
 
 	//void onFinishOpenOperation();
 	//void onFinishCloseOperation();
+	Json::Value serializeOperationData(APCombinationOperationData& data);
+	void deserializeOperationData(Json::Value& v, APCombinationOperationData& data);
 
 protected:
 	APASSETID m_coInstrumentID;
