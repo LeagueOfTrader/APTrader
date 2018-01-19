@@ -78,5 +78,9 @@ long APInstrumentQuotation::getCloseVolume(UINT index)
 
 bool APInstrumentQuotation::isValid()
 {
-	return m_valid;
+	bool ret = false;
+	m_mutex.lock();
+	ret = m_valid;
+	m_mutex.unlock();
+	return ret;
 }

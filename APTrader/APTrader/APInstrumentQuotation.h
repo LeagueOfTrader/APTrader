@@ -4,6 +4,7 @@
 #include "APTypes.h"
 #include "Model/APKLine.h"
 #include "Common/RefCountObject.h"
+#include <mutex>
 
 #include "APStructs.h"
 
@@ -42,6 +43,7 @@ protected:
 	std::vector<APBidInfo> m_openOrderList;
 	std::vector<APBidInfo> m_closeOrderList;
 
+	std::mutex m_mutex;
 	bool m_valid;
 };
 

@@ -24,8 +24,10 @@ void APFuturesQuotation::queryQuotation()
 	memset(&md, 0, sizeof(md));
 	bool ret = APFuturesCTPMDAgent::getInstance()->getMarketData(m_instrumentID, md);
 	if (ret) {
+		m_mutex.lock();
 		parseCTPData(md);
 		m_valid = true;
+		m_mutex.unlock();
 	}
 #endif
 }

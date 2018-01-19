@@ -88,7 +88,7 @@ void APQuotationMonitor::update()
 		if (!m_quotationDecision->isValueRefValid(curValue)) {
 			return;
 		}
-		if (curValue < 0.0) {
+		if (curValue < DBL_EPSILON - DBL_MAX) {
 			return;
 		}
 

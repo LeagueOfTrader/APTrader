@@ -24,5 +24,6 @@ private:
 #ifdef USE_CTP
 	int m_timestamp;
 #endif
+
 };
 

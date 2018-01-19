@@ -29,7 +29,9 @@ double APPriceMarginQuotationDecision::getValueReference()
 		&& m_srcQuotation->isValid() && m_targetQuotation->isValid()) {
 		double srcPrice = m_srcQuotation->getCurPrice();
 		double targetPrice = m_targetQuotation->getCurPrice();
-		m_priceDiff = targetPrice - srcPrice;
+		if (srcPrice > 0.0 && targetPrice > 0.0) {
+			m_priceDiff = targetPrice - srcPrice;
+		}
 	}
 
 	return m_priceDiff;

@@ -24,7 +24,10 @@ APSingleQuotationDecision::~APSingleQuotationDecision()
 double APSingleQuotationDecision::getValueReference()
 {
 	if (m_quotation != NULL && m_quotation->isValid()) {	
-		return m_quotation->getCurPrice();
+		double price = m_quotation->getCurPrice();
+		if (price > 0.0) {
+			return price;
+		}
 	}
 
 	return -DBL_MAX;
