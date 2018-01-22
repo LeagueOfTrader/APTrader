@@ -69,6 +69,10 @@ void APTransferPositionStrategy::initWithTransferInfo(std::string transferInfo)
 
 void APTransferPositionStrategy::update()
 {
+	if (!m_work) {
+		return;
+	}
+
 	if (isCloseToDeliver()) {
 		APFuturesPosCtrlWithTransfer* pc = dynamic_cast<APFuturesPosCtrlWithTransfer*>(m_positionCtrl);
 		if (pc != NULL) {

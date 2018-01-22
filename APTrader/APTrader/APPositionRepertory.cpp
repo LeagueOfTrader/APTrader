@@ -75,6 +75,30 @@ int APPositionRepertory::getPositionDataInstrumentsCount()
 	return receivedPosData.size();
 }
 
+void APPositionRepertory::deredundance()
+{
+	std::map<APASSETID, APPositionData>::iterator it;
+	for (it = m_buyPositionData.begin(); it != m_buyPositionData.end(); ) {
+		APPositionData& data = it->second;
+		if (data.holdPosition == 0 && data.longFrozenPosition == 0 && data.shortFrozenPosition == 0) {
+			it = m_buyPositionData.erase(it);
+		}
+		else {
+			it++;
+		}
+	}
+
+	for (it = m_sellPositionData.begin(); it != m_sellPositionData.end(); ) {
+		APPositionData& data = it->second;
+		if (data.holdPosition == 0 && data.longFrozenPosition == 0 && data.shortFrozenPosition == 0) {
+			it = m_buyPositionData.erase(it);
+		}
+		else {
+			it++;
+		}
+	}
+}
+
 bool APPositionRepertory::capable(std::map<APASSETID, APPositionData>& data, const APPositionData & pd)
 {
 	if (data.find(pd.instrumentID) != data.end()) {

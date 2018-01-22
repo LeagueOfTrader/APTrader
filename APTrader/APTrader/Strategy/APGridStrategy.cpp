@@ -45,6 +45,10 @@ void APGridStrategy::init(std::string strategyInfo)
 
 void APGridStrategy::update()
 {
+	if (!m_work) {
+		return;
+	}
+
 	if (m_quotationDecision != NULL) {
 		double curValue = m_quotationDecision->getValueReference();
 		if (!m_quotationDecision->isValueRefValid(curValue)) {

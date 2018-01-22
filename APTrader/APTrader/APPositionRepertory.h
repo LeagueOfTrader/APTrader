@@ -20,6 +20,8 @@ public:
 
 	int getPositionDataInstrumentsCount();
 
+	void deredundance();
+
 private:
 	bool capable(std::map<APASSETID, APPositionData>& data, const APPositionData& pd);
 	void handle(std::map<APASSETID, APPositionData>& data, const APPositionData& pd);

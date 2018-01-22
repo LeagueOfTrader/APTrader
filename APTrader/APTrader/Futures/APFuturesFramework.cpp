@@ -83,6 +83,7 @@ void APFuturesFramework::initLocalSystem()
 	APTradeManager::getInstance()->init();
 	//
 	APStrategyManager::getInstance()->init();
+	APAccountInfo::getInstance()->beginVerify();
 }
 
 #ifdef USE_CTP

@@ -26,6 +26,8 @@ void APStrategyManager::init()
 	int count = jr.getArraySize("Strategies");
 	for (int i = 0; i < count; i++) {
 		std::string strategyName = jr.getArrayStrValue("Strategies", i);
+		APStrategy* strategy = loadStrategy(strategyName);
+		// ---- run after load
 		runStrategy(strategyName);
 	}
 }
@@ -48,7 +50,7 @@ void APStrategyManager::exit()
 	}
 }
 
-APStrategy * APStrategyManager::runStrategy(std::string strategyName)
+APStrategy * APStrategyManager::loadStrategy(std::string strategyName)
 {
 	if (m_strategies.find(strategyName) != m_strategies.end()) {
 		return m_strategies[strategyName];
@@ -60,7 +62,7 @@ APStrategy * APStrategyManager::runStrategy(std::string strategyName)
 	return strategy;
 }
 
-void APStrategyManager::stopStrategy(std::string strategyName)
+void APStrategyManager::unloadStrategy(std::string strategyName)
 {
 	if (m_strategies.find(strategyName) == m_strategies.end()) {
 		return;
@@ -68,6 +70,26 @@ void APStrategyManager::stopStrategy(std::string strategyName)
 
 	m_strategies[strategyName]->exit();
 	m_strategies.erase(strategyName);
+}
+
+bool APStrategyManager::runStrategy(std::string strategyName)
+{
+	if (m_strategies.find(strategyName) == m_strategies.end()) {
+		return false;
+	}
+
+	m_strategies[strategyName]->setWork(true);
+	return true;
+}
+
+bool APStrategyManager::stopStrategy(std::string strategyName)
+{
+	if (m_strategies.find(strategyName) == m_strategies.end()) {
+		return false;
+	}
+
+	m_strategies[strategyName]->setWork(false);
+	return true;
 }
 
 APStrategy * APStrategyManager::createStrategy(std::string strategyFile)

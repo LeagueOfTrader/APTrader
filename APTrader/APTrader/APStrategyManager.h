@@ -16,8 +16,10 @@ public:
 	void update();
 	void exit();
 
-	APStrategy* runStrategy(std::string strategyName);
-	void stopStrategy(std::string strategyName);
+	APStrategy* loadStrategy(std::string strategyName);
+	void unloadStrategy(std::string strategyName);
+	bool runStrategy(std::string strategyName);
+	bool stopStrategy(std::string strategyName);
 
 //protected:
 	APStrategy* createStrategy(std::string strategyFile);

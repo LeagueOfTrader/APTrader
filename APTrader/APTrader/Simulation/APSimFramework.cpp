@@ -10,6 +10,7 @@
 #include "APSimFuturesTrade.h"
 #include "APSimTradeSystem.h"
 #include "../Utils/APLog.h"
+#include "../APStrategy.h"
 
 std::string simConfigFile = "Data/Sim/Sim.cfg";
 
@@ -44,7 +45,8 @@ void APSimFramework::init() {
 
 void APSimFramework::postInit() {
 	for (int i = 0; i < m_simStrategies.size(); i++) {		
-		APStrategyManager::getInstance()->runStrategy(m_simStrategies[i]);
+		APStrategy* s = APStrategyManager::getInstance()->loadStrategy(m_simStrategies[i]);
+		s->setWork(true);
 	}
 }
 

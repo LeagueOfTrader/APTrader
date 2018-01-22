@@ -18,6 +18,8 @@ public:
 	UINT getVisibleOrdersCount();
 
 	APOpenPositionLimit getOpenLimitType();
+	bool isAutoCorrectPosition();
+	bool isMatchRepertoryFirst();
 
 private:
 	APFinancialInstrumentType m_financialInstrumentType;
@@ -25,4 +27,6 @@ private:
 	UINT m_visibleOrdersCount;
 
 	APOpenPositionLimit m_openLimit;
+	bool m_autoCorrectPosition;
+	bool m_matchRepertoryFirst;
 };

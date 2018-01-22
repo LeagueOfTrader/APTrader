@@ -258,15 +258,45 @@ void APFuturesCombinationPosCtrl::onTradeCanceled(APASSETID instrumentID, APTrad
 
 void APFuturesCombinationPosCtrl::correctPosition()
 {
-	if (m_curOpenOperation.hasTarget()) {
-		APPositionData & prPosData = APPositionRepertory::getInstance()->getPositionData(m_instrumentID, m_directionType);
-		//prPosData.holdPosition;
+	APPositionData& prPosData = APPositionRepertory::getInstance()->getPositionData(m_instrumentID, m_directionType);
+	APPositionData& coPosData = APPositionRepertory::getInstance()->getPositionData(m_coInstrumentID, m_coDirectionType);
+
+	if (m_prVolume > prPosData.holdPosition) {
+		long prHold = m_holdPosition * m_prUnitVol;
+		prPosData.holdPosition -= prHold;
+		long closedPrVolume = 0;
+		long openedPrVolume = 0;
+		if (m_curCloseOperation.hasTarget()) {
+			closedPrVolume = m_curCloseOperation.prVolume;
+			prPosData.holdPosition += closedPrVolume;
+		}
+		if (prPosData.holdPosition > 0) {
+			if (m_curOpenOperation.hasTarget()) {
+				m_curOpenOperation.prVolume = std::min(m_curOpenOperation.prVolume, prPosData.holdPosition);		
+				openedPrVolume = m_curOpenOperation.prVolume;
+				prPosData.holdPosition = 0;
+			}
+		}
+		m_prVolume = m_curOpenOperation.prVolume + prHold;
 	}
-	else if (m_curCloseOperation.hasTarget()) {
-		//
-	}
-	else {
-		//
+
+	if (m_coVolume > coPosData.holdPosition) {
+		long coHold = m_holdPosition * m_coUnitVol;
+		coPosData.holdPosition -= coHold;
+		long closedCoVolume = 0;
+		long openedCoVolume = 0;
+		if (m_curCloseOperation.hasTarget()) {
+			closedCoVolume = m_curCloseOperation.coVolume;
+			coPosData.holdPosition += closedCoVolume;
+		}
+		if (coPosData.holdPosition > 0) {
+			if (m_curOpenOperation.hasTarget()) {
+				m_curOpenOperation.coVolume = std::min(m_curOpenOperation.coVolume, coPosData.holdPosition);
+				openedCoVolume = m_curOpenOperation.coVolume;
+				coPosData.holdPosition = 0;
+			}
+		}
+		m_coVolume = m_curOpenOperation.coVolume + coHold;
 	}
 }
 

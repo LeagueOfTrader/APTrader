@@ -76,13 +76,17 @@ void APAccountInfo::processVerification()
 				}
 				else
 				{
-					// correct
-					posCtrl->correctPosition();
+					// correct position
+					if (APGlobalConfig::getInstance()->isAutoCorrectPosition()) {
+						posCtrl->correctPosition();
+					}
 				}
 			}
 		}
 		m_verificationQueue.pop();
 	}	
+
+	APPositionRepertory::getInstance()->deredundance();
 }
 
 //void APAccountInfo::verify(std::map<APASSETID, APPositionData>& data, const APPositionData & pd, APPositionCtrl * posCtrl)

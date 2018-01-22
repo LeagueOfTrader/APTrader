@@ -5,6 +5,8 @@ std::string globalConfigFile = "Data/System/GlobalConfig.cfg";
 
 APGlobalConfig::APGlobalConfig()
 {	
+	m_autoCorrectPosition = false;
+	m_matchRepertoryFirst = true;
 }
 
 APGlobalConfig::~APGlobalConfig()
@@ -34,6 +36,11 @@ void APGlobalConfig::init()
 	//else if (openLimit == "Position") {
 	//	m_openLimit = OPL_Position;
 	//}
+
+	if (jr.hasMember("AutoCorrectPosition")) {
+		m_autoCorrectPosition = jr.getBoolValue("AutoCorrectPosition");
+	}
+
 	m_openLimit = OPL_Position;
 }
 
@@ -74,4 +81,14 @@ UINT APGlobalConfig::getVisibleOrdersCount()
 APOpenPositionLimit APGlobalConfig::getOpenLimitType()
 {
 	return m_openLimit;
+}
+
+bool APGlobalConfig::isAutoCorrectPosition()
+{
+	return m_autoCorrectPosition;
+}
+
+bool APGlobalConfig::isMatchRepertoryFirst()
+{
+	return m_matchRepertoryFirst;
 }

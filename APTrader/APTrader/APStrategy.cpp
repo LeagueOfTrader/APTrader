@@ -14,6 +14,7 @@ APStrategy::APStrategy()
 	m_positionCtrl = NULL;
 	m_quotationDecision = NULL;
 	m_closeOnly = false;
+	m_work = false;
 	m_tag = "";
 }
 
@@ -59,8 +60,11 @@ void APStrategy::init(std::string strategyInfo)
 		int subStrategiesCount = jr.getArraySize("SubStrategies");
 		for (int i = 0; i < subStrategiesCount; i++) {
 			std::string subFile = jr.getArrayStrValue("SubStrategies", i);
-			APStrategy* subStrategy = APStrategyManager::getInstance()->runStrategy(subFile);
-			this->attach(subStrategy);
+			APStrategy* subStrategy = APStrategyManager::getInstance()->loadStrategy(subFile);
+			if (subStrategy != NULL) {
+				this->attach(subStrategy);
+				subStrategy->setWork(true);
+			}
 		}
 	}
 }
@@ -136,6 +140,11 @@ void APStrategy::setInstrumentID(APASSETID instrumentID)
 void APStrategy::setCloseOnly(bool closeOnly)
 {
 	m_closeOnly = closeOnly;
+}
+
+void APStrategy::setWork(bool work)
+{
+	m_work = work;
 }
 
 

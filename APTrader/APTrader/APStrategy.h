@@ -32,6 +32,7 @@ public:
 	void setInstrumentID(APASSETID instrumentID);
 
 	void setCloseOnly(bool closeOnly);
+	void setWork(bool work);
 
 protected:
 	void initQuotationDecision(std::string quotationInfo);	
@@ -46,6 +47,7 @@ protected:
 	bool m_isSubStrategy;
 	UINT m_id;
 
+	bool m_work;
 	bool m_closeOnly;
 
 	std::string m_tag;
