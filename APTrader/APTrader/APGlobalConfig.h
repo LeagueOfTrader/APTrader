@@ -19,7 +19,8 @@ public:
 
 	APOpenPositionLimit getOpenLimitType();
 	bool isAutoCorrectPosition();
-	bool isMatchRepertoryFirst();
+	bool useRepertory();
+	bool counteractPosition();
 
 private:
 	APFinancialInstrumentType m_financialInstrumentType;
@@ -28,5 +29,6 @@ private:
 
 	APOpenPositionLimit m_openLimit;
 	bool m_autoCorrectPosition;
-	bool m_matchRepertoryFirst;
+	bool m_useRepertory;
+	bool m_counteractPosition;
 };

@@ -5,7 +5,8 @@
 #include "Utils/APTimeUtility.h"
 #include "3rdParty/jsoncpp/include/json/writer.h"
 #include "Utils/APJsonReader.h"
-
+#include "APGlobalConfig.h"
+#include "APPositionRepertory.h"
 #include "APMacro.h"
 
 #ifdef USE_CTP
@@ -35,8 +36,15 @@ APORDERID APTrade::open(APASSETID instrumentID, APTradeDirection direction, doub
 	APORDERID orderID = generateOrderID();
 	APTradeOrderInfo info = { orderID, TT_Open, instrumentID, price, volume, direction, OS_None, 0, pc->getID()};
 	m_localOrders[orderID] = info;
-	//m_orderPosCtrlRelation[orderID] = pc->getID();
 	
+	if (APGlobalConfig::getInstance()->useRepertory()) {
+		long vol = APPositionRepertory::getInstance()->distribute(instrumentID, TT_Open, direction, volume);
+		if (vol > 0) {
+			pc->onTradeDealt(instrumentID, TT_Open, price, volume, orderID, direction);
+			volume -= vol;
+		}		
+	}
+
 	open(orderID, instrumentID, direction, price, volume, ot);
 	return orderID;
 }
@@ -49,7 +57,14 @@ APORDERID APTrade::close(APASSETID instrumentID, APTradeDirection direction, dou
 	APORDERID orderID = generateOrderID();
 	APTradeOrderInfo info = { orderID, TT_Close, instrumentID, price, volume, direction, OS_None, 0, pc->getID() };
 	m_localOrders[orderID] = info;
-	//m_orderPosCtrlRelation[orderID] = pc->getID();
+
+	if (APGlobalConfig::getInstance()->useRepertory()) {
+		long vol = APPositionRepertory::getInstance()->distribute(instrumentID, TT_Close, direction, volume);
+		if (vol > 0) {
+			pc->onTradeDealt(instrumentID, TT_Close, price, volume, orderID, direction);
+			volume -= vol;
+		}
+	}
 	
 	close(orderID, instrumentID, direction, price, volume,  ot);
 	return orderID;

@@ -99,6 +99,16 @@ void APPositionRepertory::deredundance()
 	}
 }
 
+long APPositionRepertory::distribute(APASSETID instrumentID, APTradeType tradeType, APTradeDirection direction, long volume)
+{
+	if (direction == TD_Buy) {
+		return distribute(instrumentID, tradeType, m_buyPositionData, volume);
+	}
+	else {
+		return distribute(instrumentID, tradeType, m_sellPositionData, volume);
+	}
+}
+
 bool APPositionRepertory::capable(std::map<APASSETID, APPositionData>& data, const APPositionData & pd)
 {
 	if (data.find(pd.instrumentID) != data.end()) {
@@ -117,4 +127,44 @@ void APPositionRepertory::handle(std::map<APASSETID, APPositionData>& data, cons
 			data[pd.instrumentID].handle(pd);
 		}
 	}
+}
+
+long APPositionRepertory::distribute(APASSETID instrumentID, APTradeType tradeType, std::map<APASSETID, APPositionData>& data, long targetVolume)
+{
+	if (data.find(instrumentID) == data.end()) {
+		return 0;
+	}
+
+	long result = 0;
+	APPositionData& posData = data[instrumentID];
+	if (tradeType == TT_Open) {		
+		long available = posData.holdPosition - posData.longFrozenPosition - posData.shortFrozenPosition;
+		available = std::max((long)0, available);
+		result = std::min(available, targetVolume);
+
+		posData.holdPosition -= result;
+	}
+	else {
+		if (posData.holdPosition < 0) {
+			long vol = std::min(-posData.holdPosition, targetVolume);
+			posData.holdPosition += vol;
+			targetVolume -= vol;
+			result += vol;
+		}
+
+		if (targetVolume > 0) {
+			if (posData.direction == TD_Buy) {
+				long vol = std::min(posData.longFrozenPosition, targetVolume);
+				posData.longFrozenPosition -= vol;
+				result += vol;
+			}
+			else {
+				long vol = std::min(posData.shortFrozenPosition, targetVolume);
+				posData.shortFrozenPosition -= vol;
+				result += vol;
+			}
+		}
+	}
+
+	return result;
 }

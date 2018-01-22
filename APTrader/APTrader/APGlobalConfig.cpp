@@ -6,7 +6,8 @@ std::string globalConfigFile = "Data/System/GlobalConfig.cfg";
 APGlobalConfig::APGlobalConfig()
 {	
 	m_autoCorrectPosition = false;
-	m_matchRepertoryFirst = true;
+	m_useRepertory = false;
+	m_counteractPosition = true;
 }
 
 APGlobalConfig::~APGlobalConfig()
@@ -39,6 +40,14 @@ void APGlobalConfig::init()
 
 	if (jr.hasMember("AutoCorrectPosition")) {
 		m_autoCorrectPosition = jr.getBoolValue("AutoCorrectPosition");
+	}
+
+	if (jr.hasMember("UseRepertory")) {
+		m_useRepertory = jr.getBoolValue("UseRepertory");
+	}
+
+	if (jr.hasMember("CounteractPosition")) {
+		m_counteractPosition = jr.getBoolValue("CounteractPosition");
 	}
 
 	m_openLimit = OPL_Position;
@@ -88,7 +97,12 @@ bool APGlobalConfig::isAutoCorrectPosition()
 	return m_autoCorrectPosition;
 }
 
-bool APGlobalConfig::isMatchRepertoryFirst()
+bool APGlobalConfig::useRepertory()
 {
-	return m_matchRepertoryFirst;
+	return m_useRepertory;
+}
+
+bool APGlobalConfig::counteractPosition()
+{
+	return m_counteractPosition;
 }

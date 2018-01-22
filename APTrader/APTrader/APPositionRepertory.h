@@ -22,9 +22,12 @@ public:
 
 	void deredundance();
 
+	long distribute(APASSETID instrumentID, APTradeType tradeType, APTradeDirection direction, long volume);
+
 private:
 	bool capable(std::map<APASSETID, APPositionData>& data, const APPositionData& pd);
 	void handle(std::map<APASSETID, APPositionData>& data, const APPositionData& pd);
+	long distribute(APASSETID instrumentID, APTradeType tradeType, std::map<APASSETID, APPositionData>& data, long targetVolume);
 
 private:
 	std::map<APASSETID, APPositionData> m_buyPositionData;
