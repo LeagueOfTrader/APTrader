@@ -55,6 +55,7 @@ public:
 	 
 	bool inited();
 	//bool getPositionData(APASSETID instrumentID, APTradeDirection direction, APPositionData& positionData);	
+	void update();
 
 	void verifyPosition(APASSETID instrumentID, APTradeDirection dir, APPositionCtrl* posCtrl);	
 	void beginVerify();
@@ -84,5 +85,6 @@ private:
 
 	std::string m_accountID;
 	std::string m_interfaceType;
+	long m_lastTick;
 };
 

@@ -17,3 +17,5 @@ APTrader/.vs/APTrader/v15/.suo
 *.con
 *.con
 *.con
+*.tmp
+*.pch

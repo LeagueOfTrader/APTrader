@@ -94,7 +94,14 @@ void APFuturesCTPTraderResponser::OnRspParkedOrderAction(CThostFtdcParkedOrderAc
 
 void APFuturesCTPTraderResponser::OnRspOrderAction(CThostFtdcInputOrderActionField * pInputOrderAction, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
-	//
+	if (isErrorRspInfo(pRspInfo)) {
+		return;
+	}
+
+	if (pInputOrderAction != NULL) {
+
+		APLogger->log("Rsp Order Action, localID:%s, sysID: %s.", pInputOrderAction->OrderRef, pInputOrderAction->OrderSysID);
+	}
 }
 
 void APFuturesCTPTraderResponser::OnRspQueryMaxOrderVolume(CThostFtdcQueryMaxOrderVolumeField * pQueryMaxOrderVolume, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
@@ -394,6 +401,9 @@ void APFuturesCTPTraderResponser::OnErrRtnOrderInsert(CThostFtdcInputOrderField 
 void APFuturesCTPTraderResponser::OnErrRtnOrderAction(CThostFtdcOrderActionField * pOrderAction, CThostFtdcRspInfoField * pRspInfo)
 {
 	// cancel failed
+	if (pOrderAction != NULL) {
+		return;
+	}
 }
 
 void APFuturesCTPTraderResponser::OnRtnInstrumentStatus(CThostFtdcInstrumentStatusField * pInstrumentStatus)

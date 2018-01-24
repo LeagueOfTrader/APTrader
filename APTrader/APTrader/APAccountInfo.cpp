@@ -11,6 +11,10 @@
 #include "Impl/CTP/APFuturesCTPTraderAgent.h"
 #endif // USE_CTP
 
+#ifdef USE_CTP
+const long POSITION_QUERY_INTERVAL = 1000;
+#endif
+
 APAccountInfo::APAccountInfo()
 {
 	m_inited = false;
@@ -33,6 +37,12 @@ void APAccountInfo::init()
 bool APAccountInfo::inited()
 {
 	return m_inited;
+}
+
+void APAccountInfo::update()
+{
+#ifdef USE_CTP
+#endif
 }
 
 void APAccountInfo::verifyPosition(APASSETID instrumentID, APTradeDirection dir, APPositionCtrl * posCtrl)
