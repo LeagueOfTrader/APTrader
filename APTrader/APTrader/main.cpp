@@ -18,6 +18,7 @@
 #include "APTradeManager.h"
 #include "APTrade.h"
 #include "PositionCtrl/APFuturesPositionCtrl.h"
+#include "Impl/CTP/APFuturesCTPTraderAgent.h"
 
 void runMonitor() {
 	//// ---- monitor ----
@@ -65,15 +66,20 @@ void runTest() {
 
 	APTradeManager::getInstance()->init();
 
-	APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
-	APFuturesPositionCtrl* posCtrl = new APFuturesPositionCtrl();
-	std::string instID = "rb1805";
-	APTradeDirection dir = TD_Sell;
-	posCtrl->setInstrumentID(instID);
-	posCtrl->setTradeDirection(dir);
-	posCtrl->setTrade(trader);
+	//APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
+	//APFuturesPositionCtrl* posCtrl = new APFuturesPositionCtrl();
+	//std::string instID = "rb1805";
+	//APTradeDirection dir = TD_Sell;
+	//posCtrl->setInstrumentID(instID);
+	//posCtrl->setTradeDirection(dir);
+	//posCtrl->setTrade(trader);
 
-	posCtrl->open(instID, dir, 4000.0, 10);
+	//posCtrl->open(instID, dir, 4000.0, 10);
+
+	//APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPosition();
+	//APFuturesCTPTraderAgent::getInstance()->reqQryTradingAccount();
+	APFuturesCTPTraderAgent::getInstance()->reqQryAllOrders();
+
 	while (true) {
 		framework->update(0.0f);
 		Sleep(1000);

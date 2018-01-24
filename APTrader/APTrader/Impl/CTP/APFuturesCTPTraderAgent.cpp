@@ -498,7 +498,8 @@ int APFuturesCTPTraderAgent::reqUpdatePassword(std::string oldPassword, std::str
 	strcpy(req.OldPassword, oldPassword.c_str());
 	strcpy(req.NewPassword, newPassword.c_str());
 
-	m_traderApi->ReqUserPasswordUpdate(&req, genReqID());
+	int ret = m_traderApi->ReqUserPasswordUpdate(&req, genReqID());
+	return ret;
 }
 
 int APFuturesCTPTraderAgent::reqSettlementInfoConfirm()
@@ -604,6 +605,21 @@ int APFuturesCTPTraderAgent::reqQryOrder(APASSETID instrumentID, APSYSTEMID sysI
 	strcpy(req.InvestorID, m_userID.c_str());
 	strcpy(req.InstrumentID, instrumentID.c_str());
 	strcpy(req.OrderSysID, sysID.c_str());
+
+	int ret = m_traderApi->ReqQryOrder(&req, genReqID());
+	return ret;
+}
+
+int APFuturesCTPTraderAgent::reqQryAllOrders()
+{
+	if (m_traderApi == NULL) {
+		return -1;
+	}
+
+	CThostFtdcQryOrderField req;
+	memset(&req, 0, sizeof(req));
+	strcpy(req.BrokerID, m_brokerID.c_str());
+	strcpy(req.InvestorID, m_userID.c_str());
 
 	int ret = m_traderApi->ReqQryOrder(&req, genReqID());
 	return ret;

@@ -53,6 +53,8 @@ public:
 	int reqQryAllInvestorPositionDetail();
 	//	∂©µ•≤È—Ø
 	int reqQryOrder(APASSETID instrumentID, APSYSTEMID sysID);
+	int reqQryAllOrders();
+
 	int reqQryTrade(std::string tradeID, std::string startDate = "", std::string endDate = "");
 
 	int reqQryInstrumentCommissionRate(APASSETID instrumentID);

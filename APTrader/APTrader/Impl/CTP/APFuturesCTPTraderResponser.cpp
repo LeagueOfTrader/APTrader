@@ -169,6 +169,11 @@ void APFuturesCTPTraderResponser::OnRspQryOrder(CThostFtdcOrderField * pOrder, C
 
 	APORDERID localID = atoi(pOrder->OrderLocalID);
 	APFuturesCTPTraderAgent::getInstance()->onQryOrder(localID, pOrder);
+
+	if (bIsLast)
+	{
+		// sync to trade
+	}
 }
 
 void APFuturesCTPTraderResponser::OnRspQryTrade(CThostFtdcTradeField * pTrade, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
