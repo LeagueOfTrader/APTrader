@@ -13,22 +13,32 @@
 #include "Monitor/APMonitorFramework.h"
 #include <thread>
 #include "Utils/APRedisAgent.h"
-
-//void frameworkLoop() {
-//	APMonitorFramework* framework = APMonitorFramework::getInstance();
 //
-//	while (!framework->inited()) {
-//		Sleep(100);
-//	}
-//
-//	while (!framework->finished()) {
-//		framework->update(0.0);
-//		Sleep(10);
-//	}
-//}
+#include "Test/APTestFramework.h"
+#include "APTradeManager.h"
+#include "APTrade.h"
+#include "PositionCtrl/APFuturesPositionCtrl.h"
 
-void main() {
+void runMonitor() {
+	//// ---- monitor ----
+	APMonitorFramework* framework = APMonitorFramework::getInstance();
+	//std::thread frameworkThread(frameworkLoop);
+	framework->init();
 
+	while (!framework->inited()) {
+	}
+
+	while (!framework->finished()) {
+		framework->update(0.0);
+	}
+
+	framework->exit();
+
+	delete framework;
+	//// ---- monitor ----
+}
+
+void runSimulation() {
 	//APSimFramework* framework = new APSimFramework();
 	//if (framework != NULL)
 	//{
@@ -44,19 +54,35 @@ void main() {
 	//}
 	//framework->exit();
 	//delete framework;
-	//---------------------------------------------------------------------------------
-	
-	//// ---- monitor ----
-	APMonitorFramework* framework = APMonitorFramework::getInstance();
-	//std::thread frameworkThread(frameworkLoop);
-	framework->init();
-
-	while (!framework->inited()) {
-	}
-
-	while (!framework->finished()) {
-		framework->update(0.0);
-	}
-
-	framework->exit();
 }
+
+void runTest() {
+	APTestFramework* framework = APTestFramework::getInstance();
+	framework->init();
+	while (!framework->inited()) {
+		Sleep(1000);
+	}
+
+	APTradeManager::getInstance()->init();
+
+	APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
+	APFuturesPositionCtrl* posCtrl = new APFuturesPositionCtrl();
+	std::string instID = "rb1805";
+	APTradeDirection dir = TD_Sell;
+	posCtrl->setInstrumentID(instID);
+	posCtrl->setTradeDirection(dir);
+	posCtrl->setTrade(trader);
+
+	posCtrl->open(instID, dir, 4000.0, 10);
+	while (true) {
+		framework->update(0.0f);
+		Sleep(1000);
+	}
+}
+
+void main() {
+	runTest();
+}
+
+
+

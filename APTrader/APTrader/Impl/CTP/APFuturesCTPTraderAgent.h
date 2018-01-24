@@ -39,6 +39,8 @@ public:
 	void setMaxOrderRef(int id);
 	int getMaxOrderRef();
 
+
+	int reqUpdatePassword(std::string oldPassword, std::string newPassword);
 	// 投资者结算结果确认
 	int reqSettlementInfoConfirm();
 	// 请求查询合约
@@ -47,6 +49,8 @@ public:
 	int reqQryTradingAccount();
 	// 请求查询仓位
 	int reqQryInvestorPosition(APASSETID instrumentID);
+	int reqQryAllInvestorPosition();
+	int reqQryAllInvestorPositionDetail();
 	//	订单查询
 	int reqQryOrder(APASSETID instrumentID, APSYSTEMID sysID);
 	int reqQryTrade(std::string tradeID, std::string startDate = "", std::string endDate = "");

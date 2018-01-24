@@ -166,7 +166,7 @@ void APFuturesPositionCtrl::setInstrumentID(APASSETID instrumentID)
 	m_instrumentID = instrumentID;
 }
 
-void APFuturesPositionCtrl::setContractType(APTradeDirection direction)
+void APFuturesPositionCtrl::setTradeDirection(APTradeDirection direction)
 {
 	m_directionType = direction;
 }
@@ -206,6 +206,11 @@ void APFuturesPositionCtrl::close(APASSETID instrumentID, APTradeDirection direc
 void APFuturesPositionCtrl::setCloseTodayFirst(bool closeTDFirst)
 {
 	m_closeTodayFirst = closeTDFirst;
+}
+
+void APFuturesPositionCtrl::setTrade(APTrade * trader)
+{
+	m_trade = trader;
 }
 
 void APFuturesPositionCtrl::open(APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot)

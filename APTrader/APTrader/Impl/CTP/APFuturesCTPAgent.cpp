@@ -1,8 +1,14 @@
 #include "APFuturesCTPAgent.h"
 #include "../../Utils/APJsonReader.h"
 
+#include "APMacroCTP.h"
+
 const std::string ctpCfgFile = "Data/CTP/CTPAccount.cfg";
+#ifdef SIMNOW
+const std::string ctpParamFile = "Data/CTP/CTPTestParam.cfg";
+#else
 const std::string ctpParamFile = "Data/CTP/CTPParam.cfg";
+#endif
 
 APFuturesCTPAgent::APFuturesCTPAgent()
 {
@@ -80,7 +86,15 @@ void APFuturesCTPAgent::readParam()
 	APJsonReader jr;
 	jr.initWithFile(ctpParamFile);
 
-	std::string ctpStr = "StdCTP";
+#ifdef SIMNOW
+	std::string ctpStr = "TestCTP";
+#else
+	#ifdef CTP_MINI
+		std::string ctpStr = "CTPMini1";
+	#else
+		std::string ctpStr = "StdCTP";
+	#endif
+#endif
 	m_marketFront = jr.getArrayFieldStrValue(ctpStr, "MarketFront", 0);
 	m_tradeFront = jr.getArrayFieldStrValue(ctpStr, "TradeFront", 0);
 }

@@ -32,10 +32,10 @@ void APTradeManager::init()
 	}
 #endif
 	
-	if (m_trader != NULL) {
-		m_trader->load();
+	//if (m_trader != NULL) {
+	//	m_trader->load();
 		m_inited = true;
-	}
+	//}
 }
 
 void APTradeManager::exit()

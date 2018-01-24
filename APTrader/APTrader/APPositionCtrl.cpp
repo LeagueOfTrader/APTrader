@@ -16,6 +16,21 @@ APPositionCtrl::APPositionCtrl()
 	m_quotation = NULL;
 	m_tag = "";
 	m_priority = 1;
+
+	m_openOrdersPosition = 0;
+	m_closeOrdersPosition = 0;
+
+	m_holdPosition = 0;
+	m_availablePosition = 0;
+	m_maxPosition = 0;
+	m_marginPosition = 0;
+	m_frozenPosition = 0;
+
+	m_todayHoldPosition = 0;
+	m_yesterdayHoldPosition = 0;
+
+	m_cancelOpenOrdersPosition = 0;
+	m_cancelCloseOrdersPosition = 0;
 }
 
 APPositionCtrl::~APPositionCtrl()

@@ -304,6 +304,8 @@ void APFuturesCTPTraderAgent::applyOrder(APTradeType tradeType, APASSETID instru
 	char localID[32];
 	itoa(localOrderID, localID, 10);
 	strcpy(order.OrderRef, localID);
+
+	strcpy(order.InstrumentID, instrumentID.c_str());
 	
 	if (direction == TD_Buy) {
 		order.Direction = THOST_FTDC_D_Buy;
@@ -343,10 +345,10 @@ void APFuturesCTPTraderAgent::applyOrder(APTradeType tradeType, APASSETID instru
 
 	int ret = m_traderApi->ReqOrderInsert(&order, genReqID());
 	if (ret == 0) {
-		APLogger->log("Submit Order %s Success. ", localOrderID);
+		APLogger->log("Submit Order %d Success. ", localOrderID);
 	}
 	else {
-		APLogger->log("Submit Order %s Fail! ", localOrderID);
+		APLogger->log("Submit Order %d Fail! ", localOrderID);
 	}
 }
 
@@ -484,6 +486,21 @@ int APFuturesCTPTraderAgent::getMaxOrderRef()
 	return m_maxOrderRef;
 }
 
+int APFuturesCTPTraderAgent::reqUpdatePassword(std::string oldPassword, std::string newPassword)
+{
+	if (m_traderApi == NULL) {
+		return -1;
+	}
+	CThostFtdcUserPasswordUpdateField req;
+	memset(&req, 0, sizeof(req));
+	strcpy(req.BrokerID, m_brokerID.c_str());
+	strcpy(req.UserID, m_userID.c_str());
+	strcpy(req.OldPassword, oldPassword.c_str());
+	strcpy(req.NewPassword, newPassword.c_str());
+
+	m_traderApi->ReqUserPasswordUpdate(&req, genReqID());
+}
+
 int APFuturesCTPTraderAgent::reqSettlementInfoConfirm()
 {
 	if (m_traderApi == NULL) {
@@ -543,6 +560,36 @@ int APFuturesCTPTraderAgent::reqQryInvestorPosition(APASSETID instrumentID)
 	int ret = m_traderApi->ReqQryInvestorPosition(&req, genReqID());
 	//m_traderApi->ReqQryInvestorPositionDetail();
 	return ret;
+}
+
+int APFuturesCTPTraderAgent::reqQryAllInvestorPosition()
+{
+	if (m_traderApi == NULL) {
+		return -1;
+	}
+
+	CThostFtdcQryInvestorPositionField req;
+	memset(&req, 0, sizeof(req));
+	strcpy(req.BrokerID, m_brokerID.c_str());
+	strcpy(req.InvestorID, m_userID.c_str());
+
+	int ret = m_traderApi->ReqQryInvestorPosition(&req, genReqID());
+	return ret;
+}
+
+int APFuturesCTPTraderAgent::reqQryAllInvestorPositionDetail()
+{
+	if (m_traderApi == NULL) {
+		return -1;
+	}
+
+	CThostFtdcQryInvestorPositionDetailField req;
+	memset(&req, 0, sizeof(req));
+	strcpy(req.BrokerID, m_brokerID.c_str());
+	strcpy(req.InvestorID, m_userID.c_str());
+
+	m_traderApi->ReqQryInvestorPositionDetail(&req, genReqID());
+	return 0;
 }
 
 int APFuturesCTPTraderAgent::reqQryOrder(APASSETID instrumentID, APSYSTEMID sysID)

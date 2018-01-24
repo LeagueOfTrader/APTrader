@@ -31,7 +31,7 @@ public:
 	virtual void onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
 
 	void setInstrumentID(APASSETID instrumentID);
-	void setContractType(APTradeDirection direction);
+	void setTradeDirection(APTradeDirection direction);
 
 	// open/close directly
 	void open(APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot = OTC_GoodForDay);
@@ -49,6 +49,8 @@ public:
 		APOrderContingentCondition orderContingentCondition = OCC_Immediately, double stopPrice = 0.0);
 
 	void setCloseTodayFirst(bool closeTDFirst);
+
+	void setTrade(APTrade* trader);
 
 private:
 	bool m_closeTodayFirst;

@@ -39,6 +39,10 @@ void APFuturesCTPTraderResponser::OnRspUserLogin(CThostFtdcRspUserLoginField * p
 {
 	if (isErrorRspInfo(pRspInfo)) {
 		APLogger->log("Login Error! ");
+
+		//if (pRspInfo->ErrorID == 140) {
+		//	APFuturesCTPTraderAgent::getInstance()->reqUpdatePassword("cristiano7", "Cris7i@no");
+		//}
 		return;
 	}
 
@@ -234,7 +238,7 @@ void APFuturesCTPTraderResponser::OnRspQryTransferBank(CThostFtdcTransferBankFie
 void APFuturesCTPTraderResponser::OnRspQryInvestorPositionDetail(CThostFtdcInvestorPositionDetailField * pInvestorPositionDetail, 
 																	CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
-	// ÔÝÊ±²»¿¼ÂÇ
+	// Detail
 }
 
 void APFuturesCTPTraderResponser::OnRspQryNotice(CThostFtdcNoticeField * pNotice, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)

@@ -34,7 +34,7 @@ APORDERID APTrade::open(APASSETID instrumentID, APTradeDirection direction, doub
 	}
 
 	APORDERID orderID = generateOrderID();
-	APTradeOrderInfo info = { orderID, TT_Open, instrumentID, price, volume, direction, OS_None, 0, pc->getID()};
+	APTradeOrderInfo info = { orderID, TT_Open, instrumentID, price, volume, direction, OS_None, "0", pc->getID()};
 	m_localOrders[orderID] = info;
 	
 	if (APGlobalConfig::getInstance()->useRepertory()) {
@@ -55,7 +55,7 @@ APORDERID APTrade::close(APASSETID instrumentID, APTradeDirection direction, dou
 	}
 
 	APORDERID orderID = generateOrderID();
-	APTradeOrderInfo info = { orderID, TT_Close, instrumentID, price, volume, direction, OS_None, 0, pc->getID() };
+	APTradeOrderInfo info = { orderID, TT_Close, instrumentID, price, volume, direction, OS_None, "0", pc->getID() };
 	m_localOrders[orderID] = info;
 
 	if (APGlobalConfig::getInstance()->useRepertory()) {
@@ -77,7 +77,7 @@ APORDERID APTrade::open(APASSETID instrumentID, APTradeDirection direction, APOr
 	}
 
 	APORDERID orderID = generateOrderID();
-	APTradeOrderInfo info = { orderID, TT_Open, instrumentID, price, volume, direction, OS_None, 0, pc->getID() };
+	APTradeOrderInfo info = { orderID, TT_Open, instrumentID, price, volume, direction, OS_None, "0", pc->getID() };
 	m_localOrders[orderID] = info;
 
 	open(instrumentID, orderID, direction, 
@@ -95,7 +95,7 @@ APORDERID APTrade::close(APASSETID instrumentID, APTradeDirection direction, APO
 	}
 
 	APORDERID orderID = generateOrderID();
-	APTradeOrderInfo info = { orderID, TT_Close, instrumentID, price, volume, direction, OS_None, 0, pc->getID() };
+	APTradeOrderInfo info = { orderID, TT_Close, instrumentID, price, volume, direction, OS_None, "0", pc->getID() };
 	m_localOrders[orderID] = info;
 
 	close(instrumentID, orderID, direction,
