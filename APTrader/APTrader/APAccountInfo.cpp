@@ -5,7 +5,7 @@
 #include "APPositionCtrl.h"
 #include "APTradeManager.h"
 #include "APPositionRepertory.h"
-
+#include <windows.h>
 
 #ifdef USE_CTP
 #include "Impl/CTP/APFuturesCTPTraderAgent.h"
@@ -17,9 +17,11 @@ const long POSITION_QUERY_INTERVAL = 1000;
 
 APAccountInfo::APAccountInfo()
 {
-	m_inited = false;
+	//m_inited = false;
 	m_accountID = "Default";
 	m_interfaceType = "";
+
+	m_lastTick = 0;
 }
 
 APAccountInfo::~APAccountInfo()
@@ -31,17 +33,19 @@ void APAccountInfo::init()
 #ifdef USE_CTP
 	m_accountID = APFuturesCTPTraderAgent::getInstance()->getUserID();
 	m_interfaceType = "CTP";
-#endif
-}
 
-bool APAccountInfo::inited()
-{
-	return m_inited;
+	queryAllPosition();
+#endif
 }
 
 void APAccountInfo::update()
 {
 #ifdef USE_CTP
+	// query hold info
+	long curTick = GetTickCount();
+	if (curTick - m_lastTick >= POSITION_QUERY_INTERVAL) {
+		queryAllPosition();
+	}
 #endif
 }
 
@@ -55,10 +59,33 @@ void APAccountInfo::verifyPosition(APASSETID instrumentID, APTradeDirection dir,
 
 	m_verificationQueue.push(pcw);
 
-	if (m_instruments.find(instrumentID) != m_instruments.end()) {
-		return;
+	//if (m_instruments.find(instrumentID) != m_instruments.end()) {
+	//	return;
+	//}
+	//m_instruments.insert(instrumentID);
+}
+
+void APAccountInfo::verify()
+{
+	for (int i = 0; i < m_positionInfo.size(); i++) {
+		APPositionRepertory::getInstance()->store(m_positionInfo[i]);
 	}
-	m_instruments.insert(instrumentID);
+
+	processVerification();
+}
+
+void APAccountInfo::queryAllPosition()
+{
+	m_cachedPositionInfo.clear();
+#ifdef USE_CTP
+	m_lastTick = GetTickCount();
+	APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPosition();
+#endif
+}
+
+const std::vector<APPositionData>& APAccountInfo::getPositionInfo()
+{
+	return m_positionInfo;
 }
 
 void APAccountInfo::processVerification()
@@ -116,16 +143,16 @@ void APAccountInfo::processVerification()
 //	}
 //}
 
-void APAccountInfo::beginVerify()
-{
-	std::set<APASSETID>::iterator it = m_instruments.begin();
-	while (it != m_instruments.end()) {
-		APASSETID id = *it;
-#ifdef USE_CTP
-		APFuturesCTPTraderAgent::getInstance()->reqQryInvestorPosition(id);
-#endif
-	}
-}
+//void APAccountInfo::beginVerify()
+//{
+//	std::set<APASSETID>::iterator it = m_instruments.begin();
+//	while (it != m_instruments.end()) {
+//		APASSETID id = *it;
+//#ifdef USE_CTP
+//		APFuturesCTPTraderAgent::getInstance()->reqQryInvestorPosition(id);
+//#endif
+//	}
+//}
 
 std::string APAccountInfo::getAccountID()
 {
@@ -148,7 +175,7 @@ void APAccountInfo::appendPositionInfo(APPositionData & pd, CThostFtdcInvestorPo
 	pd.yesterdayPosition += info.YdPosition;
 }
 
-void APAccountInfo::onGetPositionData(APASSETID instrumentID, CThostFtdcInvestorPositionField& posData)
+void APAccountInfo::onGetPositionData(APASSETID instrumentID, std::vector<CThostFtdcInvestorPositionField>& posData)
 {
 	APPositionData posDataBuy;
 	memset(&posDataBuy, 0, sizeof(posDataBuy));
@@ -159,12 +186,15 @@ void APAccountInfo::onGetPositionData(APASSETID instrumentID, CThostFtdcInvestor
 	posDataSell.direction = TD_Sell;
 	posDataSell.instrumentID = instrumentID;
 
-	if (posData.PosiDirection == THOST_FTDC_PD_Long) {
-		appendPositionInfo(posDataBuy, posData);
+	for (int i = 0; i < posData.size(); i++) {
+		CThostFtdcInvestorPositionField& data = posData[i];
+		if (data.PosiDirection == THOST_FTDC_PD_Long) {
+			appendPositionInfo(posDataBuy, data);
+		}
+		else if (data.PosiDirection == THOST_FTDC_PD_Short) {
+			appendPositionInfo(posDataSell, data);
+		}
 	}
-	else if (posData.PosiDirection == THOST_FTDC_PD_Short) {
-		appendPositionInfo(posDataSell, posData);
-	}	
 
 	if (posDataBuy.holdPosition > 0) {
 		onGetPositionData(posDataBuy);
@@ -179,16 +209,20 @@ void APAccountInfo::onGetPositionData(APASSETID instrumentID, CThostFtdcInvestor
 
 void APAccountInfo::onSyncPositionData()
 {
-	if (!m_inited) {
-		//
-	}
+	m_mutex.lock();
+
+	m_positionInfo.clear();
+	m_positionInfo.swap(m_cachedPositionInfo);
+
+	m_mutex.unlock();
 }
 
 #endif
 
 void APAccountInfo::onGetPositionData(APPositionData data)
 {
-	APPositionRepertory::getInstance()->store(data);
+	//APPositionRepertory::getInstance()->store(data);
+	m_cachedPositionInfo.push_back(data);
 }
 
 //void APAccountInfo::verifyAfterCheck()

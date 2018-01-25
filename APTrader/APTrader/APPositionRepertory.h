@@ -18,8 +18,6 @@ public:
 	void store(APPositionData data);
 	void remove(APASSETID instrumentID, APTradeDirection direction);
 
-	int getPositionDataInstrumentsCount();
-
 	void deredundance();
 
 	long distribute(APASSETID instrumentID, APTradeType tradeType, APTradeDirection direction, long volume);

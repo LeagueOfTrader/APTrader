@@ -18,6 +18,7 @@
 APTrade::APTrade()
 {
 	m_idAccumulator = new APIntAccumulator();
+	m_inited = false;
 }
 
 APTrade::~APTrade()
@@ -294,87 +295,38 @@ void APTrade::bindOrder(APORDERID localOrderID, APPositionCtrl * posCtrl)
 		return;
 	}
 
-	if (m_orderRecordInfo.find(localOrderID) != m_orderRecordInfo.end()) {
-		m_orderRecordInfo[localOrderID].positionCtrlID = posCtrl->getID();
+	if (m_localOrders.find(localOrderID) != m_localOrders.end()) {
+		m_localOrders[localOrderID].positionCtrlID = posCtrl->getID();
 	}
 }
 
 void APTrade::queryOrder(APORDERID localOrderID)
 {
 #ifdef USE_CTP
-	if (m_orderRecordInfo.find(localOrderID) == m_orderRecordInfo.end()) {
+	if (m_localOrders.find(localOrderID) == m_localOrders.end()) {
 		return;
 	}
-	APOrderRecordInfo& ori = m_orderRecordInfo[localOrderID];
-	APFuturesCTPTraderAgent::getInstance()->reqQryOrder(ori.instrumentID, ori.sysID, ori.exchangeID);
+	APTradeOrderInfo& oi = m_localOrders[localOrderID];
+	APFuturesCTPTraderAgent::getInstance()->reqQryOrder(oi.instrumentID, oi.sysID, oi.exchangeID);
 #endif
 }
 
 void APTrade::onQueryOrder(APORDERID localOrderID)
 {
 #ifdef USE_CTP
-	if (m_orderRecordInfo.find(localOrderID) != m_orderRecordInfo.end()) {
-		m_orderRecordInfo.erase(localOrderID);
-	}
-	
-	APOrderRecordInfo& ori = m_orderRecordInfo[localOrderID];
 	APTradeOrderInfo toi = APFuturesCTPTraderAgent::getInstance()->getOrderInfo(localOrderID);
-	toi.positionCtrlID = ori.positionCtrlID;
-	m_localOrders[localOrderID] = toi;	
-
-	bool orderChanged = false;
-	if (ori.state != toi.state) {
-		orderChanged = true;
-	}
-	else if (ori.volumeSurplus != toi.volumeSurplus) {
-		orderChanged = true;
-	}
-
-	if (orderChanged) {
-		// do not query trade, use order comparision first
-		long deltaVolume = ori.volumeSurplus - toi.volumeSurplus;
-		if (deltaVolume > 0) {
-			onTraded(toi.instrumentID, toi.type, toi.price, deltaVolume, localOrderID, toi.direction);
-		}
-		// query trade
-		//std::string curDate = APTimeUtility::getDate();
-		//APFuturesCTPTraderAgent::getInstance()->reqQryTrade(toi.tradeID, APTimeUtility::getDateInDateTime(ori.recordTime), curDate);
-		onOrderStatusChanged(toi.instrumentID, toi.type, localOrderID, toi.volumeSurplus, toi.volumeTraded, 
-							toi.state, toi.sysID, toi.orderRef, toi.exchangeID, toi.sessionID, toi.frontID, 
-							toi.direction);
-	}
-	else {
-		if (toi.state == OS_AllTraded || toi.state == OS_PartTradedNotQueueing) {
-			APPositionCtrl* posCtrl = getPositionCtrlByOrder(localOrderID);
-			if (posCtrl != NULL) {
-				posCtrl->onCompleteOrder(localOrderID, toi.type);
-			}
-			removeLocalOrder(localOrderID);
-		}
-	}
+	m_localOrders[localOrderID] = toi;
 #endif
 }
 
 void APTrade::onQueryOrderFailed(APORDERID localOrderID)
 {
-	if (m_orderRecordInfo.find(localOrderID) != m_orderRecordInfo.end()) {
-		APOrderRecordInfo& ori = m_orderRecordInfo[localOrderID];
-		APPositionCtrl* posCtrl = getPositionCtrlByOrder(ori.positionCtrlID);
-		if (posCtrl != NULL) {
-			posCtrl->onOrderOutdated(localOrderID);
-		}
-		
-		m_orderRecordInfo.erase(localOrderID);
-	}
+	//
 }
 
 void APTrade::onSyncOrders()
 {
-}
-
-bool APTrade::isOrderDataComplete()
-{
-	return m_orderRecordInfo.size() == m_localOrders.size();
+	setInited();
 }
 
 APORDERID APTrade::generateOrderID()
@@ -449,93 +401,93 @@ APSYSTEMID APTrade::getExchangeIDByOrderID(APORDERID orderID)
 	return exchangeID;
 }
 
-std::string APTrade::serialize()
-{
-	Json::Value v;
-	Json::Value arr;
-	v["LocalOrders"] = arr;
-	std::map<APORDERID, APTradeOrderInfo>::iterator it;
-	int index = 0;
-	for (it = m_localOrders.begin(); it != m_localOrders.end(); it++) {
-		APTradeOrderInfo& oi = it->second;
-		APOrderRecordInfo ori = convertOrderInfo(oi);
-		Json::Value rec;
-		rec["Direction"] = (int)ori.direction;
-		rec["LocalID"] = ori.localID;
-		rec["InstrumentID"] = ori.instrumentID;
-		rec["RecordTime"] = ori.recordTime;
-		rec["State"] = (int)ori.state;
-		rec["SysID"] = ori.sysID;
-		rec["OrderRef"] = ori.orderRef;
-		rec["ExchangeID"] = ori.exchangeID;
-		rec["FrontID"] = ori.frontID;
-		rec["SessionID"] = ori.sessionID;
-		rec["VolumeSurplus"] = ori.volumeSurplus;
-		arr[index++] = rec;
-	}
-	return std::string();
-}
-
-void APTrade::deserialize(std::string str)
-{
-	APJsonReader jr;
-	jr.initWithString(str);
-
-	m_orderRecordInfo.clear();
-
-	int count = jr.getArraySize("LocalOrders");
-	for (int i = 0; i < count; i++) {
-		APOrderRecordInfo ori;
-		memset(&ori, 0, sizeof(ori));
-		std::string ordStr = jr.getArrayObjValue("LocalOrders", i);
-		Json::Reader recReader;
-		
-		Json::Value rec;
-		recReader.parse(ordStr, rec);
-
-		ori.direction = (APTradeDirection)rec["Direction"].asInt();
-		ori.localID = rec["LocalID"].asInt();
-		ori.instrumentID = rec["InstrumentID"].asString();
-		ori.recordTime = rec["RecordTime"].asString();
-		ori.state = (APOrderState)rec["State"].asInt();
-		ori.sysID = rec["SysID"].asString();
-		ori.orderRef = rec["OrderRef"].asString();
-		ori.exchangeID = rec["ExchangeID"].asString();
-		ori.frontID = rec["FrontID"].asInt();
-		ori.sessionID = rec["SessionID"].asInt();
-		ori.volumeSurplus = rec["VolumeSurplus"].asInt();
-
-		m_orderRecordInfo[ori.localID] = ori;
-	}
-}
-
-std::string APTrade::generateRedisKey()
-{
-	std::string redisKey = APAccountInfo::getInstance()->getInterfaceType() + ":"
-		+ APAccountInfo::getInstance()->getAccountID() + ":Trade:RecordOrders";
-
-	return redisKey;
-}
-
-APOrderRecordInfo APTrade::convertOrderInfo(APTradeOrderInfo & info)
-{
-	APOrderRecordInfo record;
-	memset(&record, 0, sizeof(record));
-
-	record.direction = info.direction;
-	record.instrumentID = info.instrumentID;
-	record.localID = info.orderID;
-	record.recordTime = APTimeUtility::getDateTime();
-	record.state = info.state;
-	record.sysID = info.sysID;
-	record.exchangeID = info.exchangeID;
-	record.frontID = info.frontID;
-	record.sessionID = info.sessionID;
-	record.orderRef = info.orderRef;
-	record.volumeSurplus = info.volumeSurplus;
-	
-	return record;
-}
+//std::string APTrade::serialize()
+//{
+//	Json::Value v;
+//	Json::Value arr;
+//	v["LocalOrders"] = arr;
+//	std::map<APORDERID, APTradeOrderInfo>::iterator it;
+//	int index = 0;
+//	for (it = m_localOrders.begin(); it != m_localOrders.end(); it++) {
+//		APTradeOrderInfo& oi = it->second;
+//		APOrderRecordInfo ori = convertOrderInfo(oi);
+//		Json::Value rec;
+//		rec["Direction"] = (int)ori.direction;
+//		rec["LocalID"] = ori.localID;
+//		rec["InstrumentID"] = ori.instrumentID;
+//		rec["RecordTime"] = ori.recordTime;
+//		rec["State"] = (int)ori.state;
+//		rec["SysID"] = ori.sysID;
+//		rec["OrderRef"] = ori.orderRef;
+//		rec["ExchangeID"] = ori.exchangeID;
+//		rec["FrontID"] = ori.frontID;
+//		rec["SessionID"] = ori.sessionID;
+//		rec["VolumeSurplus"] = ori.volumeSurplus;
+//		arr[index++] = rec;
+//	}
+//	return std::string();
+//}
+//
+//void APTrade::deserialize(std::string str)
+//{
+//	APJsonReader jr;
+//	jr.initWithString(str);
+//
+//	m_orderRecordInfo.clear();
+//
+//	int count = jr.getArraySize("LocalOrders");
+//	for (int i = 0; i < count; i++) {
+//		APOrderRecordInfo ori;
+//		memset(&ori, 0, sizeof(ori));
+//		std::string ordStr = jr.getArrayObjValue("LocalOrders", i);
+//		Json::Reader recReader;
+//		
+//		Json::Value rec;
+//		recReader.parse(ordStr, rec);
+//
+//		ori.direction = (APTradeDirection)rec["Direction"].asInt();
+//		ori.localID = rec["LocalID"].asInt();
+//		ori.instrumentID = rec["InstrumentID"].asString();
+//		ori.recordTime = rec["RecordTime"].asString();
+//		ori.state = (APOrderState)rec["State"].asInt();
+//		ori.sysID = rec["SysID"].asString();
+//		ori.orderRef = rec["OrderRef"].asString();
+//		ori.exchangeID = rec["ExchangeID"].asString();
+//		ori.frontID = rec["FrontID"].asInt();
+//		ori.sessionID = rec["SessionID"].asInt();
+//		ori.volumeSurplus = rec["VolumeSurplus"].asInt();
+//
+//		m_orderRecordInfo[ori.localID] = ori;
+//	}
+//}
+//
+//std::string APTrade::generateRedisKey()
+//{
+//	std::string redisKey = APAccountInfo::getInstance()->getInterfaceType() + ":"
+//		+ APAccountInfo::getInstance()->getAccountID() + ":Trade:RecordOrders";
+//
+//	return redisKey;
+//}
+//
+//APOrderRecordInfo APTrade::convertOrderInfo(APTradeOrderInfo & info)
+//{
+//	APOrderRecordInfo record;
+//	memset(&record, 0, sizeof(record));
+//
+//	record.direction = info.direction;
+//	record.instrumentID = info.instrumentID;
+//	record.localID = info.orderID;
+//	record.recordTime = APTimeUtility::getDateTime();
+//	record.state = info.state;
+//	record.sysID = info.sysID;
+//	record.exchangeID = info.exchangeID;
+//	record.frontID = info.frontID;
+//	record.sessionID = info.sessionID;
+//	record.orderRef = info.orderRef;
+//	record.volumeSurplus = info.volumeSurplus;
+//	
+//	return record;
+//}
 
 std::vector<APORDERID> APTrade::getRelatedOrders(APPositionCtrl * pc)
 {

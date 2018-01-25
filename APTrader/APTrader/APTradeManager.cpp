@@ -11,7 +11,6 @@
 
 APTradeManager::APTradeManager()
 {
-	m_inited = false;
 }
 
 APTradeManager::~APTradeManager()
@@ -32,17 +31,20 @@ void APTradeManager::init()
 	}
 #endif
 	
-	//if (m_trader != NULL) {
-	//	m_trader->load();
-		m_inited = true;
-	//}
+	if (m_trader != NULL) {
+		//m_trader->load();
+		m_trader->queryAllOrders();
+		setInited();
+	}
 }
 
 void APTradeManager::exit()
 {
 	if (m_trader != NULL)
 	{
-		m_trader->save();
+		//m_trader->save();
+		delete m_trader;
+		m_trader = NULL;
 	}
 }
 
@@ -54,9 +56,4 @@ void APTradeManager::setTradeInstance(APTrade * tradeInstance)
 APTrade * APTradeManager::getTradeInstance()
 {
 	return m_trader;
-}
-
-bool APTradeManager::inited()
-{
-	return m_inited;
 }

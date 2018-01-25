@@ -7,8 +7,9 @@
 #include <list>
 #include "APTypes.h"
 #include <set>
-#include "Utils/APRedisSerializedObject.h"
+//#include "Utils/APRedisSerializedObject.h"
 #include "APStructs.h"
+#include "Common/InitializableObject.h"
 
 //#define INVALID_ORDER_ID 0
 //#define MATCH_ANY_ORDER_ID 0xFEEEFEEE
@@ -16,7 +17,7 @@
 class APPositionCtrl;
 class APIntAccumulator;
 
-class APTrade : public APRedisSerializedObject
+class APTrade : public InitializableObject //: public APRedisSerializedObject
 {
 public:
 	APTrade();
@@ -66,7 +67,7 @@ public:
 
 	void onSyncOrders();
 
-	bool isOrderDataComplete();
+	//bool isOrderDataComplete();
 
 protected:
 	virtual void open(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, 
@@ -99,11 +100,11 @@ protected:
 	int getFrontIDByOrderID(APORDERID orderID);
 	APSYSTEMID getExchangeIDByOrderID(APORDERID orderID);
 
-	// serialize
-	virtual std::string serialize();
-	virtual void deserialize(std::string str);
-	virtual std::string generateRedisKey();
-	APOrderRecordInfo convertOrderInfo(APTradeOrderInfo& info);
+	//// serialize
+	//virtual std::string serialize();
+	//virtual void deserialize(std::string str);
+	//virtual std::string generateRedisKey();
+	//APOrderRecordInfo convertOrderInfo(APTradeOrderInfo& info);
 
 private:
 	std::vector<UINT> getRelatedOrders(APPositionCtrl* pc);
@@ -116,7 +117,7 @@ protected:
 	//std::map <UINT, std::set<UINT>> m_posCtrlOrders;
 	APIntAccumulator* m_idAccumulator;
 	
-private:
-	std::map<APORDERID, APOrderRecordInfo> m_orderRecordInfo;
+//private:
+//	std::map<APORDERID, APOrderRecordInfo> m_orderRecordInfo;
 };
 

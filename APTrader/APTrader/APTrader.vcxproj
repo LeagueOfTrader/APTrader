@@ -23,7 +23,7 @@
     <ProjectGuid>{5756CC17-711D-4763-84FB-FB6BA7A6756F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>APTrader</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -157,6 +157,9 @@
     <ClInclude Include="APFundPool.h" />
     <ClInclude Include="APPositionRepertory.h" />
     <ClInclude Include="APStructs.h" />
+    <ClInclude Include="Common\InitializableObject.h" />
+    <ClInclude Include="Impl\CTP\APMacroCTP.h" />
+    <ClInclude Include="Test\APTestFramework.h" />
     <ClInclude Include="Utils\APRedisSerializedObject.h" />
     <ClInclude Include="Common\ThreadSafeQueue.h" />
     <ClInclude Include="Utils\APRedisAgent.h" />
@@ -226,6 +229,7 @@
     <ClCompile Include="APFramework.cpp" />
     <ClCompile Include="APFundPool.cpp" />
     <ClCompile Include="APPositionRepertory.cpp" />
+    <ClCompile Include="Test\APTestFramework.cpp" />
     <ClCompile Include="Utils\APRedisSerializedObject.cpp" />
     <ClCompile Include="Utils\APRedisAgent.cpp" />
     <ClCompile Include="Monitor\APMonitorFramework.cpp" />

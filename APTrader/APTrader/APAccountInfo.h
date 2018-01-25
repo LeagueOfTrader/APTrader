@@ -5,11 +5,11 @@
 #include "APDef.h"
 #include "APTypes.h"
 #include <queue>
-#include <set>
+#include <vector>
 #include "APMacro.h"
-
+#include "Common/InitializableObject.h"
 #include "APStructs.h"
-
+#include <mutex>
 
 #ifdef USE_CTP
 #include "ThostFtdcUserApiStruct.h"
@@ -45,26 +45,28 @@ public :
 	bool operator()(APPositionCtrlWrapper p0, APPositionCtrlWrapper p1) const;
 };
 
-class APAccountInfo : public Singleton<APAccountInfo>
+class APAccountInfo : public InitializableObject, public Singleton<APAccountInfo>
 {
 public:
 	APAccountInfo();
 	~APAccountInfo();
 
 	virtual void init();
-	 
-	bool inited();
+
 	//bool getPositionData(APASSETID instrumentID, APTradeDirection direction, APPositionData& positionData);	
 	void update();
 
 	void verifyPosition(APASSETID instrumentID, APTradeDirection dir, APPositionCtrl* posCtrl);	
-	void beginVerify();
+	void verify();
+	void queryAllPosition();
+
+	const std::vector<APPositionData>& getPositionInfo();
 	
 	std::string getAccountID();
 	std::string getInterfaceType();
 
 #ifdef USE_CTP
-	void onGetPositionData(APASSETID instrumentID, CThostFtdcInvestorPositionField& positionData);
+	void onGetPositionData(APASSETID instrumentID, std::vector<CThostFtdcInvestorPositionField>& positionData);
 	void onSyncPositionData();
 #endif
 
@@ -80,12 +82,13 @@ protected:
 private:
 	std::priority_queue<APPositionCtrlWrapper, std::vector<APPositionCtrlWrapper>, APPositionCtrlWrapperComparer> m_verificationQueue;
 
-	std::set<APASSETID> m_instruments;
-
-	bool m_inited;
+	//std::set<APASSETID> m_instruments;
+	std::vector<APPositionData> m_positionInfo;
+	std::vector<APPositionData> m_cachedPositionInfo;
 
 	std::string m_accountID;
 	std::string m_interfaceType;
 	long m_lastTick;
+	std::mutex m_mutex;
 };
 

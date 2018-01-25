@@ -62,13 +62,13 @@ struct APTradeDetailInfo : APOrderIndexInfo {
 	APTradeType tradeType;
 };
 
-struct APOrderRecordInfo : APOrderIndexInfo {
-	UINT positionCtrlID;
-	APTradeDirection direction;
-	APOrderState state;
-	long volumeSurplus;
-	std::string recordTime;
-};
+//struct APOrderRecordInfo : APOrderIndexInfo {
+//	UINT positionCtrlID;
+//	APTradeDirection direction;
+//	APOrderState state;
+//	long volumeSurplus;
+//	std::string recordTime;
+//};
 
 
 struct APTradeOrderInfo {

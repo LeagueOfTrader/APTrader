@@ -61,20 +61,6 @@ void APPositionRepertory::remove(APASSETID instrumentID, APTradeDirection direct
 	}
 }
 
-int APPositionRepertory::getPositionDataInstrumentsCount()
-{
-	std::set<APASSETID> receivedPosData;
-	std::map<APASSETID, APPositionData>::iterator it;
-	for (it = m_buyPositionData.begin(); it != m_buyPositionData.end(); it++) {
-		receivedPosData.insert(it->first);
-	}
-	for (it = m_sellPositionData.begin(); it != m_sellPositionData.end(); it++) {
-		receivedPosData.insert(it->first);
-	}
-
-	return receivedPosData.size();
-}
-
 void APPositionRepertory::deredundance()
 {
 	std::map<APASSETID, APPositionData>::iterator it;

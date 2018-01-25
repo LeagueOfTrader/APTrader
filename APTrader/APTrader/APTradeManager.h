@@ -1,12 +1,13 @@
 #pragma once
 #include "Common/Singleton.h"
+#include "Common/InitializableObject.h"
 #include <string>
 #include "APDef.h"
 
 class APTrade;
 class APPositionCtrl;
 
-class APTradeManager : public Singleton<APTradeManager>
+class APTradeManager : public InitializableObject, public Singleton<APTradeManager>
 {
 public:
 	APTradeManager();
@@ -18,10 +19,7 @@ public:
 
 	APTrade* getTradeInstance();
 
-	bool inited();
-
 protected:
 	APTrade* m_trader;
-	bool m_inited;
 };
 
