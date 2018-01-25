@@ -439,7 +439,7 @@ void APFuturesCTPTraderAgent::applyOrder(APTradeType tradeType, APASSETID instru
 	}
 }
 
-void APFuturesCTPTraderAgent::cancelOrder(APORDERID localOrderID, APSYSTEMID sysID)
+void APFuturesCTPTraderAgent::cancelOrder(APASSETID instrumentID, int frontID, int sessionID, APSYSTEMID orderRef)
 {
 	if (m_traderApi == NULL) {
 		return;
@@ -449,20 +449,46 @@ void APFuturesCTPTraderAgent::cancelOrder(APORDERID localOrderID, APSYSTEMID sys
 	memset(&req, 0, sizeof(req));
 	strcpy(req.BrokerID, m_brokerID.c_str());
 	strcpy(req.InvestorID, m_userID.c_str());
-	char strOrderID[32];
-	itoa(localOrderID, strOrderID, 10);
-	strcpy(req.OrderRef, strOrderID);
-	req.FrontID = m_frontID;
-	req.SessionID = m_sessionID;
+	//char strOrderID[32];
+	//itoa(localOrderID, strOrderID, 10);
+	strcpy(req.OrderRef, orderRef.c_str());
+	req.FrontID = frontID;
+	req.SessionID = sessionID;
 	req.ActionFlag = THOST_FTDC_AF_Delete;
-	strcpy(req.OrderSysID, sysID.c_str());
+	strcpy(req.InstrumentID, instrumentID.c_str());
+	//strcpy(req.OrderSysID, sysID.c_str());
 
 	int ret = m_traderApi->ReqOrderAction(&req, genReqID());
 	if (ret == 0) {
-		APLogger->log("Apply Cancel %d Success. ", sysID);
+		APLogger->log("Apply Cancel %s Success. ", instrumentID.c_str());
 	}
 	else {
-		APLogger->log("Apply Cancel %d Failed. ", sysID);
+		APLogger->log("Apply Cancel %s Failed. ", instrumentID.c_str());
+	}
+}
+
+void APFuturesCTPTraderAgent::cancelOrder(APASSETID instrumentID, APSYSTEMID exchangeID, APSYSTEMID orderSysID)
+{
+	if (m_traderApi == NULL) {
+		return;
+	}
+
+	CThostFtdcInputOrderActionField req;
+	memset(&req, 0, sizeof(req));
+	strcpy(req.BrokerID, m_brokerID.c_str());
+	strcpy(req.InvestorID, m_userID.c_str());
+	strcpy(req.ExchangeID, exchangeID.c_str());
+	//req.FrontID = m_frontID;
+	req.ActionFlag = THOST_FTDC_AF_Delete;
+	strcpy(req.InstrumentID, instrumentID.c_str());
+	strcpy(req.OrderSysID, orderSysID.c_str());
+
+	int ret = m_traderApi->ReqOrderAction(&req, genReqID());
+	if (ret == 0) {
+		APLogger->log("Apply Cancel %s Success. ", orderSysID.c_str());
+	}
+	else {
+		APLogger->log("Apply Cancel %s Failed. ", orderSysID.c_str());
 	}
 }
 
@@ -471,10 +497,15 @@ void APFuturesCTPTraderAgent::setFrontID(TThostFtdcFrontIDType frontID)
 	m_frontID = frontID;
 }
 
-void APFuturesCTPTraderAgent::setSessionID(TThostFtdcSessionIDType sessionID)
+int APFuturesCTPTraderAgent::getFrontID()
 {
-	m_sessionID = sessionID;
+	return m_frontID;
 }
+
+//void APFuturesCTPTraderAgent::setSessionID(TThostFtdcSessionIDType sessionID)
+//{
+//	m_sessionID = sessionID;
+//}
 
 void APFuturesCTPTraderAgent::setMaxOrderRef(int id)
 {
@@ -569,6 +600,8 @@ int APFuturesCTPTraderAgent::reqQryAllInvestorPosition()
 		return -1;
 	}
 
+	m_positionInfo.clear();
+
 	CThostFtdcQryInvestorPositionField req;
 	memset(&req, 0, sizeof(req));
 	strcpy(req.BrokerID, m_brokerID.c_str());
@@ -584,16 +617,18 @@ int APFuturesCTPTraderAgent::reqQryAllInvestorPositionDetail()
 		return -1;
 	}
 
+	m_positionDetail.clear();
+
 	CThostFtdcQryInvestorPositionDetailField req;
 	memset(&req, 0, sizeof(req));
 	strcpy(req.BrokerID, m_brokerID.c_str());
 	strcpy(req.InvestorID, m_userID.c_str());
 
-	m_traderApi->ReqQryInvestorPositionDetail(&req, genReqID());
-	return 0;
+	int ret = m_traderApi->ReqQryInvestorPositionDetail(&req, genReqID());
+	return ret;
 }
 
-int APFuturesCTPTraderAgent::reqQryOrder(APASSETID instrumentID, APSYSTEMID sysID)
+int APFuturesCTPTraderAgent::reqQryOrder(APASSETID instrumentID, APSYSTEMID sysID, APSYSTEMID exchangeID)
 {
 	if (m_traderApi == NULL) {
 		return -1;
@@ -604,6 +639,7 @@ int APFuturesCTPTraderAgent::reqQryOrder(APASSETID instrumentID, APSYSTEMID sysI
 	strcpy(req.BrokerID, m_brokerID.c_str());
 	strcpy(req.InvestorID, m_userID.c_str());
 	strcpy(req.InstrumentID, instrumentID.c_str());
+	strcpy(req.ExchangeID, exchangeID.c_str());
 	strcpy(req.OrderSysID, sysID.c_str());
 
 	int ret = m_traderApi->ReqQryOrder(&req, genReqID());
@@ -616,6 +652,8 @@ int APFuturesCTPTraderAgent::reqQryAllOrders()
 		return -1;
 	}
 
+	m_orderInfo.clear();
+
 	CThostFtdcQryOrderField req;
 	memset(&req, 0, sizeof(req));
 	strcpy(req.BrokerID, m_brokerID.c_str());
@@ -625,7 +663,7 @@ int APFuturesCTPTraderAgent::reqQryAllOrders()
 	return ret;
 }
 
-int APFuturesCTPTraderAgent::reqQryTrade(std::string tradeID, std::string startDate, std::string endDate)
+int APFuturesCTPTraderAgent::reqQryTrade(APASSETID instrumentID, std::string startDate, std::string endDate)
 {
 	if (m_traderApi == NULL) {
 		return -1;
@@ -633,7 +671,30 @@ int APFuturesCTPTraderAgent::reqQryTrade(std::string tradeID, std::string startD
 
 	CThostFtdcQryTradeField req;
 	memset(&req, 0, sizeof(req));
-	strcpy(req.TradeID, tradeID.c_str());
+	strcpy(req.InstrumentID, instrumentID.c_str());
+
+	if (startDate.length() > 0) {
+		strcpy(req.TradeTimeStart, startDate.c_str());
+	}
+
+	if (endDate.length() > 0) {
+		strcpy(req.TradeTimeEnd, endDate.c_str());
+	}
+
+	int ret = m_traderApi->ReqQryTrade(&req, genReqID());
+	return ret;
+}
+
+int APFuturesCTPTraderAgent::reqQryAllTrades(std::string startDate, std::string endDate)
+{
+	if (m_traderApi == NULL) {
+		return -1;
+	}
+
+	m_tradeInfo.clear();
+
+	CThostFtdcQryTradeField req;
+	memset(&req, 0, sizeof(req));
 
 	if (startDate.length() > 0) {
 		strcpy(req.TradeTimeStart, startDate.c_str());
@@ -679,9 +740,21 @@ int APFuturesCTPTraderAgent::reqQryInstrumentMarginRate(APASSETID instrumentID)
 	return ret;
 }
 
-void APFuturesCTPTraderAgent::onQryInstrumentPositionFinished(APASSETID instrumentID)
+
+// ---- response
+
+void APFuturesCTPTraderAgent::onQryInstrumentPositionFinished()
 {
-	APAccountInfo::getInstance()->onGetPositionData(instrumentID, m_positionInfo[instrumentID]);
+	m_mutex.lock();
+	std::map<APASSETID, CThostFtdcInvestorPositionField>::iterator it;
+	for (it = m_positionInfo.begin(); it != m_positionInfo.end(); it++) {
+		APASSETID instrumentID = it->first;
+		CThostFtdcInvestorPositionField& posInfo = it->second;
+		APAccountInfo::getInstance()->onGetPositionData(instrumentID, posInfo);
+	}
+	m_mutex.unlock();
+
+	APAccountInfo::getInstance()->onSyncPositionData();
 }
 
 void APFuturesCTPTraderAgent::onQryInstrumentPosition(APASSETID instrumentID, CThostFtdcInvestorPositionField * positionInfo)
@@ -690,12 +763,30 @@ void APFuturesCTPTraderAgent::onQryInstrumentPosition(APASSETID instrumentID, CT
 		return;
 	}
 
-	if (m_positionInfo.find(instrumentID) == m_positionInfo.end()) {
-		std::vector<CThostFtdcInvestorPositionField> posInfoArr;
-		m_positionInfo[instrumentID] = posInfoArr;
+	m_mutex.lock();
+	m_positionInfo[instrumentID] = *positionInfo;
+	m_mutex.unlock();
+}
+
+void APFuturesCTPTraderAgent::onQryInstrumentPositionDetailFinished()
+{
+	//
+}
+
+void APFuturesCTPTraderAgent::onQryInstrumentPositionDetail(APASSETID instrumentID, CThostFtdcInvestorPositionDetailField * detailInfo)
+{
+	if (detailInfo == NULL) {
+		return;
 	}
 
-	m_positionInfo[instrumentID].push_back(*positionInfo);
+	m_mutex.lock();
+	if (m_positionDetail.find(instrumentID) == m_positionDetail.end()) {
+		std::vector<CThostFtdcInvestorPositionDetailField> ipdfArr;
+		m_positionDetail[instrumentID] = ipdfArr;
+	}
+
+	m_positionDetail[instrumentID].push_back(*detailInfo);
+	m_mutex.unlock();
 }
 
 void APFuturesCTPTraderAgent::onRtnOrder(CThostFtdcOrderField * order)
@@ -737,10 +828,14 @@ void APFuturesCTPTraderAgent::onRtnOrder(CThostFtdcOrderField * order)
 	}
 	long volumeTotal = order->VolumeTotal;
 	long volumeTraded = order->VolumeTraded;
-	APSYSTEMID tradeID = order->TraderID;
+	APSYSTEMID exchangeID = order->ExchangeID;
+	APSYSTEMID orderRef = order->OrderRef;
+	int sessionID = order->SessionID;
+	int frontID = order->FrontID;
 
 	trader->onOrderStatusChanged(instrumentID, tradeType, localOrderID, volumeTotal, volumeTraded, 
-								orderState, sysOrderID, tradeID, direction);
+								orderState, sysOrderID, orderRef, exchangeID, sessionID, frontID, 
+								direction);
 }
 
 void APFuturesCTPTraderAgent::onRtnTrade(CThostFtdcTradeField * info)
@@ -784,7 +879,7 @@ void APFuturesCTPTraderAgent::onRtnTrade(CThostFtdcTradeField * info)
 		direction = TD_Sell;
 	}
 
-	trader->onTraded(instrumentID, tradeType, price, volume, orderID, sysID, direction);
+	trader->onTraded(instrumentID, tradeType, price, volume, orderID, direction);
 }
 
 void APFuturesCTPTraderAgent::onQryOrder(APORDERID localOrderID, CThostFtdcOrderField * pOrderInfo)
@@ -793,10 +888,12 @@ void APFuturesCTPTraderAgent::onQryOrder(APORDERID localOrderID, CThostFtdcOrder
 		return;
 	}
 
+	m_mutex.lock();
 	m_orderInfo[localOrderID] = *pOrderInfo;
+	m_mutex.unlock();
 }
 
-void APFuturesCTPTraderAgent::onQryOrderFinished(APORDERID orderID)
+void APFuturesCTPTraderAgent::onQryOrderFinished()
 {
 	if (APTradeManager::getInstance()->inited() == false) {
 		return;
@@ -806,7 +903,14 @@ void APFuturesCTPTraderAgent::onQryOrderFinished(APORDERID orderID)
 		return;
 	}
 
-	trader->onQueryOrder(orderID);
+	m_mutex.lock();
+	std::map<APORDERID, CThostFtdcOrderField>::iterator it;
+	for (it = m_orderInfo.begin(); it != m_orderInfo.end(); it++) {
+		trader->onQueryOrder(it->first);
+	}
+	m_mutex.unlock();
+
+	trader->onSyncOrders();
 }
 
 void APFuturesCTPTraderAgent::onQryOrderFailed(APORDERID orderID)
@@ -814,6 +918,7 @@ void APFuturesCTPTraderAgent::onQryOrderFailed(APORDERID orderID)
 	if (APTradeManager::getInstance()->inited() == false) {
 		return;
 	}
+
 	APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
 	if (trader == NULL) {
 		return;
@@ -840,7 +945,11 @@ APTradeOrderInfo APFuturesCTPTraderAgent::getOrderInfo(APORDERID orderID)
 		info.price = of.LimitPrice;
 		info.state = parseOrderState(of.OrderStatus);
 		info.sysID = of.OrderSysID;
-		info.tradeID = of.TraderID;
+		info.orderRef = of.OrderRef;
+		info.exchangeID = of.ExchangeID;
+		info.sessionID = of.SessionID;
+		info.frontID = of.FrontID;
+
 		if (of.CombOffsetFlag[0] == THOST_FTDC_OF_Open) {
 			info.type = TT_Open;
 		}
@@ -920,6 +1029,10 @@ std::vector<APTradeDetailInfo> APFuturesCTPTraderAgent::getTradeInfo(APORDERID l
 
 			tdi.localID = atoi(tf.OrderLocalID);
 			tdi.sysID = tf.OrderSysID;
+			tdi.exchangeID = tf.ExchangeID;
+			tdi.frontID = 0;
+			tdi.sessionID = 0;
+			tdi.orderRef = tf.OrderRef;
 			APTradeDirection direction = TD_Buy;
 			if (tf.Direction == THOST_FTDC_D_Buy) {
 				direction = TD_Buy;

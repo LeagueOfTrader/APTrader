@@ -20,7 +20,7 @@ APSimFuturesTrade::~APSimFuturesTrade()
 void APSimFuturesTrade::open(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot)
 {
 	APSYSTEMID sysID = APSimTradeSystem::getInstance()->requestOpen(orderID, instrumentID, direction, price, volume);
-	APTradeOrderInfo order = {orderID, TT_Open, instrumentID, price, volume, direction, OS_Touched, sysID, 0};
+	APTradeOrderInfo order = {orderID, TT_Open, instrumentID, price, volume, direction, OS_Touched, 0};
 
 	m_orderRecord[orderID] = order;
 
@@ -37,7 +37,7 @@ void APSimFuturesTrade::open(APORDERID orderID, APASSETID instrumentID, APTradeD
 void APSimFuturesTrade::close(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot)
 {
 	APSYSTEMID sysID = APSimTradeSystem::getInstance()->requestClose(orderID, instrumentID, direction, price, volume);
-	APTradeOrderInfo order = { orderID, TT_Close, instrumentID, price, volume, direction, OS_Touched, sysID, 0 };
+	APTradeOrderInfo order = { orderID, TT_Close, instrumentID, price, volume, direction, OS_Touched, 0 };
 
 	m_orderRecord[orderID] = order;
 
@@ -53,7 +53,7 @@ void APSimFuturesTrade::close(APORDERID orderID, APASSETID instrumentID, APTrade
 
 void APSimFuturesTrade::cancel(APORDERID orderID)
 {
-	APSYSTEMID sysID = getSysIDByOrder(orderID);
+	APSYSTEMID sysID = getSysIDByOrderID(orderID);
 	if (sysID.length() > 0) {
 		APSimTradeSystem::getInstance()->requestCancel(sysID);
 	}

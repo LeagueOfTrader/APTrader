@@ -35,35 +35,7 @@ void APFuturesCTPTraderResponser::OnRspAuthenticate(CThostFtdcRspAuthenticateFie
 {
 }
 
-void APFuturesCTPTraderResponser::OnRspUserLogin(CThostFtdcRspUserLoginField * pRspUserLogin, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
-{
-	if (isErrorRspInfo(pRspInfo)) {
-		APLogger->log("Login Error! ");
 
-		//if (pRspInfo->ErrorID == 140) {
-		//	APFuturesCTPTraderAgent::getInstance()->reqUpdatePassword("cristiano7", "Cris7i@no");
-		//}
-		return;
-	}
-
-	// on login
-	APFuturesCTPTraderAgent::getInstance()->setFrontID(pRspUserLogin->FrontID);
-	APFuturesCTPTraderAgent::getInstance()->setSessionID(pRspUserLogin->SessionID);
-
-	APFuturesCTPTraderAgent::getInstance()->reqSettlementInfoConfirm();	
-
-	APFuturesCTPTraderAgent::getInstance()->onLogin();
-	//APTrade* trade = APTradeManager::getInstance()->getTradeInstance();
-	//if (trade != NULL) {
-	//	int maxOrderID = atoi(pRspUserLogin->MaxOrderRef);
-	//	trade->setOrderIDBase(maxOrderID);
-	//}
-}
-
-void APFuturesCTPTraderResponser::OnRspUserLogout(CThostFtdcUserLogoutField * pUserLogout, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
-{
-	//
-}
 
 void APFuturesCTPTraderResponser::OnRspUserPasswordUpdate(CThostFtdcUserPasswordUpdateField * pUserPasswordUpdate, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
@@ -73,36 +45,7 @@ void APFuturesCTPTraderResponser::OnRspTradingAccountPasswordUpdate(CThostFtdcTr
 {
 }
 
-void APFuturesCTPTraderResponser::OnRspOrderInsert(CThostFtdcInputOrderField * pInputOrder, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
-{
-	if (isErrorRspInfo(pRspInfo)) {
-		return;
-	}
 
-	if (pInputOrder != NULL) {
-		pInputOrder->OrderRef;
-	}
-}
-
-void APFuturesCTPTraderResponser::OnRspParkedOrderInsert(CThostFtdcParkedOrderField * pParkedOrder, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
-{
-}
-
-void APFuturesCTPTraderResponser::OnRspParkedOrderAction(CThostFtdcParkedOrderActionField * pParkedOrderAction, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
-{
-}
-
-void APFuturesCTPTraderResponser::OnRspOrderAction(CThostFtdcInputOrderActionField * pInputOrderAction, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
-{
-	if (isErrorRspInfo(pRspInfo)) {
-		return;
-	}
-
-	if (pInputOrderAction != NULL) {
-
-		APLogger->log("Rsp Order Action, localID:%s, sysID: %s.", pInputOrderAction->OrderRef, pInputOrderAction->OrderSysID);
-	}
-}
 
 void APFuturesCTPTraderResponser::OnRspQueryMaxOrderVolume(CThostFtdcQueryMaxOrderVolumeField * pQueryMaxOrderVolume, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
@@ -161,45 +104,6 @@ void APFuturesCTPTraderResponser::OnRspCombActionInsert(CThostFtdcInputCombActio
 {
 }
 
-void APFuturesCTPTraderResponser::OnRspQryOrder(CThostFtdcOrderField * pOrder, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
-{
-	if (isErrorRspInfo(pRspInfo)) {
-		if (pOrder != NULL) {
-			APFuturesCTPTraderAgent::getInstance()->onQryOrderFailed(atoi(pOrder->OrderLocalID));
-		}
-		return;
-	}
-
-	if (pOrder == NULL) {
-		return;
-	}
-
-	APORDERID localID = atoi(pOrder->OrderLocalID);
-	APFuturesCTPTraderAgent::getInstance()->onQryOrder(localID, pOrder);
-
-	if (bIsLast)
-	{
-		// sync to trade
-	}
-}
-
-void APFuturesCTPTraderResponser::OnRspQryTrade(CThostFtdcTradeField * pTrade, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
-{
-	// todo: qry trade
-}
-
-void APFuturesCTPTraderResponser::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField * pInvestorPosition, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
-{
-	if (isErrorRspInfo(pRspInfo) || pInvestorPosition == NULL) {
-		return;
-	}
-
-	std::string instrumentID = pInvestorPosition->InstrumentID;
-	APFuturesCTPTraderAgent::getInstance()->onQryInstrumentPosition(instrumentID, pInvestorPosition);
-	if (bIsLast) {
-		APFuturesCTPTraderAgent::getInstance()->onQryInstrumentPositionFinished(instrumentID);
-	}
-}
 
 void APFuturesCTPTraderResponser::OnRspQryTradingAccount(CThostFtdcTradingAccountField * pTradingAccount, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
@@ -247,11 +151,7 @@ void APFuturesCTPTraderResponser::OnRspQryTransferBank(CThostFtdcTransferBankFie
 {
 }
 
-void APFuturesCTPTraderResponser::OnRspQryInvestorPositionDetail(CThostFtdcInvestorPositionDetailField * pInvestorPositionDetail, 
-																	CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
-{
-	// Detail
-}
+
 
 void APFuturesCTPTraderResponser::OnRspQryNotice(CThostFtdcNoticeField * pNotice, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
@@ -365,46 +265,7 @@ void APFuturesCTPTraderResponser::OnRspQryAccountregister(CThostFtdcAccountregis
 {
 }
 
-void APFuturesCTPTraderResponser::OnRspError(CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
-{
-	// todo: req error
-}
 
-void APFuturesCTPTraderResponser::OnRtnOrder(CThostFtdcOrderField * pOrder)
-{
-	// 每次报单状态发生变化时被调用
-	// 一次报单过程中会被触发多次: 1. CTP将报单向交易所提交时; 
-	//                             2. 交易所撤销或接受报单时; 
-	//                             3. 该报单成交时;
-	if (pOrder == NULL) {
-		return;
-	}
-
-	APFuturesCTPTraderAgent::getInstance()->onRtnOrder(pOrder);
-}
-
-void APFuturesCTPTraderResponser::OnRtnTrade(CThostFtdcTradeField * pTrade)
-{
-	if (pTrade == NULL) {
-		return;
-	}
-
-	APFuturesCTPTraderAgent::getInstance()->onRtnTrade(pTrade);
-}
-
-void APFuturesCTPTraderResponser::OnErrRtnOrderInsert(CThostFtdcInputOrderField * pInputOrder, CThostFtdcRspInfoField * pRspInfo)
-{
-	APORDERID localID = atoi(pInputOrder->OrderRef);
-	APFuturesCTPTraderAgent::getInstance()->onTradeFailed(localID);
-}
-
-void APFuturesCTPTraderResponser::OnErrRtnOrderAction(CThostFtdcOrderActionField * pOrderAction, CThostFtdcRspInfoField * pRspInfo)
-{
-	// cancel failed
-	if (pOrderAction != NULL) {
-		return;
-	}
-}
 
 void APFuturesCTPTraderResponser::OnRtnInstrumentStatus(CThostFtdcInstrumentStatusField * pInstrumentStatus)
 {
@@ -597,6 +458,177 @@ void APFuturesCTPTraderResponser::OnRtnCancelAccountByBank(CThostFtdcCancelAccou
 void APFuturesCTPTraderResponser::OnRtnChangeAccountByBank(CThostFtdcChangeAccountField * pChangeAccount)
 {
 }
+
+
+//---- used response
+
+void APFuturesCTPTraderResponser::OnRspUserLogin(CThostFtdcRspUserLoginField * pRspUserLogin, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
+{
+	if (isErrorRspInfo(pRspInfo)) {
+		APLogger->log("Login Error! ");
+
+		//if (pRspInfo->ErrorID == 140) {
+		//	APFuturesCTPTraderAgent::getInstance()->reqUpdatePassword("cristiano7", "Cris7i@no");
+		//}
+		return;
+	}
+
+	// on login
+	APFuturesCTPTraderAgent::getInstance()->setFrontID(pRspUserLogin->FrontID);
+	//APFuturesCTPTraderAgent::getInstance()->setSessionID(pRspUserLogin->SessionID);
+
+	APFuturesCTPTraderAgent::getInstance()->reqSettlementInfoConfirm();
+
+	APFuturesCTPTraderAgent::getInstance()->onLogin();
+	//APTrade* trade = APTradeManager::getInstance()->getTradeInstance();
+	//if (trade != NULL) {
+	//	int maxOrderID = atoi(pRspUserLogin->MaxOrderRef);
+	//	trade->setOrderIDBase(maxOrderID);
+	//}
+}
+
+void APFuturesCTPTraderResponser::OnRspUserLogout(CThostFtdcUserLogoutField * pUserLogout, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
+{
+	//
+}
+
+void APFuturesCTPTraderResponser::OnRspOrderInsert(CThostFtdcInputOrderField * pInputOrder, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
+{
+	if (isErrorRspInfo(pRspInfo)) {
+		return;
+	}
+
+	if (pInputOrder != NULL) {
+		pInputOrder->OrderRef;
+	}
+}
+
+void APFuturesCTPTraderResponser::OnRspParkedOrderInsert(CThostFtdcParkedOrderField * pParkedOrder, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
+{
+}
+
+void APFuturesCTPTraderResponser::OnRspParkedOrderAction(CThostFtdcParkedOrderActionField * pParkedOrderAction, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
+{
+}
+
+void APFuturesCTPTraderResponser::OnRspOrderAction(CThostFtdcInputOrderActionField * pInputOrderAction, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
+{
+	if (isErrorRspInfo(pRspInfo)) {
+		return;
+	}
+
+	if (pInputOrderAction != NULL) {
+
+		APLogger->log("Rsp Order Action, orderRef:%s, sysID: %s.", pInputOrderAction->OrderRef, pInputOrderAction->OrderSysID);
+	}
+}
+
+void APFuturesCTPTraderResponser::OnRspQryOrder(CThostFtdcOrderField * pOrder, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
+{
+	if (isErrorRspInfo(pRspInfo)) {
+		if (pOrder != NULL) {
+			APFuturesCTPTraderAgent::getInstance()->onQryOrderFailed(atoi(pOrder->OrderLocalID));
+		}
+		return;
+	}
+
+	if (pOrder == NULL) {
+		return;
+	}
+
+	APORDERID localID = atoi(pOrder->OrderLocalID);
+	APFuturesCTPTraderAgent::getInstance()->onQryOrder(localID, pOrder);
+
+	if (bIsLast)
+	{
+		// sync to trade
+		APFuturesCTPTraderAgent::getInstance()->onQryOrderFinished();
+	}
+}
+
+void APFuturesCTPTraderResponser::OnRspQryTrade(CThostFtdcTradeField * pTrade, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
+{
+	// todo: qry trade
+}
+
+void APFuturesCTPTraderResponser::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField * pInvestorPosition, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
+{
+	if (isErrorRspInfo(pRspInfo) || pInvestorPosition == NULL) {
+		return;
+	}
+
+	std::string instrumentID = pInvestorPosition->InstrumentID;
+	APFuturesCTPTraderAgent::getInstance()->onQryInstrumentPosition(instrumentID, pInvestorPosition);
+	if (bIsLast) {
+		APFuturesCTPTraderAgent::getInstance()->onQryInstrumentPositionFinished();
+	}
+}
+
+
+void APFuturesCTPTraderResponser::OnRspQryInvestorPositionDetail(CThostFtdcInvestorPositionDetailField * pInvestorPositionDetail,
+	CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
+{
+	// Detail
+	if (isErrorRspInfo(pRspInfo)) {
+		return;
+	}
+
+	if (pInvestorPositionDetail != NULL) {
+		//APLogger->log("Position Detail, instrument: %s, dir:%d, volume:%d, closeVolume:%d", pInvestorPositionDetail->InstrumentID, 
+		//	pInvestorPositionDetail->Direction, 
+		//	pInvestorPositionDetail->Volume,
+		//	pInvestorPositionDetail->CloseVolume);
+		APFuturesCTPTraderAgent::getInstance()->onQryInstrumentPositionDetail(
+			pInvestorPositionDetail->InstrumentID, pInvestorPositionDetail);
+	}
+
+	if (bIsLast) {
+		APFuturesCTPTraderAgent::getInstance()->onQryInstrumentPositionDetailFinished();
+	}
+}
+
+void APFuturesCTPTraderResponser::OnRspError(CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
+{
+	// todo: req error
+}
+
+void APFuturesCTPTraderResponser::OnRtnOrder(CThostFtdcOrderField * pOrder)
+{
+	// 每次报单状态发生变化时被调用
+	// 一次报单过程中会被触发多次: 1. CTP将报单向交易所提交时; 
+	//                             2. 交易所撤销或接受报单时; 
+	//                             3. 该报单成交时;
+	if (pOrder == NULL) {
+		return;
+	}
+
+	APFuturesCTPTraderAgent::getInstance()->onRtnOrder(pOrder);
+}
+
+void APFuturesCTPTraderResponser::OnRtnTrade(CThostFtdcTradeField * pTrade)
+{
+	if (pTrade == NULL) {
+		return;
+	}
+
+	APFuturesCTPTraderAgent::getInstance()->onRtnTrade(pTrade);
+}
+
+void APFuturesCTPTraderResponser::OnErrRtnOrderInsert(CThostFtdcInputOrderField * pInputOrder, CThostFtdcRspInfoField * pRspInfo)
+{
+	APORDERID localID = atoi(pInputOrder->OrderRef);
+	APFuturesCTPTraderAgent::getInstance()->onTradeFailed(localID);
+}
+
+void APFuturesCTPTraderResponser::OnErrRtnOrderAction(CThostFtdcOrderActionField * pOrderAction, CThostFtdcRspInfoField * pRspInfo)
+{
+	// cancel failed
+	if (pOrderAction != NULL) {
+		return;
+	}
+}
+
+//---- general methods
 
 bool APFuturesCTPTraderResponser::isErrorRspInfo(CThostFtdcRspInfoField * pRspInfo)
 {

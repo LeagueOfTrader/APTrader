@@ -148,7 +148,7 @@ void APAccountInfo::appendPositionInfo(APPositionData & pd, CThostFtdcInvestorPo
 	pd.yesterdayPosition += info.YdPosition;
 }
 
-void APAccountInfo::onGetPositionData(APASSETID instrumentID, std::vector<CThostFtdcInvestorPositionField>& positionDataArr)
+void APAccountInfo::onGetPositionData(APASSETID instrumentID, CThostFtdcInvestorPositionField& posData)
 {
 	APPositionData posDataBuy;
 	memset(&posDataBuy, 0, sizeof(posDataBuy));
@@ -158,16 +158,13 @@ void APAccountInfo::onGetPositionData(APASSETID instrumentID, std::vector<CThost
 	memset(&posDataSell, 0, sizeof(posDataSell));
 	posDataSell.direction = TD_Sell;
 	posDataSell.instrumentID = instrumentID;
-	
-	for (int i = 0; i < positionDataArr.size(); i++) {
-		CThostFtdcInvestorPositionField& ipf = positionDataArr[i];
-		if (ipf.PosiDirection == THOST_FTDC_PD_Long) {
-			appendPositionInfo(posDataBuy, ipf);
-		}
-		else if (ipf.PosiDirection == THOST_FTDC_PD_Short) {
-			appendPositionInfo(posDataSell, ipf);
-		}
+
+	if (posData.PosiDirection == THOST_FTDC_PD_Long) {
+		appendPositionInfo(posDataBuy, posData);
 	}
+	else if (posData.PosiDirection == THOST_FTDC_PD_Short) {
+		appendPositionInfo(posDataSell, posData);
+	}	
 
 	if (posDataBuy.holdPosition > 0) {
 		onGetPositionData(posDataBuy);
@@ -177,8 +174,16 @@ void APAccountInfo::onGetPositionData(APASSETID instrumentID, std::vector<CThost
 		onGetPositionData(posDataSell);
 	}
 
-	verifyAfterCheck();
+	//verifyAfterCheck();
 }
+
+void APAccountInfo::onSyncPositionData()
+{
+	if (!m_inited) {
+		//
+	}
+}
+
 #endif
 
 void APAccountInfo::onGetPositionData(APPositionData data)
@@ -186,28 +191,28 @@ void APAccountInfo::onGetPositionData(APPositionData data)
 	APPositionRepertory::getInstance()->store(data);
 }
 
-void APAccountInfo::verifyAfterCheck()
-{
-	bool positionDataComplete = false;
-	int reqCounts = m_instruments.size();	
-
-	if (reqCounts == APPositionRepertory::getInstance()->getPositionDataInstrumentsCount()) {
-		positionDataComplete = true;		
-	}
-
-	bool orderDataComplete = false;
-	if (APTradeManager::getInstance()->inited()) {
-		APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
-		if (trader != NULL) {
-			orderDataComplete = trader->isOrderDataComplete();
-		}
-	}
-	
-	if (orderDataComplete && positionDataComplete) {
-		processVerification();
-		m_inited = true;
-	}
-}
+//void APAccountInfo::verifyAfterCheck()
+//{
+//	bool positionDataComplete = false;
+//	int reqCounts = m_instruments.size();	
+//
+//	if (reqCounts == APPositionRepertory::getInstance()->getPositionDataInstrumentsCount()) {
+//		positionDataComplete = true;		
+//	}
+//
+//	bool orderDataComplete = false;
+//	if (APTradeManager::getInstance()->inited()) {
+//		APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
+//		if (trader != NULL) {
+//			orderDataComplete = trader->isOrderDataComplete();
+//		}
+//	}
+//	
+//	if (orderDataComplete && positionDataComplete) {
+//		processVerification();
+//		m_inited = true;
+//	}
+//}
 
 //bool APAccountInfo::getPositionData(APASSETID instrumentID, APTradeDirection direction, APPositionData & data)
 //{

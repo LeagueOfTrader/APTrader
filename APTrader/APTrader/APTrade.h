@@ -44,11 +44,11 @@ public:
 	virtual void cancelAll(APASSETID instrumentID, APPositionCtrl* pc);
 	virtual void cancel(APORDERID orderID, APPositionCtrl* pc);
 	
-	virtual void onTraded(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, 
-								APSYSTEMID sysID, APTradeDirection direction = TD_Buy);
+	virtual void onTraded(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
 	virtual void onOrderStatusChanged(APASSETID instrumentID, APTradeType type, APORDERID orderID, long volumeSurplus, long volumeTraded,
-								APOrderState state, APSYSTEMID sysID, APSYSTEMID tradeID, APTradeDirection direction = TD_Buy);	
-	virtual void onCanceled(APORDERID orderID, APSYSTEMID sysID = 0);
+								APOrderState state, APSYSTEMID sysID, APSYSTEMID orderRef = "", APSYSTEMID exchangeID = "",
+								int sessionID = 0, int frontID = 0, APTradeDirection direction = TD_Buy);
+	virtual void onCanceled(APORDERID orderID);
 	virtual void onFailed(APORDERID orderID);
 
 	virtual void onFundChanged(APASSETID instrumentID, APTradeType type, double variableFund, APORDERID orderID, APTradeDirection direction = TD_Buy);
@@ -58,10 +58,13 @@ public:
 	void setOrderIDBase(APORDERID base);
 
 	// sync orders
+	void queryAllOrders();
 	void bindOrder(APORDERID localOrderID, APPositionCtrl* posCtrl);
 	void queryOrder(APORDERID localOrderID);
 	void onQueryOrder(APORDERID localOrderID);
 	void onQueryOrderFailed(APORDERID localOrderID);
+
+	void onSyncOrders();
 
 	bool isOrderDataComplete();
 
@@ -86,7 +89,15 @@ protected:
 
 	APORDERID generateOrderID();
 	void removeLocalOrder(APORDERID orderID);
-	APSYSTEMID getSysIDByOrder(APORDERID orderID);	
+
+
+	bool isOrderExists(APORDERID orderID);
+	APASSETID getInstrumentIDByOrderID(APORDERID orderID);
+	APSYSTEMID getSysIDByOrderID(APORDERID orderID);	
+	APSYSTEMID getOrderRefByOrderID(APORDERID orderID);
+	int getSessionIDByOrderID(APORDERID orderID);
+	int getFrontIDByOrderID(APORDERID orderID);
+	APSYSTEMID getExchangeIDByOrderID(APORDERID orderID);
 
 	// serialize
 	virtual std::string serialize();

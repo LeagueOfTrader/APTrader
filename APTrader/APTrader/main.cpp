@@ -66,19 +66,20 @@ void runTest() {
 
 	APTradeManager::getInstance()->init();
 
-	//APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
-	//APFuturesPositionCtrl* posCtrl = new APFuturesPositionCtrl();
-	//std::string instID = "rb1805";
-	//APTradeDirection dir = TD_Sell;
-	//posCtrl->setInstrumentID(instID);
-	//posCtrl->setTradeDirection(dir);
-	//posCtrl->setTrade(trader);
+	APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
+	APFuturesPositionCtrl* posCtrl = new APFuturesPositionCtrl();
+	std::string instID = "rb1805";
+	APTradeDirection dir = TD_Sell;
+	posCtrl->setInstrumentID(instID);
+	posCtrl->setTradeDirection(dir);
+	posCtrl->setTrade(trader);
 
 	//posCtrl->open(instID, dir, 4000.0, 10);
 
-	//APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPosition();
+	APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPosition();
+	APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPositionDetail();
 	//APFuturesCTPTraderAgent::getInstance()->reqQryTradingAccount();
-	APFuturesCTPTraderAgent::getInstance()->reqQryAllOrders();
+	//APFuturesCTPTraderAgent::getInstance()->reqQryAllOrders();
 
 	while (true) {
 		framework->update(0.0f);

@@ -48,6 +48,10 @@ struct APOrderIndexInfo {
 	APASSETID instrumentID;
 	//APTradeDirection direction;
 	APSYSTEMID sysID;
+	APSYSTEMID orderRef;
+	APSYSTEMID exchangeID;	
+	int sessionID;
+	int frontID;
 };
 
 struct APTradeDetailInfo : APOrderIndexInfo {
@@ -76,21 +80,29 @@ struct APTradeOrderInfo {
 	APTradeDirection direction;
 	APOrderState state;
 	APSYSTEMID sysID;
+	APSYSTEMID orderRef;
+	APSYSTEMID exchangeID;
+	int sessionID;
+	int frontID;
 	UINT positionCtrlID;
 
 	//
-	APSYSTEMID tradeID;
+	//APSYSTEMID tradeID;
 	long volumeTraded;
 	long volumeSurplus;
 
 	APTradeOrderInfo() {
-		tradeID = "";
+		//tradeID = "";
+		orderRef = "";
+		exchangeID = "";
+		sessionID = 0;
+		frontID = 0;
 		volumeTraded = 0;
 		volumeSurplus = 0;
 	}
 
 	APTradeOrderInfo(APORDERID theOrderID, APTradeType theType, APASSETID theInstrumentID, double thePrice, long theVolume,
-		APTradeDirection theDir, APOrderState theState, APSYSTEMID theSysID, UINT thePositionCtrlID) {
+		APTradeDirection theDir, APOrderState theState, UINT thePositionCtrlID) {
 		orderID = theOrderID;
 		type = theType;
 		instrumentID = theInstrumentID;
@@ -98,10 +110,15 @@ struct APTradeOrderInfo {
 		volume = theVolume;
 		direction = theDir;
 		state = theState;
-		sysID = theSysID;
+		//sysID = theSysID;
 		positionCtrlID = thePositionCtrlID;
 
-		tradeID = "";
+		//tradeID = "";
+		sysID = "";
+		orderRef = "";
+		exchangeID = "";
+		sessionID = 0;
+		frontID = 0;
 		volumeTraded = 0;
 		volumeSurplus = 0;
 	}
@@ -115,9 +132,12 @@ struct APTradeOrderInfo {
 		direction = info.direction;
 		state = info.state;
 		sysID = info.sysID;
+		orderRef = info.orderRef;
+		exchangeID = info.exchangeID;
+		sessionID = info.sessionID;
+		frontID = info.frontID;
 		positionCtrlID = info.positionCtrlID;
-
-		tradeID = info.tradeID;
+				
 		volumeTraded = info.volumeTraded;
 		volumeSurplus = info.volumeSurplus;
 	}

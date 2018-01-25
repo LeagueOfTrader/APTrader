@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <mutex>
 #include "../../Utils/APIntAccumulator.h"
 
 typedef void(*InitCallback)();
@@ -40,5 +41,7 @@ protected:
 	bool m_loginSuccess;
 
 	InitCallback m_initCallback;
+
+	std::mutex m_mutex;
 };
 

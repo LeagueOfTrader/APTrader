@@ -57,9 +57,14 @@ void APFuturesTrade::close(APASSETID instrumentID, APORDERID localOrderID, APTra
 void APFuturesTrade::cancel(APORDERID orderID)
 {
 #ifdef USE_CTP
-	APSYSTEMID sysID = getSysIDByOrder(orderID);
-	if (sysID.length() > 0) {
-		APFuturesCTPTraderAgent::getInstance()->cancelOrder(orderID, sysID);
+	if (!isOrderExists(orderID)) {
+		return;
 	}
+
+	APSYSTEMID orderRef = getOrderRefByOrderID(orderID);
+	int sessionID = getSessionIDByOrderID(orderID);
+	int frontID = getFrontIDByOrderID(orderID);
+	APASSETID instrumentID = getInstrumentIDByOrderID(orderID);
+	APFuturesCTPTraderAgent::getInstance()->cancelOrder(instrumentID, frontID, sessionID, orderRef);	
 #endif
 }

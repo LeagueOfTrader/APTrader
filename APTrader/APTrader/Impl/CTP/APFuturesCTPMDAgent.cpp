@@ -111,7 +111,10 @@ bool APFuturesCTPMDAgent::getMarketData(APASSETID instrumentID, CThostFtdcDepthM
 		return false;
 	}
 
+	m_mutex.lock();
 	data = m_marketData[instrumentID];
+	m_mutex.unlock();
+
 	return true;
 }
 
@@ -120,8 +123,8 @@ void APFuturesCTPMDAgent::onGetMarketData(CThostFtdcDepthMarketDataField * data)
 	if (data == NULL) {
 		return;
 	}
-
+	m_mutex.lock();
 	APASSETID instrumentID = data->InstrumentID;
-
 	m_marketData[instrumentID] = *data;
+	m_mutex.unlock();
 }

@@ -64,12 +64,13 @@ public:
 	std::string getInterfaceType();
 
 #ifdef USE_CTP
-	void onGetPositionData(APASSETID instrumentID, std::vector<CThostFtdcInvestorPositionField>& positionDataArr);
+	void onGetPositionData(APASSETID instrumentID, CThostFtdcInvestorPositionField& positionData);
+	void onSyncPositionData();
 #endif
 
 protected:
 	void onGetPositionData(APPositionData data);
-	void verifyAfterCheck();
+	//void verifyAfterCheck();
 	void processVerification();
 
 #ifdef USE_CTP

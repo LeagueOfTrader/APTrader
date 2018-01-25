@@ -32,10 +32,12 @@ public:
 		APOrderTimeCondition orderTimeCondition = OTC_GoodForDay, std::string date = "",
 		APOrderVolumeCondition orderVolumeCondition = OVC_Any, long minVolume = 0,
 		APOrderContingentCondition orderContingentCondition = OCC_Immediately, double stopPrice = 0.0);
-	void cancelOrder(APORDERID localOrderID, APSYSTEMID sysID);
+	void cancelOrder(APASSETID instrumentID, int frontID, int sessionID, APSYSTEMID orderRef);
+	void cancelOrder(APASSETID instrumentID, APSYSTEMID exchangeID, APSYSTEMID orderSysID);
 
 	void setFrontID(TThostFtdcFrontIDType frontID);
-	void setSessionID(TThostFtdcSessionIDType sessionID);
+	int getFrontID();
+	//void setSessionID(TThostFtdcSessionIDType sessionID);
 	void setMaxOrderRef(int id);
 	int getMaxOrderRef();
 
@@ -52,24 +54,27 @@ public:
 	int reqQryAllInvestorPosition();
 	int reqQryAllInvestorPositionDetail();
 	//	∂©µ•≤È—Ø
-	int reqQryOrder(APASSETID instrumentID, APSYSTEMID sysID);
+	int reqQryOrder(APASSETID instrumentID, APSYSTEMID sysID, APSYSTEMID exchangeID);
 	int reqQryAllOrders();
 
-	int reqQryTrade(std::string tradeID, std::string startDate = "", std::string endDate = "");
+	int reqQryTrade(APASSETID InstrumentID, std::string startDate = "", std::string endDate = "");
+	int reqQryAllTrades(std::string startDate = "", std::string endDate = "");
 
 	int reqQryInstrumentCommissionRate(APASSETID instrumentID);
 	int reqQryInstrumentMarginRate(APASSETID instrumentID);
 
 	// response	
-	void onQryInstrumentPositionFinished(APASSETID instrumentID);
+	void onQryInstrumentPositionFinished();
 	void onQryInstrumentPosition(APASSETID instrumentID, CThostFtdcInvestorPositionField* positionInfo);
+	void onQryInstrumentPositionDetailFinished();
+	void onQryInstrumentPositionDetail(APASSETID instrumentID, CThostFtdcInvestorPositionDetailField* detailInfo);
 
 	// order & trade
 	void onRtnOrder(CThostFtdcOrderField* order);
 	void onRtnTrade(CThostFtdcTradeField* tradeInfo);
 
 	void onQryOrder(APORDERID localOrderID, CThostFtdcOrderField* pOrderInfo);
-	void onQryOrderFinished(APORDERID localOrderID);
+	void onQryOrderFinished();
 	void onQryOrderFailed(APORDERID localOrderID);
 	APTradeOrderInfo getOrderInfo(APORDERID orderID);
 
@@ -84,10 +89,11 @@ private:
 	CThostFtdcTraderApi* m_traderApi;
 	APFuturesCTPTraderResponser* m_tradeResponser;
 	TThostFtdcFrontIDType m_frontID;
-	TThostFtdcSessionIDType m_sessionID;
+	//TThostFtdcSessionIDType m_sessionID;
 	std::string m_tradingDay;
 
-	std::map<APASSETID, std::vector<CThostFtdcInvestorPositionField>> m_positionInfo;
+	std::map<APASSETID, CThostFtdcInvestorPositionField> m_positionInfo;
+	std::map<APASSETID, std::vector<CThostFtdcInvestorPositionDetailField>> m_positionDetail;
 	std::map<APORDERID, CThostFtdcOrderField> m_orderInfo;
 	std::map<APORDERID, std::vector<CThostFtdcTradeField>> m_tradeInfo;
 
