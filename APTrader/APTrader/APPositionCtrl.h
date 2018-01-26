@@ -54,8 +54,12 @@ public:
 
 	void recycleFund(APRecycleFundLevel level = RFL_UndeficitPosition);
 
-	long getOpenOrderedPosition();
-	long getCloseOrderedPosition();
+	long getOpenOrdersPosition();
+	long getCloseOrdersPosition();
+	void setOpenOrdersPosition(long pos);
+	void setCloseOrdersPosition(long pos);
+	
+	void relateOrder(APORDERID orderID);
 
 	virtual void openPosition(APTradeDirection direction, double price, long volume);
 	virtual void closePosition(APTradeDirection direction, double price, long volume);
@@ -91,6 +95,7 @@ protected:
 	void cancel(APORDERID orderID);
 	
 	//virtual void onSyncPositionStatus(const APPositionData& data);
+	virtual void modifyOrdersPosition(const APTradeOrderInfo& info);
 
 	virtual void initWithData(std::string positionInfo);
 

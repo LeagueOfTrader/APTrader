@@ -167,10 +167,10 @@ std::vector<APPositionData> APPositionCtrl::getHoldPositionDetail()
 	pd.instrumentID = m_instrumentID;
 	pd.direction = m_directionType;
 	pd.holdPosition = m_holdPosition;
-	if (m_directionType == TD_Buy) {
+	if (m_directionType == TD_Sell) {
 		pd.longFrozenPosition = m_closeOrdersPosition;
 	}
-	else if (m_directionType == TD_Sell) {
+	else if (m_directionType == TD_Buy) {
 		pd.shortFrozenPosition = m_closeOrdersPosition;
 	}
 	holdPosList.push_back(pd);
@@ -208,14 +208,67 @@ long APPositionCtrl::getAvailablePosition()
 	return m_availablePosition;
 }
 
-long APPositionCtrl::getOpenOrderedPosition()
+long APPositionCtrl::getOpenOrdersPosition()
 {
 	return m_openOrdersPosition;
 }
 
-long APPositionCtrl::getCloseOrderedPosition()
+long APPositionCtrl::getCloseOrdersPosition()
 {
 	return m_closeOrdersPosition;
+}
+
+void APPositionCtrl::setOpenOrdersPosition(long pos)
+{
+	m_openOrdersPosition = pos;
+}
+
+void APPositionCtrl::setCloseOrdersPosition(long pos)
+{
+	m_closeOrdersPosition = pos;
+}
+
+void APPositionCtrl::relateOrder(APORDERID orderID)
+{
+	if (m_trade != NULL) {
+		APTradeOrderInfo info;
+		bool ret = m_trade->getOrderInfo(orderID, info);
+		if (ret) {
+			if (info.type == TT_Open) {
+				m_openOrderList.push_back(orderID);
+			}
+			else {
+				m_closeOrderList.push_back(orderID);
+			}
+
+			modifyOrdersPosition(info);
+
+			m_trade->bindOrder(orderID, this);
+		}
+	}
+}
+
+void APPositionCtrl::modifyOrdersPosition(const APTradeOrderInfo& info)
+{
+	APASSETID instrumentID = info.instrumentID;
+	APTradeDirection direction = info.direction;
+	APTradeType tradeType = info.type;
+	long deltaVolume = info.volumeSurplus;
+
+	if (m_instrumentID != instrumentID) {
+		return;
+	}
+
+	if (m_directionType != direction) {
+		return;
+	}
+
+	if (tradeType == TT_Open) {
+		m_openOrdersPosition += deltaVolume;
+	}
+	else {
+		m_closeOrdersPosition += deltaVolume;
+	}
 }
 
 void APPositionCtrl::openPosition(APTradeDirection direction, double price, long volume)
@@ -403,6 +456,8 @@ void APPositionCtrl::correctPosition()
 //	//	m_closeOrdersPosition = 0;
 //	//}
 //}
+
+
 
 void APPositionCtrl::initWithData(std::string positionInfo)
 {

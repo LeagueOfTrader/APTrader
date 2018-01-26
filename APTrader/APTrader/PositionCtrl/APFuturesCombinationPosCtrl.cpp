@@ -300,6 +300,34 @@ void APFuturesCombinationPosCtrl::correctPosition()
 	}
 }
 
+void APFuturesCombinationPosCtrl::modifyOrdersPosition(const APTradeOrderInfo& info)
+{
+	APASSETID instrumentID = info.instrumentID;
+	APTradeDirection direction = info.direction;
+	APTradeType tradeType = info.type;
+
+	if (m_instrumentID == instrumentID && m_directionType == direction) {
+		if (tradeType == TT_Open) {
+			m_curOpenOperation.prTarget = info.volume;
+			m_curOpenOperation.prVolume = info.volumeTraded;
+		}
+		else {
+			m_curCloseOperation.prTarget = info.volume;
+			m_curCloseOperation.prVolume = info.volumeTraded;
+		}
+	}
+	else if (m_coInstrumentID == instrumentID && m_coDirectionType == direction) {
+		if (tradeType == TT_Open) {
+			m_curOpenOperation.coTarget = info.volume;
+			m_curOpenOperation.coVolume = info.volumeTraded;
+		}
+		else {
+			m_curCloseOperation.coTarget = info.volume;
+			m_curCloseOperation.coVolume = info.volumeTraded;
+		}
+	}
+}
+
 Json::Value APFuturesCombinationPosCtrl::serializeToJsonValue()
 {
 	Json::Value v = APPositionCtrl::serializeToJsonValue();

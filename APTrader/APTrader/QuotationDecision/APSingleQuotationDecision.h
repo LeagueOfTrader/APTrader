@@ -15,6 +15,8 @@ public:
 
 	virtual double getValueReference();
 
+	virtual APInstrumentQuotation* getQuotationByIndex(int index = 0);
+
 protected:
 	APInstrumentQuotation* m_quotation;
 };

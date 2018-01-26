@@ -4,23 +4,15 @@
 
 APPriceMarginQuotationDecision::APPriceMarginQuotationDecision(APASSETID srcInstrumentID, APASSETID targetInstrumentID, 
 																double upper, double lower) 
-																: APQuotationDecision(upper, lower)
+																: APDualQuotationDecision(srcInstrumentID, targetInstrumentID,
+																	upper, lower)
 {
-	m_srcQuotation = APMarketDataMgr->subscribeInstrument(srcInstrumentID);
-	m_targetQuotation = APMarketDataMgr->subscribeInstrument(targetInstrumentID);
 	m_priceDiff = DBL_MAX;
 }
 
 
 APPriceMarginQuotationDecision::~APPriceMarginQuotationDecision()
 {
-	if (m_srcQuotation != NULL) {
-		APMarketDataMgr->unSubscribeInstrument(m_srcQuotation->getInstrumentID());
-	}
-
-	if (m_targetQuotation != NULL) {
-		APMarketDataMgr->unSubscribeInstrument(m_targetQuotation->getInstrumentID());
-	}
 }
 
 double APPriceMarginQuotationDecision::getValueReference()
@@ -36,4 +28,3 @@ double APPriceMarginQuotationDecision::getValueReference()
 
 	return m_priceDiff;
 }
-

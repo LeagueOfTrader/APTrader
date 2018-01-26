@@ -32,3 +32,12 @@ double APSingleQuotationDecision::getValueReference()
 
 	return -DBL_MAX;
 }
+
+APInstrumentQuotation * APSingleQuotationDecision::getQuotationByIndex(int index)
+{
+	if (index == 0) {
+		return m_quotation;
+	}
+
+	return NULL;
+}

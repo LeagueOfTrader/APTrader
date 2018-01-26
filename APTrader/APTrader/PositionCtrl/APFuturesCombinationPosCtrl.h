@@ -69,6 +69,8 @@ public:
 	virtual void correctPosition();
 
 protected:
+	virtual void modifyOrdersPosition(const APTradeOrderInfo& info);
+
 	virtual Json::Value serializeToJsonValue();
 	virtual void deserialize(std::string str);
 

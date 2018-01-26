@@ -1,4 +1,6 @@
 #pragma once
+class APInstrumentQuotation;
+
 class APQuotationDecision
 {
 public:
@@ -8,6 +10,8 @@ public:
 
 	virtual double getValueReference() = 0;
 	virtual bool isValueRefValid(double valRef);
+
+	virtual APInstrumentQuotation* getQuotationByIndex(int index = 0) = 0;
 
 protected:
 	double m_upperLimit;

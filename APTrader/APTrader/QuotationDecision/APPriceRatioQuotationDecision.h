@@ -1,12 +1,12 @@
 #pragma once
-#include "../APQuotationDecision.h"
+#include "APDualQuotationDecision.h"
 #include <string>
 #include "../APTypes.h"
 
 class APInstrumentQuotation;
 
 class APPriceRatioQuotationDecision :
-	public APQuotationDecision
+	public APDualQuotationDecision
 {
 public:
 	APPriceRatioQuotationDecision(APASSETID srcInstrumentID, APASSETID targetInstrumentID, double upper, double lower);
@@ -15,9 +15,6 @@ public:
 	virtual double getValueReference();
 
 protected:
-	APInstrumentQuotation* m_srcQuotation;
-	APInstrumentQuotation* m_targetQuotation;
-
 	double m_priceRatio;
 };
 
