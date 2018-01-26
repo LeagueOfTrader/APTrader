@@ -49,11 +49,6 @@ bool APTestFramework::finished()
 	return m_finished;
 }
 
-bool APTestFramework::inited()
-{
-	return m_inited;
-}
-
 void APTestFramework::initLocalSystem()
 {
 	APMarketDataMgr->init();
@@ -64,7 +59,7 @@ void APTestFramework::initLocalSystem()
 	//APStrategyManager::getInstance()->init();
 	//APAccountInfo::getInstance()->beginVerify();
 
-	m_inited = true;
+	setInited();
 }
 
 

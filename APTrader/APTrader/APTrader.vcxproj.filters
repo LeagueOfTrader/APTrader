@@ -234,6 +234,12 @@
     <ClInclude Include="Common\InitializableObject.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="QuotationDecision\APDualQuotationDecision.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="APSystemSetting.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APPositionCtrl.cpp">
@@ -408,6 +414,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Test\APTestFramework.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="QuotationDecision\APDualQuotationDecision.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APSystemSetting.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

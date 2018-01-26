@@ -746,11 +746,11 @@ int APFuturesCTPTraderAgent::reqQryInstrumentMarginRate(APASSETID instrumentID)
 void APFuturesCTPTraderAgent::onQryInstrumentPositionFinished()
 {
 	m_mutex.lock();
-	std::map<APASSETID, CThostFtdcInvestorPositionField>::iterator it;
+	std::map<APASSETID, std::vector<CThostFtdcInvestorPositionField>>::iterator it;
 	for (it = m_positionInfo.begin(); it != m_positionInfo.end(); it++) {
 		APASSETID instrumentID = it->first;
-		CThostFtdcInvestorPositionField& posInfo = it->second;
-		APAccountInfo::getInstance()->onGetPositionData(instrumentID, posInfo);
+		//CThostFtdcInvestorPositionField& posInfo = it->second;
+		//APAccountInfo::getInstance()->onGetPositionData(instrumentID, posInfo);
 	}
 	m_mutex.unlock();
 
@@ -764,7 +764,12 @@ void APFuturesCTPTraderAgent::onQryInstrumentPosition(APASSETID instrumentID, CT
 	}
 
 	m_mutex.lock();
-	m_positionInfo[instrumentID] = *positionInfo;
+	if (m_positionInfo.find(instrumentID) == m_positionInfo.end()) {
+		std::vector<CThostFtdcInvestorPositionField> ipfArr;
+		m_positionInfo[instrumentID] = ipfArr;
+	}
+
+	m_positionInfo[instrumentID].push_back(*positionInfo);
 	m_mutex.unlock();
 }
 

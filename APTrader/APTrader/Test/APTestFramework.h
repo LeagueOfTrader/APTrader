@@ -3,9 +3,10 @@
 #include "../APMacro.h"
 #include "../APTypes.h"
 #include "../Common/Singleton.h"
+#include "../Common/InitializableObject.h"
 #ifdef USE_CTP
 
-class APTestFramework : public APFramework, public Singleton<APTestFramework> 
+class APTestFramework : public APFramework, public InitializableObject, public Singleton<APTestFramework> 
 {
 public:
 	APTestFramework();
@@ -16,8 +17,6 @@ public:
 	virtual void exit();
 
 	virtual bool finished();
-
-	bool inited();
 
 protected:
 	void initLocalSystem();
@@ -30,6 +29,5 @@ protected:
 
 private:
 	int m_ctpCount;
-	bool m_inited;
 #endif
 };

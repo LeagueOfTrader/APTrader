@@ -157,8 +157,10 @@
     <ClInclude Include="APFundPool.h" />
     <ClInclude Include="APPositionRepertory.h" />
     <ClInclude Include="APStructs.h" />
+    <ClInclude Include="APSystemSetting.h" />
     <ClInclude Include="Common\InitializableObject.h" />
     <ClInclude Include="Impl\CTP\APMacroCTP.h" />
+    <ClInclude Include="QuotationDecision\APDualQuotationDecision.h" />
     <ClInclude Include="Test\APTestFramework.h" />
     <ClInclude Include="Utils\APRedisSerializedObject.h" />
     <ClInclude Include="Common\ThreadSafeQueue.h" />
@@ -229,6 +231,8 @@
     <ClCompile Include="APFramework.cpp" />
     <ClCompile Include="APFundPool.cpp" />
     <ClCompile Include="APPositionRepertory.cpp" />
+    <ClCompile Include="APSystemSetting.cpp" />
+    <ClCompile Include="QuotationDecision\APDualQuotationDecision.cpp" />
     <ClCompile Include="Test\APTestFramework.cpp" />
     <ClCompile Include="Utils\APRedisSerializedObject.cpp" />
     <ClCompile Include="Utils\APRedisAgent.cpp" />

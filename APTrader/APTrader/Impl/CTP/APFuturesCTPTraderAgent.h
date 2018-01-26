@@ -92,7 +92,7 @@ private:
 	//TThostFtdcSessionIDType m_sessionID;
 	std::string m_tradingDay;
 
-	std::map<APASSETID, CThostFtdcInvestorPositionField> m_positionInfo;
+	std::map<APASSETID, std::vector<CThostFtdcInvestorPositionField>> m_positionInfo;
 	std::map<APASSETID, std::vector<CThostFtdcInvestorPositionDetailField>> m_positionDetail;
 	std::map<APORDERID, CThostFtdcOrderField> m_orderInfo;
 	std::map<APORDERID, std::vector<CThostFtdcTradeField>> m_tradeInfo;

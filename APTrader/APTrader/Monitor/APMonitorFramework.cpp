@@ -16,7 +16,7 @@ void onRemoteSystemInited() {
 
 APMonitorFramework::APMonitorFramework()
 {
-	m_inited = false;
+	//m_inited = false;
 }
 
 
@@ -44,11 +44,6 @@ void APMonitorFramework::exit()
 #endif // USE_CTP
 
 	APQuotationMonitorManager::getInstance()->destroy();
-}
-
-bool APMonitorFramework::inited()
-{
-	return m_inited;
 }
 
 void APMonitorFramework::initRemoteSystem()
@@ -79,5 +74,5 @@ void APMonitorFramework::initLocalSystem()
 void APMonitorFramework::onLocalInited()
 {
 	APLogger->log("---- Local system inited ----");
-	m_inited = true;
+	setInited();
 }

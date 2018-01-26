@@ -1,8 +1,9 @@
 #pragma once
 #include "../Common/Singleton.h"
+#include "../Common/InitializableObject.h"
 #include "../APFramework.h"
 
-class APMonitorFramework : public APFramework, public Singleton<APMonitorFramework>
+class APMonitorFramework : public APFramework, public InitializableObject, public Singleton<APMonitorFramework>
 {
 public:
 	APMonitorFramework();
@@ -12,7 +13,6 @@ public:
 	virtual void update(float deltaTime);
 	virtual void exit();
 
-	bool inited();
 	void onRemoteInited();
 	void onLocalInited();
 
@@ -20,9 +20,6 @@ protected:
 	void initRemoteSystem();
 	
 	void initLocalSystem();
-	
 
-private:
-	bool m_inited;
 };
 

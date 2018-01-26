@@ -31,5 +31,6 @@ private:
 	//CycleBuffer<const char*>* m_commandBuffer;
 	threadsafe_queue<std::string> m_commandBuffer;
 	int m_threadInterval;
+	bool m_quit;
 };
 

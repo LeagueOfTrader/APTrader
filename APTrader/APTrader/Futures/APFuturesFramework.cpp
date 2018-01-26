@@ -5,6 +5,8 @@
 #include "../APStrategyManager.h"
 #include "../APMarketDataManager.h"
 #include "../APGlobalConfig.h"
+#include "../APSystemSetting.h"
+#include <windows.h>
 
 #ifdef USE_CTP
 #include "../Impl/CTP/APFuturesCTPMDAgent.h"
@@ -51,6 +53,8 @@ APFuturesFramework::~APFuturesFramework()
 void APFuturesFramework::init() 
 {
 	APGlobalConfig::getInstance()->init();
+	APRedisAgent::getInstance()->init();
+	APSystemSetting::getInstance()->init();
 
 #ifdef USE_CTP
 	initCTP();
@@ -62,6 +66,9 @@ void APFuturesFramework::init()
 
 void APFuturesFramework::update(float deltaTime)
 {
+	APMarketDataMgr->update(deltaTime);
+	APAccountInfo::getInstance()->update();
+	APStrategyManager::getInstance()->update();
 }
 
 void APFuturesFramework::exit()
@@ -78,12 +85,20 @@ bool APFuturesFramework::finished()
 void APFuturesFramework::initLocalSystem()
 {
 	APMarketDataMgr->init();
-	APRedisAgent::getInstance()->init();
+	
 	APAccountInfo::getInstance()->init();
 	APTradeManager::getInstance()->init();
 	//
+	APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
+	if (trader == NULL) {
+		return;
+	}
+
+	while (!trader->inited() || !APAccountInfo::getInstance()->inited()) {
+		Sleep(10);
+	}
 	APStrategyManager::getInstance()->init();
-	APAccountInfo::getInstance()->beginVerify();
+	APAccountInfo::getInstance()->verify();
 }
 
 #ifdef USE_CTP

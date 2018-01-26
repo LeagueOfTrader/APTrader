@@ -9,6 +9,7 @@ APRedisAgent::APRedisAgent()
 {
 	m_context = NULL;
 	m_over = false;
+	m_quit = false;
 }
 
 APRedisAgent::~APRedisAgent()
@@ -82,6 +83,10 @@ std::string APRedisAgent::read(std::string key) {
 
 bool APRedisAgent::hasKey(std::string key)
 {
+	if (m_context == NULL) {
+		return false;
+	}
+
 	bool exists = false;
 	std::string cmd = "EXISTS " + key;
 	redisReply* r = (redisReply*)redisCommand(m_context, cmd.c_str());
@@ -97,6 +102,7 @@ bool APRedisAgent::hasKey(std::string key)
 
 void APRedisAgent::exit()
 {
+	m_quit = true;
 }
 
 void APRedisAgent::redisThreadFunc()
@@ -107,6 +113,12 @@ void APRedisAgent::redisThreadFunc()
 void APRedisAgent::processWriteCmd()
 {
 	while (!m_over) {
+		if (m_quit) {
+			if (m_commandBuffer.size() == 0) {
+				m_over = true;
+			}
+		}
+
 		long beginTime = GetTickCount();
 		while (m_commandBuffer.size() > 0) {
 			std::string cmd = "";
