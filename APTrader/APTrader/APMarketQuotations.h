@@ -29,5 +29,7 @@ protected:
 protected:
 	std::map<APASSETID, APInstrumentQuotation*> m_instrumentQuotations;
 	APFinancialInstrumentType m_marketType;
+
+	long m_lastTick;
 };
 

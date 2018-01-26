@@ -147,4 +147,14 @@ void APStrategy::setWork(bool work)
 	m_work = work;
 }
 
+bool APStrategy::isCloseOnly()
+{
+	return m_closeOnly;
+}
+
+bool APStrategy::isWork()
+{
+	return m_work;
+}
+
 

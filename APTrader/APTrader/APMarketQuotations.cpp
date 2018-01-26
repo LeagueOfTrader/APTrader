@@ -2,11 +2,11 @@
 #include "APInstrumentQuotation.h"
 #include "APObjectFactory.h"
 #include "APGlobalConfig.h"
-
+#include <windows.h>
 
 APMarketQuotations::APMarketQuotations()
 {
-	//
+	m_lastTick = 0;
 }
 
 
@@ -55,6 +55,14 @@ void APMarketQuotations::init()
 void APMarketQuotations::update(float deltaTime)
 {
 	std::map<std::string, APInstrumentQuotation*>::iterator it = m_instrumentQuotations.begin();
+	
+	long curTick = GetTickCount();
+	if (curTick - m_lastTick < 300) {
+		return;
+	}
+
+	m_lastTick = curTick;
+
 	while (it != m_instrumentQuotations.end()) {
 		APInstrumentQuotation* quotation = it->second;
 		if (quotation != NULL) {
@@ -66,7 +74,7 @@ void APMarketQuotations::update(float deltaTime)
 			quotation->queryQuotation();
 		}
 		it++;
-	}
+	}		
 }
 
 APInstrumentQuotation * APMarketQuotations::generateQuotation(APASSETID instrumentID)

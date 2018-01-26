@@ -34,6 +34,9 @@ public:
 	void setCloseOnly(bool closeOnly);
 	void setWork(bool work);
 
+	bool isCloseOnly();
+	bool isWork();
+
 protected:
 	void initQuotationDecision(std::string quotationInfo);	
 

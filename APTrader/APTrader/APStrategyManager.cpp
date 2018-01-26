@@ -28,7 +28,7 @@ void APStrategyManager::init()
 		std::string strategyName = jr.getArrayStrValue("Strategies", i);
 		APStrategy* strategy = loadStrategy(strategyName);
 		// ---- run after load
-		runStrategy(strategyName);
+		//runStrategy(strategyName);
 	}
 }
 
