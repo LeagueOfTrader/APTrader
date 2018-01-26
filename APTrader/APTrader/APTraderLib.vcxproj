@@ -1,0 +1,294 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{FD43FD4E-00A5-4E26-A65F-3FAC2111DB60}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>APTraderLib</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ReferencePath>.\3rdParty\ctp;$(ReferencePath)</ReferencePath>
+    <IntDir>$(Platform)\$(Configuration)Lib\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_LIB;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\3rdParty\jsoncpp\include\json;.\3rdParty\ctp;.\3rdParty\hiredis\include\deps\hiredis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>.\3rdParty\jsoncpp\lib\debug;.\3rdParty\ctp;.\3rdParty\hiredis\lib\debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>jsoncpp_d.lib;thostmduserapi.lib;thosttraderapi.lib;hiredis.lib;Win32_Interop.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>jsoncpp_d.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>.\3rdParty\jsoncpp\lib\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\3rdParty\jsoncpp\include\json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>jsoncpp.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>.\3rdParty\jsoncpp\lib\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="APAccountInfo.h" />
+    <ClInclude Include="APDef.h" />
+    <ClInclude Include="APFramework.h" />
+    <ClInclude Include="APFundPool.h" />
+    <ClInclude Include="APPositionRepertory.h" />
+    <ClInclude Include="APStructs.h" />
+    <ClInclude Include="APSystemSetting.h" />
+    <ClInclude Include="Common\InitializableObject.h" />
+    <ClInclude Include="Impl\CTP\APMacroCTP.h" />
+    <ClInclude Include="QuotationDecision\APDualQuotationDecision.h" />
+    <ClInclude Include="Test\APTestFramework.h" />
+    <ClInclude Include="Utils\APRedisSerializedObject.h" />
+    <ClInclude Include="Common\ThreadSafeQueue.h" />
+    <ClInclude Include="Utils\APRedisAgent.h" />
+    <ClInclude Include="Monitor\APMonitorFramework.h" />
+    <ClInclude Include="Monitor\APQuotationMonitorManager.h" />
+    <ClInclude Include="Monitor\APQuotationMonitor.h" />
+    <ClInclude Include="Common\RefCountObject.h" />
+    <ClInclude Include="PositionCtrl\APFuturesCombinationPosCtrl.h" />
+    <ClInclude Include="APMacro.h" />
+    <ClInclude Include="APMarketDataManager.h" />
+    <ClInclude Include="Impl\CTP\APFuturesCTPAgent.h" />
+    <ClInclude Include="Impl\CTP\APFuturesCTPTraderAgent.h" />
+    <ClInclude Include="Impl\CTP\APFuturesCTPMDResponser.h" />
+    <ClInclude Include="Impl\CTP\APFuturesCTPMDAgent.h" />
+    <ClInclude Include="Futures\APFuturesFramework.h" />
+    <ClInclude Include="APInstrumentQuotation.h" />
+    <ClInclude Include="Model\APKLine.h" />
+    <ClInclude Include="Quotation\APFuturesMarketQuotations.h" />
+    <ClInclude Include="APTypes.h" />
+    <ClInclude Include="Impl\CTP\APFuturesCTPTraderResponser.h" />
+    <ClInclude Include="Common\SerializedObject.h" />
+    <ClInclude Include="Simulation\APSimSingleQuotationDecision.h" />
+    <ClInclude Include="Utils\APLog.h" />
+    <ClInclude Include="Simulation\APSimMarketQuotations.h" />
+    <ClInclude Include="Simulation\APSimAccount.h" />
+    <ClInclude Include="Common\Cyclebuffer.h" />
+    <ClInclude Include="Simulation\APSimTradeSystem.h" />
+    <ClInclude Include="Simulation\APSimFuturesTrade.h" />
+    <ClInclude Include="Simulation\APSimFuturesQuotation.h" />
+    <ClInclude Include="Simulation\APSimFramework.h" />
+    <ClInclude Include="Common\ParentChildrenHierarchy.h" />
+    <ClInclude Include="Strategy\APTransferPositionStrategy.h" />
+    <ClInclude Include="PositionCtrl\APFuturesPosCtrlWithTransfer.h" />
+    <ClInclude Include="Utils\APInterpolator.h" />
+    <ClInclude Include="APTradeManager.h" />
+    <ClInclude Include="Utils\APIntAccumulator.h" />
+    <ClInclude Include="Futures\APFuturesPositionTransfer.h" />
+    <ClInclude Include="Futures\APFuturesIDSelector.h" />
+    <ClInclude Include="Strategy\APStandardGridStrategy.h" />
+    <ClInclude Include="APStrategyFactory.h" />
+    <ClInclude Include="APStrategyManager.h" />
+    <ClInclude Include="Utils\APTimeUtility.h" />
+    <ClInclude Include="Utils\APJsonReader.h" />
+    <ClInclude Include="QuotationDecision\APPriceMarginQuotationDecision.h" />
+    <ClInclude Include="QuotationDecision\APPriceRatioQuotationDecision.h" />
+    <ClInclude Include="APQuotationDecision.h" />
+    <ClInclude Include="QuotationDecision\APSingleQuotationDecision.h" />
+    <ClInclude Include="Quotation\APFuturesQuotation.h" />
+    <ClInclude Include="Shares\APSharesFilter.h" />
+    <ClInclude Include="Trade\APFuturesTrade.h" />
+    <ClInclude Include="APObjectFactory.h" />
+    <ClInclude Include="Trade\APSharesTrade.h" />
+    <ClInclude Include="PositionCtrl\APFuturesPositionCtrl.h" />
+    <ClInclude Include="APGlobalConfig.h" />
+    <ClInclude Include="Quotation\APSharesQuotation.h" />
+    <ClInclude Include="APMarketQuotations.h" />
+    <ClInclude Include="APTrade.h" />
+    <ClInclude Include="APPositionCtrl.h" />
+    <ClInclude Include="APPositionManager.h" />
+    <ClInclude Include="PositionCtrl\APSharesPositionCtrl.h" />
+    <ClInclude Include="APStrategy.h" />
+    <ClInclude Include="Strategy\APGridStrategy.h" />
+    <ClInclude Include="Common\Singleton.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="APAccountInfo.cpp" />
+    <ClCompile Include="APFramework.cpp" />
+    <ClCompile Include="APFundPool.cpp" />
+    <ClCompile Include="APPositionRepertory.cpp" />
+    <ClCompile Include="APSystemSetting.cpp" />
+    <ClCompile Include="QuotationDecision\APDualQuotationDecision.cpp" />
+    <ClCompile Include="Test\APTestFramework.cpp" />
+    <ClCompile Include="Utils\APRedisSerializedObject.cpp" />
+    <ClCompile Include="Utils\APRedisAgent.cpp" />
+    <ClCompile Include="Monitor\APMonitorFramework.cpp" />
+    <ClCompile Include="Monitor\APQuotationMonitorManager.cpp" />
+    <ClCompile Include="Monitor\APQuotationMonitor.cpp" />
+    <ClCompile Include="PositionCtrl\APFuturesCombinationPosCtrl.cpp" />
+    <ClCompile Include="Impl\CTP\APFuturesCTPAgent.cpp" />
+    <ClCompile Include="Impl\CTP\APFuturesCTPTraderAgent.cpp" />
+    <ClCompile Include="Impl\CTP\APFuturesCTPMDResponser.cpp" />
+    <ClCompile Include="Impl\CTP\APFuturesCTPMDAgent.cpp" />
+    <ClCompile Include="Futures\APFuturesFramework.cpp" />
+    <ClCompile Include="APInstrumentQuotation.cpp" />
+    <ClCompile Include="Quotation\APFuturesMarketQuotations.cpp" />
+    <ClCompile Include="Impl\CTP\APFuturesCTPTraderResponser.cpp" />
+    <ClCompile Include="Simulation\APSimSingleQuotationDecision.cpp" />
+    <ClCompile Include="Utils\APLog.cpp" />
+    <ClCompile Include="Simulation\APSimMarketQuotations.cpp" />
+    <ClCompile Include="Simulation\APSimAccount.cpp" />
+    <ClCompile Include="Simulation\APSimTradeSystem.cpp" />
+    <ClCompile Include="Simulation\APSimFuturesTrade.cpp" />
+    <ClCompile Include="Simulation\APSimFuturesQuotation.cpp" />
+    <ClCompile Include="Simulation\APSimFramework.cpp" />
+    <ClCompile Include="Strategy\APTransferPositionStrategy.cpp" />
+    <ClCompile Include="PositionCtrl\APFuturesPosCtrlWithTransfer.cpp" />
+    <ClCompile Include="APTradeManager.cpp" />
+    <ClCompile Include="Utils\APIntAccumulator.cpp" />
+    <ClCompile Include="Futures\APFuturesPositionTransfer.cpp" />
+    <ClCompile Include="Futures\APFuturesIDSelector.cpp" />
+    <ClCompile Include="Strategy\APStandardGridStrategy.cpp" />
+    <ClCompile Include="APStrategyFactory.cpp" />
+    <ClCompile Include="APStrategyManager.cpp" />
+    <ClCompile Include="Utils\APTimeUtility.cpp" />
+    <ClCompile Include="Utils\APJsonReader.cpp" />
+    <ClCompile Include="QuotationDecision\APPriceMarginQuotationDecision.cpp" />
+    <ClCompile Include="QuotationDecision\APPriceRatioQuotationDecision.cpp" />
+    <ClCompile Include="APQuotationDecision.cpp" />
+    <ClCompile Include="QuotationDecision\APSingleQuotationDecision.cpp" />
+    <ClCompile Include="Quotation\APFuturesQuotation.cpp" />
+    <ClCompile Include="Shares\APSharesFilter.cpp" />
+    <ClCompile Include="Trade\APFuturesTrade.cpp" />
+    <ClCompile Include="APObjectFactory.cpp" />
+    <ClCompile Include="Trade\APSharesTrade.cpp" />
+    <ClCompile Include="PositionCtrl\APFuturesPositionCtrl.cpp" />
+    <ClCompile Include="APGlobalConfig.cpp" />
+    <ClCompile Include="Quotation\APSharesQuotation.cpp" />
+    <ClCompile Include="APMarketQuotations.cpp" />
+    <ClCompile Include="APTrade.cpp" />
+    <ClCompile Include="APPositionCtrl.cpp" />
+    <ClCompile Include="APPositionManager.cpp" />
+    <ClCompile Include="PositionCtrl\APSharesPositionCtrl.cpp" />
+    <ClCompile Include="APStrategy.cpp" />
+    <ClCompile Include="Strategy\APGridStrategy.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

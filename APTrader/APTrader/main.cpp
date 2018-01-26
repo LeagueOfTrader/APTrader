@@ -27,6 +27,7 @@ void runMonitor() {
 	framework->init();
 
 	while (!framework->inited()) {
+		Sleep(10);
 	}
 
 	while (!framework->finished()) {
@@ -77,7 +78,7 @@ void runTest() {
 	//posCtrl->open(instID, dir, 4000.0, 10);
 
 	APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPosition();
-	APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPositionDetail();
+	//APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPositionDetail();
 	//APFuturesCTPTraderAgent::getInstance()->reqQryTradingAccount();
 	//APFuturesCTPTraderAgent::getInstance()->reqQryAllOrders();
 
