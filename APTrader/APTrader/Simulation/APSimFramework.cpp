@@ -56,7 +56,7 @@ APTrade * APSimFramework::generateSimTradeInstance()
 }
 
 void APSimFramework::update(float deltaTime) {
-	APSimMarketQuotations::getInstance()->update(deltaTime);
+	APSimMarketQuotations::getInstance()->update();
 	APPositionManager::getInstance()->update();
 	APStrategyManager::getInstance()->update();
 	APSimTradeSystem::getInstance()->update();

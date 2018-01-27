@@ -5,8 +5,8 @@ APInstrumentQuotation::APInstrumentQuotation(APASSETID instrumentID)
 {
 	m_instrumentID = instrumentID;
 	memset(&m_kLineData, 0, sizeof(m_kLineData));
-	m_openOrderList.resize(5);
-	m_closeOrderList.resize(5);
+	m_buyList.resize(5);
+	m_sellList.resize(5);
 	m_valid = false;
 }
 
@@ -40,40 +40,40 @@ APASSETID APInstrumentQuotation::getInstrumentID()
 	return m_instrumentID;
 }
 
-double APInstrumentQuotation::getOpenPrice(UINT index)
+double APInstrumentQuotation::getBuyPrice(UINT index)
 {
-	if (index >= m_openOrderList.size()) {
+	if (index >= m_buyList.size()) {
 		return 0.0f;
 	}
 
-	return m_openOrderList[index].price;
+	return m_buyList[index].price;
 }
 
-double APInstrumentQuotation::getClosePrice(UINT index)
+double APInstrumentQuotation::getSellPrice(UINT index)
 {
-	if (index >= m_closeOrderList.size()) {
+	if (index >= m_sellList.size()) {
 		return 0.0f;
 	}
 
-	return m_closeOrderList[index].price;
+	return m_sellList[index].price;
 }
 
-long APInstrumentQuotation::getOpenVolume(UINT index)
+long APInstrumentQuotation::getBuyVolume(UINT index)
 {
-	if (index >= m_openOrderList.size()) {
+	if (index >= m_buyList.size()) {
 		return 0;
 	}
 
-	return m_openOrderList[index].volume;
+	return m_buyList[index].volume;
 }
 
-long APInstrumentQuotation::getCloseVolume(UINT index)
+long APInstrumentQuotation::getSellVolume(UINT index)
 {
-	if (index >= m_closeOrderList.size()) {
+	if (index >= m_sellList.size()) {
 		return 0;
 	}
 
-	return m_closeOrderList[index].volume;
+	return m_sellList[index].volume;
 }
 
 bool APInstrumentQuotation::isValid()

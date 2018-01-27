@@ -31,7 +31,7 @@ void runMonitor() {
 	}
 
 	while (!framework->finished()) {
-		framework->update(0.0);
+		framework->update();
 	}
 
 	framework->exit();
@@ -83,7 +83,7 @@ void runTest() {
 	//APFuturesCTPTraderAgent::getInstance()->reqQryAllOrders();
 
 	while (true) {
-		framework->update(0.0f);
+		framework->update();
 		Sleep(1000);
 	}
 }

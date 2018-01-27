@@ -8,7 +8,6 @@ std::string redisCfgFile = "Data/System/Redis.cfg";
 APRedisAgent::APRedisAgent()
 {
 	m_context = NULL;
-	m_over = false;
 	m_quit = false;
 }
 
@@ -46,6 +45,8 @@ void APRedisAgent::init()
 		std::thread redisWriteThread(APRedisAgent::redisThreadFunc);
 		redisWriteThread.detach();
 	}
+
+	setInited();
 }
 
 void APRedisAgent::write(std::string key, std::string value) 
@@ -112,10 +113,10 @@ void APRedisAgent::redisThreadFunc()
 
 void APRedisAgent::processWriteCmd()
 {
-	while (!m_over) {
+	while (!m_exited) {
 		if (m_quit) {
 			if (m_commandBuffer.size() == 0) {
-				m_over = true;
+				m_exited = true;
 			}
 		}
 
@@ -139,9 +140,4 @@ void APRedisAgent::processWriteCmd()
 			Sleep(300);
 		}
 	}
-}
-
-bool APRedisAgent::isOver()
-{
-	return m_over;
 }

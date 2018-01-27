@@ -248,6 +248,65 @@ void APPositionCtrl::relateOrder(APORDERID orderID)
 	}
 }
 
+void APPositionCtrl::openPosition(APTradeDirection direction, long volume)
+{
+	double price = 0.0;
+	if (getMarketPrice(m_instrumentID, TT_Open, direction, price)) {
+		openPosition(direction, price, volume);
+	}
+}
+
+void APPositionCtrl::closePosition(APTradeDirection direction, long volume)
+{
+	double price = 0.0;
+	if (getMarketPrice(m_instrumentID, TT_Close, direction, price)) {
+		closePosition(direction, price, volume);
+	}
+}
+
+void APPositionCtrl::openFullPosition(APTradeDirection direction)
+{
+	double price = 0.0;
+	if (getMarketPrice(m_instrumentID, TT_Close, direction, price)) {
+		openFullPosition(direction, price);
+	}
+}
+
+void APPositionCtrl::closeOffPosition(APTradeDirection direction)
+{
+	double price = 0.0;
+	if (getMarketPrice(m_instrumentID, TT_Close, direction, price)) {
+		closeOffPosition(direction, price);
+	}
+}
+
+bool APPositionCtrl::getMarketPrice(APASSETID instrumentID, APTradeType tradeType, APTradeDirection direction, double& price)
+{
+	if (m_quotation != NULL) {
+		price = 0.0;
+		if (tradeType == TT_Open) {
+			if (direction == TD_Buy) {
+				price = m_quotation->getSellPrice();
+			}
+			else {
+				price = m_quotation->getBuyPrice();
+			}
+		}
+		else {
+			if (direction == TD_Buy) {
+				price = m_quotation->getBuyPrice();
+			}
+			else {
+				price = m_quotation->getSellPrice();
+			}
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
 void APPositionCtrl::modifyOrdersPosition(const APTradeOrderInfo& info)
 {
 	APASSETID instrumentID = info.instrumentID;
@@ -480,6 +539,10 @@ void APPositionCtrl::initWithData(std::string positionInfo)
 #endif // !_DEBUG
 	
 	// load & sync data
+	if (APGlobalConfig::getInstance()->isManualPosition()) {
+		return;
+	}
+
 	bool ret = load();
 	if (ret) { 
 		syncPosition(); 

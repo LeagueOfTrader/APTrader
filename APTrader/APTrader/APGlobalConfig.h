@@ -1,15 +1,16 @@
 #pragma once
 #include "Common/Singleton.h"
+#include "Common/InitializableObject.h"
 #include "APDef.h"
 #include "APTypes.h"
 
-class APGlobalConfig : public Singleton<APGlobalConfig> 
+class APGlobalConfig : public InitializableObject, public Singleton<APGlobalConfig> 
 {
 public:
 	APGlobalConfig();
 	~APGlobalConfig();
 
-	void init();
+	virtual void init();
 
 	APFinancialInstrumentType getInstrumentType();
 	UINT getTransactionDays(); // t + n
@@ -21,6 +22,8 @@ public:
 	bool isAutoCorrectPosition();
 	bool useRepertory();
 	bool counteractPosition();
+	bool isManualPosition();
+	bool isAutoRunStrategy();
 
 private:
 	APFinancialInstrumentType m_financialInstrumentType;
@@ -31,4 +34,6 @@ private:
 	bool m_autoCorrectPosition;
 	bool m_useRepertory;
 	bool m_counteractPosition;
+	bool m_manualPosition;
+	bool m_autoRunStrategy;
 };

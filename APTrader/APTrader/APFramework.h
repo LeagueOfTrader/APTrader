@@ -1,19 +1,42 @@
 #pragma once
 #include <string>
+#include <vector>
+#include "Common/InitializableObject.h"
 
-class APFramework
+class Ticker;
+class InitializableObject;
+
+class APFramework : public InitializableObject
 {
 public:
 	APFramework();
 	~APFramework();
 
-	virtual void init() = 0;
-	virtual void update(float deltaTime = 0.0f) = 0;
-	virtual void exit() = 0;
+	virtual void preInit();
+	virtual void postInit();
+	
+	virtual void init();
+	virtual void update();
+	virtual void exit();
 
 	virtual bool finished();
+	void terminate();
+
+	void addInit(InitializableObject* initObj);
+	void addPreInit(InitializableObject* initObj);
+	void addPostInit(InitializableObject* initObj);
+
+	void addTicker(Ticker* ticker);
+
+	bool inited();
+	bool exited();
 
 protected:
 	bool m_finished;
+	std::vector<InitializableObject*> m_preInitList;
+	std::vector<InitializableObject*> m_initList;
+	std::vector<InitializableObject*> m_postInitList;
+
+	std::vector<Ticker*> m_tickList;
 };
 

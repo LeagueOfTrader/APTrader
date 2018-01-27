@@ -31,9 +31,9 @@ void APMonitorFramework::init()
 	initRemoteSystem();
 }
 
-void APMonitorFramework::update(float deltaTime)
+void APMonitorFramework::update()
 {
-	APMarketDataMgr->update(deltaTime);
+	APMarketDataMgr->update();
 	APQuotationMonitorManager::getInstance()->update();
 }
 
@@ -44,6 +44,8 @@ void APMonitorFramework::exit()
 #endif // USE_CTP
 
 	APQuotationMonitorManager::getInstance()->destroy();
+
+	m_exited = true;
 }
 
 void APMonitorFramework::initRemoteSystem()

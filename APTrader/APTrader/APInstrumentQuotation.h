@@ -22,10 +22,10 @@ public:
 	double getAveragePrice();
 	APASSETID getInstrumentID();
 
-	virtual double getOpenPrice(UINT index = 0);
-	virtual double getClosePrice(UINT index = 0);
-	virtual long getOpenVolume(UINT index = 0);
-	virtual long getCloseVolume(UINT index = 0);
+	virtual double getBuyPrice(UINT index = 0);
+	virtual double getSellPrice(UINT index = 0);
+	virtual long getBuyVolume(UINT index = 0);
+	virtual long getSellVolume(UINT index = 0);
 
 	bool isValid();
 
@@ -40,8 +40,8 @@ protected:
 	double m_hightestPriceHistory;
 	double m_lowestPriceHistory;
 
-	std::vector<APBidInfo> m_openOrderList;
-	std::vector<APBidInfo> m_closeOrderList;
+	std::vector<APBidInfo> m_buyList;
+	std::vector<APBidInfo> m_sellList;
 
 	std::mutex m_mutex;
 	bool m_valid;

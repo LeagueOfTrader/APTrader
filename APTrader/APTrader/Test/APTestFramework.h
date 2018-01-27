@@ -6,14 +6,14 @@
 #include "../Common/InitializableObject.h"
 #ifdef USE_CTP
 
-class APTestFramework : public APFramework, public InitializableObject, public Singleton<APTestFramework> 
+class APTestFramework : public APFramework, public Singleton<APTestFramework> 
 {
 public:
 	APTestFramework();
 	~APTestFramework();
 
 	virtual void init();
-	virtual void update(float deltaTime);
+	virtual void update();
 	virtual void exit();
 
 	virtual bool finished();

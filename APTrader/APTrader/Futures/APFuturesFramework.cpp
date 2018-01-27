@@ -7,6 +7,7 @@
 #include "../APGlobalConfig.h"
 #include "../APSystemSetting.h"
 #include <windows.h>
+#include "../APStrategyFactory.h"
 
 #ifdef USE_CTP
 #include "../Impl/CTP/APFuturesCTPMDAgent.h"
@@ -50,31 +51,64 @@ APFuturesFramework::~APFuturesFramework()
 {
 }
 
-void APFuturesFramework::init() 
+//void APFuturesFramework::init() 
+//{
+//	APGlobalConfig::getInstance()->init();
+//	APRedisAgent::getInstance()->init();
+//	APSystemSetting::getInstance()->init();
+//
+//#ifdef USE_CTP
+//	initCTP();
+//#else
+//	initLocalSystem();
+//#endif // USE_CTP
+//
+//}
+
+//void APFuturesFramework::update(float deltaTime)
+//{
+//	APMarketDataMgr->update(deltaTime);
+//	APAccountInfo::getInstance()->update();
+//	APStrategyManager::getInstance()->update();
+//}
+//
+//void APFuturesFramework::exit()
+//{
+//	APStrategyManager::getInstance()->exit();
+//	APTradeManager::getInstance()->exit();
+//}
+
+void APFuturesFramework::ready()
 {
-	APGlobalConfig::getInstance()->init();
-	APRedisAgent::getInstance()->init();
-	APSystemSetting::getInstance()->init();
+	addPreInit(APGlobalConfig::getInstance());
+	addPreInit(APRedisAgent::getInstance());
+	addPreInit(APSystemSetting::getInstance());
+
+	addInit(APMarketDataMgr);
+	addInit(APStrategyFactory::getInstance());
+	addInit(APAccountInfo::getInstance());
+	addInit(APTradeManager::getInstance());
+
+	addPostInit(APStrategyManager::getInstance());
+
+	addTicker(APMarketDataMgr);
+	addTicker(APAccountInfo::getInstance());
+	addTicker(APStrategyManager::getInstance());
+}
+
+void APFuturesFramework::start()
+{
+	//APGlobalConfig::getInstance()->init();
+	//APRedisAgent::getInstance()->init();
+	//APSystemSetting::getInstance()->init();
+
+	preInit();
 
 #ifdef USE_CTP
 	initCTP();
 #else
 	initLocalSystem();
-#endif // USE_CTP
-
-}
-
-void APFuturesFramework::update(float deltaTime)
-{
-	APMarketDataMgr->update(deltaTime);
-	APAccountInfo::getInstance()->update();
-	APStrategyManager::getInstance()->update();
-}
-
-void APFuturesFramework::exit()
-{
-	APStrategyManager::getInstance()->exit();
-	APTradeManager::getInstance()->exit();
+#endif
 }
 
 bool APFuturesFramework::finished()
@@ -84,20 +118,27 @@ bool APFuturesFramework::finished()
 
 void APFuturesFramework::initLocalSystem()
 {
-	APMarketDataMgr->init();
-	
-	APAccountInfo::getInstance()->init();
-	APTradeManager::getInstance()->init();
+	//APMarketDataMgr->init();
 	//
-	APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
-	if (trader == NULL) {
-		return;
-	}
+	//APAccountInfo::getInstance()->init();
+	//APTradeManager::getInstance()->init();
+	////
+	//APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
+	//if (trader == NULL) {
+	//	return;
+	//}
 
-	while (!trader->inited() || !APAccountInfo::getInstance()->inited()) {
-		Sleep(10);
+	//while (!trader->inited() || !APAccountInfo::getInstance()->inited()) {
+	//	Sleep(10);
+	//}
+	init();
+
+	long waitInterval = APSystemSetting::getInstance()->getInitializeStateWaitInterval();
+	while (!inited()) {
+		Sleep(waitInterval);
 	}
-	APStrategyManager::getInstance()->init();
+	
+	postInit();
 	APAccountInfo::getInstance()->verify();
 }
 

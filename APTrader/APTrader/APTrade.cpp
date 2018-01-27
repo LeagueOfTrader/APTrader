@@ -329,6 +329,10 @@ void APTrade::onSyncOrders()
 	setInited();
 }
 
+void APTrade::init()
+{
+}
+
 APORDERID APTrade::generateOrderID()
 {
 	UINT accumID = m_idAccumulator->generateID();

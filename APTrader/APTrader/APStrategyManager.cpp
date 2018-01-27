@@ -3,7 +3,8 @@
 #include "APStrategyFactory.h"
 #include "Utils/APJsonReader.h"
 #include "Utils/APIntAccumulator.h"
-
+#include "APGlobalConfig.h"
+#include "APSystemSetting.h"
 
 std::string strategyStartupFile = "Data/Strategy/startup.cfg";
 std::string strategyPath = "Data/Strategy/";
@@ -27,9 +28,17 @@ void APStrategyManager::init()
 	for (int i = 0; i < count; i++) {
 		std::string strategyName = jr.getArrayStrValue("Strategies", i);
 		APStrategy* strategy = loadStrategy(strategyName);
+		
 		// ---- run after load
-		//runStrategy(strategyName);
+		if (APGlobalConfig::getInstance()->isAutoRunStrategy()) {
+			runStrategy(strategyName);
+		}
 	}
+
+	long interval = APSystemSetting::getInstance()->getStrategyUpdateInterval();
+	setInterval(interval);
+
+	setInited();
 }
 
 void APStrategyManager::update()
@@ -48,6 +57,8 @@ void APStrategyManager::exit()
 		APStrategy* strategy = it->second;
 		strategy->exit();
 	}
+
+	m_exited = true;
 }
 
 APStrategy * APStrategyManager::loadStrategy(std::string strategyName)
@@ -106,6 +117,15 @@ APStrategy * APStrategyManager::createStrategy(std::string strategyFile)
 	strategy->init(strategyInfo);
 	strategy->setID(m_idAccumulator->generateID());
 	return strategy;
+}
+
+APStrategy * APStrategyManager::getStrategy(std::string strategyName)
+{
+	if (m_strategies.find(strategyName) != m_strategies.end()) {
+		return m_strategies[strategyName];
+	}
+
+	return NULL;
 }
 
 std::string APStrategyManager::makeUpStrategyFileName(std::string strategyName)

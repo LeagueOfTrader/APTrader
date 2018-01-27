@@ -34,7 +34,7 @@ void APTestFramework::init()
 	initCTP();
 }
 
-void APTestFramework::update(float deltaTime)
+void APTestFramework::update()
 {
 }
 
@@ -42,6 +42,8 @@ void APTestFramework::exit()
 {
 	APStrategyManager::getInstance()->exit();
 	APTradeManager::getInstance()->exit();
+
+	m_exited = true;
 }
 
 bool APTestFramework::finished()

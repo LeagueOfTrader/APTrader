@@ -8,6 +8,8 @@ APGlobalConfig::APGlobalConfig()
 	m_autoCorrectPosition = false;
 	m_useRepertory = false;
 	m_counteractPosition = true;
+	m_manualPosition = false;
+	m_autoRunStrategy = true;
 }
 
 APGlobalConfig::~APGlobalConfig()
@@ -50,7 +52,17 @@ void APGlobalConfig::init()
 		m_counteractPosition = jr.getBoolValue("CounteractPosition");
 	}
 
+	if (jr.hasMember("ManualPosition")) {
+		m_manualPosition = jr.getBoolValue("ManualPosition");
+	}
+
+	if (jr.hasMember("AutoRunStrategy")) {
+		m_autoRunStrategy = jr.getBoolValue("AutoRunStrategy");
+	}
+
 	m_openLimit = OPL_Position;
+
+	setInited();
 }
 
 APFinancialInstrumentType APGlobalConfig::getInstrumentType()
@@ -105,4 +117,14 @@ bool APGlobalConfig::useRepertory()
 bool APGlobalConfig::counteractPosition()
 {
 	return m_counteractPosition;
+}
+
+bool APGlobalConfig::isManualPosition()
+{
+	return m_manualPosition;
+}
+
+bool APGlobalConfig::isAutoRunStrategy()
+{
+	return m_autoRunStrategy;
 }

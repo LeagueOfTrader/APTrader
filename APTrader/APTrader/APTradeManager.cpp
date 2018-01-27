@@ -43,9 +43,21 @@ void APTradeManager::exit()
 	if (m_trader != NULL)
 	{
 		//m_trader->save();
+		m_trader->exit();
 		delete m_trader;
 		m_trader = NULL;
 	}
+
+	m_exited = true;
+}
+
+bool APTradeManager::inited()
+{
+	if (m_trader != NULL) {
+		return m_trader->inited();
+	}
+
+	return false;
 }
 
 void APTradeManager::setTradeInstance(APTrade * tradeInstance)

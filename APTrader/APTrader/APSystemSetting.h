@@ -9,7 +9,7 @@ public:
 	APSystemSetting();
 	~APSystemSetting();
 
-	void init();
+	virtual void init();
 
 	long getStrategyUpdateInterval();
 	long getInitializeStateWaitInterval();

@@ -3,6 +3,7 @@
 #include "../APMacro.h"
 #include "../APTypes.h"
 #include "../Common/Singleton.h"
+#include "../Common/InitializableObject.h"
 
 #ifdef USE_CTP
 const BYTE CTP_Flag_None = 0;
@@ -17,9 +18,11 @@ public:
 	APFuturesFramework();
 	~APFuturesFramework();
 
-	virtual void init();
-	virtual void update(float deltaTime);
-	virtual void exit();
+	//virtual void init();
+	//virtual void update(float deltaTime);
+	//virtual void exit();
+	virtual void ready();
+	virtual void start();
 
 	virtual bool finished();
 

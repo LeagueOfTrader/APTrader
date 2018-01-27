@@ -114,10 +114,10 @@ bool APTransferPositionStrategy::isCloseToDeliver()
 void APTransferPositionStrategy::transferContracts()
 {
 	if (m_curQuotation != NULL && m_targetQuotation != NULL) {
-		double srcPrice = m_curQuotation->getOpenPrice();
-		long srcVolume = m_curQuotation->getOpenVolume();
-		double targetPrice = m_targetQuotation->getClosePrice();
-		long targetVolume = m_targetQuotation->getCloseVolume();
+		double srcPrice = m_curQuotation->getBuyPrice();
+		long srcVolume = m_curQuotation->getBuyVolume();
+		double targetPrice = m_targetQuotation->getSellPrice();
+		long targetVolume = m_targetQuotation->getSellVolume();
 		long volume = std::min(srcVolume, targetVolume);
 		APFuturesPosCtrlWithTransfer* pc = dynamic_cast<APFuturesPosCtrlWithTransfer*>(m_positionCtrl);
 		if (pc != NULL) {
@@ -164,12 +164,12 @@ bool APTransferPositionStrategy::canTransferWithCurrentPrice()
 
 		double priceMargin = getCurPriceMargin();
 		if (m_directionType == TD_Buy) {
-			if (m_targetQuotation->getClosePrice() - m_curQuotation->getOpenPrice() <= priceMargin) {
+			if (m_targetQuotation->getSellPrice() - m_curQuotation->getBuyPrice() <= priceMargin) {
 				return true;
 			}
 		}
 		else if (m_directionType == TD_Sell) {
-			if (m_curQuotation->getOpenPrice() - m_targetQuotation->getClosePrice() >= priceMargin) {
+			if (m_curQuotation->getBuyPrice() - m_targetQuotation->getSellPrice() >= priceMargin) {
 				return true;
 			}
 		}

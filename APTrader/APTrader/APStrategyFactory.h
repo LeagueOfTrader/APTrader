@@ -1,18 +1,21 @@
 #pragma once
 #include <string>
 #include <map>
+#include "Common/InitializableObject.h"
+#include "Common/Singleton.h"
 
 class APStrategy;
 
 typedef APStrategy*(*StrategyCreateMethod)();
 
-class APStrategyFactory
+class APStrategyFactory : public InitializableObject, public Singleton<APStrategyFactory>
 {
 public:
-	static void init();
-	static APStrategy* createStrategy(std::string name);
+	virtual void init();
+	APStrategy* createStrategy(std::string name);
+	void registerCreator(std::string name, StrategyCreateMethod function);
 
 private:
-	static std::map<std::string, StrategyCreateMethod> m_createMethods;
+	std::map<std::string, StrategyCreateMethod> m_createMethods;
 };
 

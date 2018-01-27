@@ -1,6 +1,7 @@
 #pragma once
 #include "../APMarketQuotations.h"
 #include "../APTypes.h"
+#include  "../Common/Singleton.h"
 
 class APSimMarketQuotations : public APMarketQuotations, public Singleton<APSimMarketQuotations>
 {

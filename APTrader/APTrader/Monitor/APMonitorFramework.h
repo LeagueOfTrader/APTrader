@@ -3,14 +3,14 @@
 #include "../Common/InitializableObject.h"
 #include "../APFramework.h"
 
-class APMonitorFramework : public APFramework, public InitializableObject, public Singleton<APMonitorFramework>
+class APMonitorFramework : public APFramework, public Singleton<APMonitorFramework>
 {
 public:
 	APMonitorFramework();
 	~APMonitorFramework();
 
 	virtual void init();
-	virtual void update(float deltaTime);
+	virtual void update();
 	virtual void exit();
 
 	void onRemoteInited();

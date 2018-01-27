@@ -1,20 +1,22 @@
 #pragma once
 #include "Common/Singleton.h"
+#include "Common/InitializableObject.h"
+#include "Common/Ticker.h"
 #include <map>
 #include <string>
 
 class APStrategy;
 class APIntAccumulator;
 
-class APStrategyManager : public Singleton<APStrategyManager>
+class APStrategyManager : public InitializableObject, public Ticker, public Singleton<APStrategyManager>
 {
 public:
 	APStrategyManager();
 	~APStrategyManager();
 
-	void init();
-	void update();
-	void exit();
+	virtual void init();
+	virtual void update();
+	virtual void exit();
 
 	APStrategy* loadStrategy(std::string strategyName);
 	void unloadStrategy(std::string strategyName);
@@ -23,6 +25,8 @@ public:
 
 //protected:
 	APStrategy* createStrategy(std::string strategyFile);
+
+	APStrategy* getStrategy(std::string strategyName);
 
 private:
 	std::string makeUpStrategyFileName(std::string strategyName);

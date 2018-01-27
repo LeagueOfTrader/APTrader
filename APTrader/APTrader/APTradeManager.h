@@ -13,8 +13,9 @@ public:
 	APTradeManager();
 	~APTradeManager();
 
-	void init();
-	void exit();
+	virtual void init();
+	virtual void exit();
+	virtual bool inited();
 	void setTradeInstance(APTrade* tradeInstance);
 
 	APTrade* getTradeInstance();

@@ -8,6 +8,7 @@
 #include <vector>
 #include "APMacro.h"
 #include "Common/InitializableObject.h"
+#include "Common/Ticker.h"
 #include "APStructs.h"
 #include <mutex>
 
@@ -45,7 +46,7 @@ public :
 	bool operator()(APPositionCtrlWrapper p0, APPositionCtrlWrapper p1) const;
 };
 
-class APAccountInfo : public InitializableObject, public Singleton<APAccountInfo>
+class APAccountInfo : public InitializableObject, public Ticker, public Singleton<APAccountInfo>
 {
 public:
 	APAccountInfo();
@@ -54,7 +55,7 @@ public:
 	virtual void init();
 
 	//bool getPositionData(APASSETID instrumentID, APTradeDirection direction, APPositionData& positionData);	
-	void update();
+	virtual void update();
 
 	void verifyPosition(APASSETID instrumentID, APTradeDirection dir, APPositionCtrl* posCtrl);	
 	void verify();

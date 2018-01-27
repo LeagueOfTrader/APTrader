@@ -8,7 +8,7 @@ class APInstrumentQuotation;
 
 struct APGridData {
 	double valueRef;
-	double price;
+	//double price;
 	long position;
 
 	//APGridData(double theValueRef, double thePrice, long thePosition) {

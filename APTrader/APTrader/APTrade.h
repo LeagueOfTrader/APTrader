@@ -68,6 +68,7 @@ public:
 	void onSyncOrders();
 
 	//bool isOrderDataComplete();
+	virtual void init();
 
 protected:
 	virtual void open(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, 

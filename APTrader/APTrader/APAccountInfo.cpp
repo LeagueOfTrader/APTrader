@@ -6,6 +6,7 @@
 #include "APTradeManager.h"
 #include "APPositionRepertory.h"
 #include <windows.h>
+#include "APSystemSetting.h"
 
 #ifdef USE_CTP
 #include "Impl/CTP/APFuturesCTPTraderAgent.h"
@@ -36,16 +37,17 @@ void APAccountInfo::init()
 
 	queryAllPosition();
 #endif
+
+	long interval = APSystemSetting::getInstance()->getHoldPositionQueryInterval();
+	setInterval(interval);
 }
 
 void APAccountInfo::update()
 {
 #ifdef USE_CTP
 	// query hold info
-	long curTick = GetTickCount();
-	if (curTick - m_lastTick >= POSITION_QUERY_INTERVAL) {
-		queryAllPosition();
-	}
+	queryAllPosition();
+	
 #endif
 }
 
@@ -78,7 +80,6 @@ void APAccountInfo::queryAllPosition()
 {
 	m_cachedPositionInfo.clear();
 #ifdef USE_CTP
-	m_lastTick = GetTickCount();
 	APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPosition();
 #endif
 }

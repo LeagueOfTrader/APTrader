@@ -2,13 +2,14 @@
 #include <map>
 #include <list>
 #include <string>
-#include "Common/Singleton.h"
+#include "Common/InitializableObject.h"
+#include "Common/Ticker.h"
 #include "APDef.h"
 #include "APTypes.h"
 
 class APInstrumentQuotation;
 
-class APMarketQuotations
+class APMarketQuotations : public InitializableObject, public Ticker
 {
 public:
 	APMarketQuotations();
@@ -17,8 +18,8 @@ public:
 	APInstrumentQuotation* subscribeInstrument(APASSETID instrumentID);
 	void unSubscribeInstrument(APASSETID instrumentID);
 
-	void init();
-	void update(float deltaTime);
+	virtual void init();
+	virtual void update();
 
 protected:
 	virtual APInstrumentQuotation* generateQuotation(APASSETID instrumentID);
@@ -29,7 +30,5 @@ protected:
 protected:
 	std::map<APASSETID, APInstrumentQuotation*> m_instrumentQuotations;
 	APFinancialInstrumentType m_marketType;
-
-	long m_lastTick;
 };
 

@@ -3,10 +3,10 @@
 #include "APObjectFactory.h"
 #include "APGlobalConfig.h"
 #include <windows.h>
+#include "APSystemSetting.h"
 
 APMarketQuotations::APMarketQuotations()
 {
-	m_lastTick = 0;
 }
 
 
@@ -50,19 +50,15 @@ void APMarketQuotations::unSubscribeInstrument(APASSETID instrumentID)
 void APMarketQuotations::init()
 {
 	m_marketType = APGlobalConfig::getInstance()->getInstrumentType();
+	long interval = APSystemSetting::getInstance()->getMarketDataQueryInterval();
+	setInterval(interval);
+
+	setInited();
 }
 
-void APMarketQuotations::update(float deltaTime)
+void APMarketQuotations::update()
 {
 	std::map<std::string, APInstrumentQuotation*>::iterator it = m_instrumentQuotations.begin();
-	
-	long curTick = GetTickCount();
-	if (curTick - m_lastTick < 300) {
-		return;
-	}
-
-	m_lastTick = curTick;
-
 	while (it != m_instrumentQuotations.end()) {
 		APInstrumentQuotation* quotation = it->second;
 		if (quotation != NULL) {
