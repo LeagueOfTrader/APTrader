@@ -402,6 +402,10 @@ void APPositionCtrl::cancelTrade(APTradeType type, double price, APTradeDirectio
 	cancel(type, price, direction);
 }
 
+void APPositionCtrl::cancelTrade(APTradeType type, APTradeDirection direction)
+{
+}
+
 void APPositionCtrl::cancelTrade(APTradeType type)
 {
 	cancel(type);

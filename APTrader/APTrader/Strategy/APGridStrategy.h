@@ -33,7 +33,6 @@ public:
 
 protected:
 	virtual void buildGrids(std::string gridsInfo) = 0;
-	virtual void resetGrids() = 0;
 
 	int getGridIndex(std::vector<APGridData>& grids, double value, bool reverse = false);
 
@@ -54,8 +53,8 @@ protected:
 	std::vector<APGridData> m_openGrids;
 	std::vector<APGridData> m_closeGrids;
 
-	double m_waitFloor;
-	double m_waitCeil;
+	double m_indeterminateFloor;
+	double m_indeterminateCeil;
 
 	int m_curIndex;
 	int m_lastIndex;

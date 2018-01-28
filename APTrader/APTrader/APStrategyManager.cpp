@@ -108,7 +108,7 @@ APStrategy * APStrategyManager::createStrategy(std::string strategyFile)
 	APJsonReader jr;
 	jr.initWithFile(strategyFile);
 	std::string strategyType = jr.getStrValue("StrategyType");
-	APStrategy* strategy = APStrategyFactory::createStrategy(strategyType);
+	APStrategy* strategy = APStrategyFactory::getInstance()->createStrategy(strategyType);
 	std::string strategyInfo = jr.getObjValue("StrategyInfo");
 	if(jr.hasMember("Priotiry")){
 		UINT priority = jr.getIntValue("Priority");

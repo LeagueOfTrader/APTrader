@@ -28,7 +28,7 @@ APSimFramework::~APSimFramework()
 void APSimFramework::init() {
 	initFromCfg();
 
-	APStrategyFactory::init();
+	APStrategyFactory::getInstance()->init();
 	APSimAccount::getInstance()->init();
 	APGlobalConfig::getInstance()->init();
 	APSimMarketQuotations::getInstance()->init();

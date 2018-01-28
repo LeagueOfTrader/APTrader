@@ -9,7 +9,7 @@
 const double MONITOR_IGNORE_VAL = 0.001;
 const double MONITOR_SINGLE_INST_UNIT_PRICE = 1.0;
 
-void buildEqualRatioArray(std::vector<double>& arr, double baseVal, double ratio, int count) {
+void buildEqualRatioArr(std::vector<double>& arr, double baseVal, double ratio, int count) {
 	arr.clear();
 	double accumVal = 1.0;
 	for (int i = 0; i < count; i++) {
@@ -19,7 +19,7 @@ void buildEqualRatioArray(std::vector<double>& arr, double baseVal, double ratio
 	}
 }
 
-void buildEqualDiffArray(std::vector<double>& arr, double baseVal, double diff, int count) {
+void buildEqualDiffArr(std::vector<double>& arr, double baseVal, double diff, int count) {
 	double val = baseVal;
 	for (int i = 0; i < count; i++) {
 		arr.push_back(val);
@@ -288,12 +288,12 @@ void APQuotationMonitor::initRatioGrids(std::string info)
 	double shortVal = jr.getDoubleValue("ShortVal");
 
 	if (m_direction == TD_Buy) {
-		buildEqualRatioArray(m_closeValues, longVal, 1.0 + percent, count);
-		buildEqualRatioArray(m_openValues, shortVal, 1.0 - percent, count);
+		buildEqualRatioArr(m_closeValues, longVal, 1.0 + percent, count);
+		buildEqualRatioArr(m_openValues, shortVal, 1.0 - percent, count);
 	}
 	else if (m_direction == TD_Sell) {
-		buildEqualRatioArray(m_openValues, longVal, 1.0 + percent, count);
-		buildEqualRatioArray(m_closeValues, shortVal, 1.0 - percent, count);
+		buildEqualRatioArr(m_openValues, longVal, 1.0 + percent, count);
+		buildEqualRatioArr(m_closeValues, shortVal, 1.0 - percent, count);
 	}
 
 	int imptIdx = jr.getIntValue("ImportantIndex");
@@ -327,12 +327,12 @@ void APQuotationMonitor::initDiffGrids(std::string info)
 	double shortVal = jr.getDoubleValue("ShortVal");
 
 	if (m_direction == TD_Buy) {
-		buildEqualDiffArray(m_openValues, shortVal, -diff, count);
-		buildEqualDiffArray(m_closeValues, longVal, diff, count);
+		buildEqualDiffArr(m_openValues, shortVal, -diff, count);
+		buildEqualDiffArr(m_closeValues, longVal, diff, count);
 	}
 	else if (m_direction == TD_Sell) {
-		buildEqualDiffArray(m_closeValues, shortVal, -diff, count);
-		buildEqualDiffArray(m_openValues, longVal, diff, count);
+		buildEqualDiffArr(m_closeValues, shortVal, -diff, count);
+		buildEqualDiffArr(m_openValues, longVal, diff, count);
 	}
 
 	int imptIdx = jr.getIntValue("ImportantIndex");

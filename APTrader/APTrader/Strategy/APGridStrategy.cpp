@@ -73,7 +73,7 @@ void APGridStrategy::printGrids()
 	for (int i = 0; i < m_openGrids.size(); i++) {
 		APGridData& data = m_openGrids[i];
 		std::stringstream ss;
-		ss << "[" << i + 1 << "], quotation: " << data.valueRef << ", price: " << data.price << ", position: " << data.position << ". ";
+		ss << "[" << i + 1 << "], quotation: " << data.valueRef << ", position: " << data.position << ". ";
 		APLogger->log(ss.str().c_str());
 		//std::cout << "[" << i + 1 << "], quotation: " << data.valueRef << ", price: " << data.price << ", position: " << data.position << ". " << std::endl;
 	}
@@ -83,7 +83,7 @@ void APGridStrategy::printGrids()
 	for (int i = 0; i < m_closeGrids.size(); i++) {
 		APGridData& data = m_closeGrids[i];
 		std::stringstream ss;
-		ss << "[" << i + 1 << "], quotation: " << data.valueRef << ", price: " << data.price << ", position: " << data.position << ". ";
+		ss << "[" << i + 1 << "], quotation: " << data.valueRef << ", position: " << data.position << ". ";
 		APLogger->log(ss.str().c_str());
 		//std::cout << "[" << i + 1 << "], quotation: " << data.valueRef << ", price: " << data.price << ", position: " << data.position << ". " << std::endl;
 	}
@@ -162,24 +162,24 @@ void APGridStrategy::goThroughGrids()
 
 	double refPrice = 0.0;
 	if (gridIndex > 0) {
-		refPrice = m_closeGrids[gridIndex - 1].price;
+		refPrice = m_closeGrids[gridIndex - 1].valueRef;
 	}
 	else {
-		refPrice = m_openGrids[-gridIndex - 1].price;
+		refPrice = m_openGrids[-gridIndex - 1].valueRef;
 	}
 
-	if (m_positionCtrl != NULL) {
-		m_positionCtrl->cancelTrade(type, refPrice, m_direction);
-	}
+	//if (m_positionCtrl != NULL) {
+	//	m_positionCtrl->cancelTrade(type, refPrice, m_direction);
+	//}
 }
 
 bool APGridStrategy::inOpenSection(double value)
 {
 	if (m_direction == TD_Buy) {
-		return value < m_waitFloor;
+		return value < m_indeterminateFloor;
 	}
 	else if (m_direction == TD_Sell) {
-		return value > m_waitCeil;
+		return value > m_indeterminateCeil;
 	}
 
 	return false;
@@ -188,10 +188,10 @@ bool APGridStrategy::inOpenSection(double value)
 bool APGridStrategy::inCloseSection(double value)
 {
 	if (m_direction == TD_Buy) {
-		return value >= m_waitCeil;
+		return value >= m_indeterminateCeil;
 	}
 	else if (m_direction == TD_Sell) {
-		return value <= m_waitFloor;
+		return value <= m_indeterminateFloor;
 	}
 
 	return false;

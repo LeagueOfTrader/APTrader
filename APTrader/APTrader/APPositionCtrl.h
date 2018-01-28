@@ -72,6 +72,7 @@ public:
 	virtual void closeOffPosition(APTradeDirection direction, double price);
 	//void cancelTrade(APTradeType type, double price, long volume); // may implement later
 	virtual void cancelTrade(APTradeType type, double price, APTradeDirection direction);
+	virtual void cancelTrade(APTradeType type, APTradeDirection direction);
 	virtual void cancelTrade(APTradeType type);
 	virtual void cancelAllTrade();
 
