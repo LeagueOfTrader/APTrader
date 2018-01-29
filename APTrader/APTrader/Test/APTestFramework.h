@@ -15,6 +15,7 @@ public:
 	virtual void init();
 	virtual void update();
 	virtual void exit();
+	virtual bool inited();
 
 	virtual bool finished();
 

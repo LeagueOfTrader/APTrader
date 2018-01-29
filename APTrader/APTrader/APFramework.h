@@ -28,7 +28,7 @@ public:
 
 	void addTicker(Ticker* ticker);
 
-	bool inited();
+	virtual bool inited();
 	bool exited();
 
 protected:

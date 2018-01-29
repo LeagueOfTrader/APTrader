@@ -43,8 +43,8 @@ void APStrategyManager::init()
 
 void APStrategyManager::update()
 {
-	std::map<std::string, APStrategy*>::iterator it = m_strategies.begin();
-	for (; it != m_strategies.end(); it++) {
+	std::map<std::string, APStrategy*>::iterator it;
+	for (it = m_strategies.begin(); it != m_strategies.end(); it++) {
 		APStrategy* strategy = it->second;
 		strategy->update();
 	}
@@ -110,6 +110,7 @@ APStrategy * APStrategyManager::createStrategy(std::string strategyFile)
 	std::string strategyType = jr.getStrValue("StrategyType");
 	APStrategy* strategy = APStrategyFactory::getInstance()->createStrategy(strategyType);
 	std::string strategyInfo = jr.getObjValue("StrategyInfo");
+
 	if(jr.hasMember("Priotiry")){
 		UINT priority = jr.getIntValue("Priority");
 		strategy->setPriority(priority);
@@ -130,5 +131,5 @@ APStrategy * APStrategyManager::getStrategy(std::string strategyName)
 
 std::string APStrategyManager::makeUpStrategyFileName(std::string strategyName)
 {
-	return strategyPath + strategyName + ".cfg";
+	return strategyPath + strategyName + ".stg";
 }

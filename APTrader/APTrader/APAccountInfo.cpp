@@ -215,6 +215,10 @@ void APAccountInfo::onSyncPositionData()
 	m_positionInfo.clear();
 	m_positionInfo.swap(m_cachedPositionInfo);
 
+	if (m_inited == false) {
+		setInited();
+	}
+
 	m_mutex.unlock();
 }
 

@@ -749,8 +749,8 @@ void APFuturesCTPTraderAgent::onQryInstrumentPositionFinished()
 	std::map<APASSETID, std::vector<CThostFtdcInvestorPositionField>>::iterator it;
 	for (it = m_positionInfo.begin(); it != m_positionInfo.end(); it++) {
 		APASSETID instrumentID = it->first;
-		//CThostFtdcInvestorPositionField& posInfo = it->second;
-		//APAccountInfo::getInstance()->onGetPositionData(instrumentID, posInfo);
+		std::vector<CThostFtdcInvestorPositionField>& posInfo = it->second;
+		APAccountInfo::getInstance()->onGetPositionData(instrumentID, posInfo);
 	}
 	m_mutex.unlock();
 

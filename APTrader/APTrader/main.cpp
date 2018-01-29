@@ -13,6 +13,8 @@
 #include "Monitor/APMonitorFramework.h"
 #include <thread>
 #include "Utils/APRedisAgent.h"
+
+#include "Futures/APFuturesFramework.h"
 //
 #include "Test/APTestFramework.h"
 #include "APTradeManager.h"
@@ -65,15 +67,15 @@ void runTest() {
 		Sleep(1000);
 	}
 
-	APTradeManager::getInstance()->init();
+	//APTradeManager::getInstance()->init();
 
-	APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
-	APFuturesPositionCtrl* posCtrl = new APFuturesPositionCtrl();
-	std::string instID = "rb1805";
-	APTradeDirection dir = TD_Sell;
-	posCtrl->setInstrumentID(instID);
-	posCtrl->setTradeDirection(dir);
-	posCtrl->setTrade(trader);
+	//APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
+	//APFuturesPositionCtrl* posCtrl = new APFuturesPositionCtrl();
+	//std::string instID = "rb1805";
+	//APTradeDirection dir = TD_Sell;
+	//posCtrl->setInstrumentID(instID);
+	//posCtrl->setTradeDirection(dir);
+	//posCtrl->setTrade(trader);
 
 	//posCtrl->open(instID, dir, 4000.0, 10);
 
@@ -88,7 +90,25 @@ void runTest() {
 	}
 }
 
+void runFuturesFramework() {
+	APFuturesFramework* framework = APFuturesFramework::getInstance();
+	framework->ready();
+	framework->start();
+
+	while (!framework->inited()) {
+		Sleep(100);
+	}
+
+	while (!framework->finished()) {
+		framework->update();
+		Sleep(10);
+	}
+
+	framework->exit();
+}
+
 void main() {
+	//runFuturesFramework();
 	runTest();
 }
 

@@ -1,0 +1,31 @@
+{
+	"Tag":"hc1805sell",
+    "StrategyType": "Grid",
+    "Priority": 10,
+    "StrategyInfo": {
+        "Position": {
+            "InstrumentID": "hc1805",
+            "TotalPosition": 100,
+            "Direction": "Sell"
+        },
+        "Quotation": {
+            "QuotationDecisionType": 101,
+            "SrcID": "hc1805",
+            "TargetID": "0",
+            "UpperLimit": 10000,
+			"LowerLimit": 100
+        },
+        "Grids": {
+			"GridType": 3,
+			"Diff": 50,
+            "Direction": "Sell",
+            "Ceil": 3890,
+            "Floor": 3850,
+            "DeltaPosition": 5,
+            "BasePosition": 20,
+            "GridsCount": 5,
+            "LongValue": 3900,
+            "ShortValue": 3850
+        }
+    }
+}

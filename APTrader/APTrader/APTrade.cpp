@@ -331,6 +331,8 @@ void APTrade::onSyncOrders()
 
 void APTrade::init()
 {
+	UINT base = APTimeUtility::getTimestamp() * 1000;
+	m_idAccumulator->setBase(base);
 }
 
 APORDERID APTrade::generateOrderID()

@@ -116,30 +116,46 @@ bool APFuturesFramework::finished()
 	return m_finished;
 }
 
+bool APFuturesFramework::inited()
+{
+	return m_inited;
+}
+
 void APFuturesFramework::initLocalSystem()
 {
-	//APMarketDataMgr->init();
-	//
-	//APAccountInfo::getInstance()->init();
-	//APTradeManager::getInstance()->init();
-	////
-	//APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
-	//if (trader == NULL) {
-	//	return;
-	//}
-
-	//while (!trader->inited() || !APAccountInfo::getInstance()->inited()) {
-	//	Sleep(10);
-	//}
-	init();
-
-	long waitInterval = APSystemSetting::getInstance()->getInitializeStateWaitInterval();
-	while (!inited()) {
-		Sleep(waitInterval);
-	}
+	APMarketDataMgr->init();	
 	
-	postInit();
-	APAccountInfo::getInstance()->verify();
+	APTradeManager::getInstance()->init();
+	APStrategyFactory::getInstance()->init();
+	APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
+	if (trader == NULL) {
+		return;
+	}
+
+	if (!trader->inited() ) {
+		Sleep(500);
+	}
+
+	APAccountInfo::getInstance()->init();
+	while (!APAccountInfo::getInstance()->inited()) {
+		Sleep(500);
+	}
+
+	APStrategyManager::getInstance()->init();
+	//init();
+
+	//long waitInterval = APSystemSetting::getInstance()->getInitializeStateWaitInterval();
+	//while (!inited()) {
+	//	Sleep(waitInterval);
+	//}
+	
+	//postInit();
+
+	if (!APGlobalConfig::getInstance()->isManualPosition()) {
+		APAccountInfo::getInstance()->verify();
+	}
+
+	setInited();
 }
 
 #ifdef USE_CTP

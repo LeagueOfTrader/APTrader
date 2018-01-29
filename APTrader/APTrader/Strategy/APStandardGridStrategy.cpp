@@ -131,7 +131,7 @@ void APStandardGridStrategy::buildEqualRatioGrids(std::string info)
 	std::vector<double> longVals;
 	buildEqualRatioArray(longVals, m_longValue, ratio, m_gridsCount);
 	std::vector<double> shortVals;
-	buildEqualRatioArray(shortVals, m_shortValue, ratio, m_gridsCount);
+	buildEqualRatioArray(shortVals, m_shortValue, -ratio, m_gridsCount);
 
 	if (m_direction == TD_Buy) {
 		buildBuyGrids(longVals, shortVals);
@@ -150,7 +150,7 @@ void APStandardGridStrategy::buildEqualDiffGrids(std::string info)
 	std::vector<double> longVals;
 	buildEqualDiffArray(longVals, m_longValue, diff, m_gridsCount);
 	std::vector<double> shortVals;
-	buildEqualDiffArray(shortVals, m_shortValue, diff, m_gridsCount);
+	buildEqualDiffArray(shortVals, m_shortValue, -diff, m_gridsCount);
 
 	if (m_direction == TD_Buy) {
 		buildBuyGrids(longVals, shortVals);

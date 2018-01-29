@@ -26,6 +26,8 @@ public:
 
 	virtual bool finished();
 
+	virtual bool inited();
+
 protected:
 	void initLocalSystem();
 

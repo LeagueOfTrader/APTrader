@@ -46,6 +46,11 @@ void APTestFramework::exit()
 	m_exited = true;
 }
 
+bool APTestFramework::inited()
+{
+	return m_inited;
+}
+
 bool APTestFramework::finished()
 {
 	return m_finished;
