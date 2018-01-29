@@ -40,9 +40,9 @@ void APStrategy::init(std::string strategyInfo)
 		m_tag = jr.getStrValue("Tag");
 	}
 
-	if (jr.hasMember("Subsidiary")) {
-		m_isSubStrategy = jr.getBoolValue("Subsidiary");
-	}
+	//if (jr.hasMember("Subsidiary")) {
+	//	m_isSubStrategy = jr.getBoolValue("Subsidiary");
+	//}
 
 	if (jr.hasMember("Position")) {
 		std::string positionInfo = jr.getObjValue("Position");
@@ -56,17 +56,17 @@ void APStrategy::init(std::string strategyInfo)
 		initQuotationDecision(quotationInfo);
 	}
 
-	if (jr.hasMember("SubStrategies")) {
-		int subStrategiesCount = jr.getArraySize("SubStrategies");
-		for (int i = 0; i < subStrategiesCount; i++) {
-			std::string subFile = jr.getArrayStrValue("SubStrategies", i);
-			APStrategy* subStrategy = APStrategyManager::getInstance()->loadStrategy(subFile);
-			if (subStrategy != NULL) {
-				this->attach(subStrategy);
-				subStrategy->setWork(true);
-			}
-		}
-	}
+	//if (jr.hasMember("SubStrategies")) {
+	//	int subStrategiesCount = jr.getArraySize("SubStrategies");
+	//	for (int i = 0; i < subStrategiesCount; i++) {
+	//		std::string subFile = jr.getArrayStrValue("SubStrategies", i);
+	//		APStrategy* subStrategy = APStrategyManager::getInstance()->loadStrategy(subFile);
+	//		if (subStrategy != NULL) {
+	//			this->attach(subStrategy);
+	//			subStrategy->setWork(true);
+	//		}
+	//	}
+	//}
 }
 
 //void APStrategy::setPositionCtrl(APPositionCtrl * positionCtrl)

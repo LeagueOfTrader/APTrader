@@ -541,6 +541,8 @@ void APFuturesCTPTraderResponser::OnRspQryOrder(CThostFtdcOrderField * pOrder, C
 	}
 
 	if (pOrder == NULL) {
+		// no orders;
+		APFuturesCTPTraderAgent::getInstance()->onQryOrderFinished();
 		return;
 	}
 

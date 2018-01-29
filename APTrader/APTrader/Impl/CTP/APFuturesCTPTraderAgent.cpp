@@ -900,9 +900,9 @@ void APFuturesCTPTraderAgent::onQryOrder(APORDERID localOrderID, CThostFtdcOrder
 
 void APFuturesCTPTraderAgent::onQryOrderFinished()
 {
-	if (APTradeManager::getInstance()->inited() == false) {
-		return;
-	}
+	//if (APTradeManager::getInstance()->inited() == false) {
+	//	return;
+	//}
 	APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
 	if (trader == NULL) {
 		return;

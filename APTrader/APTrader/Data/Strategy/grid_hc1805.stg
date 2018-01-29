@@ -9,7 +9,7 @@
             "Direction": "Sell"
         },
         "Quotation": {
-            "QuotationDecisionType": 101,
+            "QuotationDecisionType": 1,
             "SrcID": "hc1805",
             "TargetID": "0",
             "UpperLimit": 10000,

@@ -79,7 +79,7 @@ void runTest() {
 
 	//posCtrl->open(instID, dir, 4000.0, 10);
 
-	APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPosition();
+	//APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPosition();
 	//APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPositionDetail();
 	//APFuturesCTPTraderAgent::getInstance()->reqQryTradingAccount();
 	//APFuturesCTPTraderAgent::getInstance()->reqQryAllOrders();
@@ -95,6 +95,13 @@ void runFuturesFramework() {
 	framework->ready();
 	framework->start();
 
+	while (!framework->isCTPInited())
+	{
+		Sleep(100);
+	}
+
+	framework->initLocalSystem();
+
 	while (!framework->inited()) {
 		Sleep(100);
 	}
@@ -108,8 +115,8 @@ void runFuturesFramework() {
 }
 
 void main() {
-	//runFuturesFramework();
-	runTest();
+	runFuturesFramework();
+	//runTest();
 }
 
 

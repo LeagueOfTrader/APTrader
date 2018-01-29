@@ -92,7 +92,7 @@ void APFuturesFramework::ready()
 	addPostInit(APStrategyManager::getInstance());
 
 	addTicker(APMarketDataMgr);
-	addTicker(APAccountInfo::getInstance());
+	//addTicker(APAccountInfo::getInstance());
 	addTicker(APStrategyManager::getInstance());
 }
 
@@ -132,11 +132,12 @@ void APFuturesFramework::initLocalSystem()
 		return;
 	}
 
-	if (!trader->inited() ) {
+	while (!trader->inited() ) {
 		Sleep(500);
 	}
 
 	APAccountInfo::getInstance()->init();
+
 	while (!APAccountInfo::getInstance()->inited()) {
 		Sleep(500);
 	}
@@ -162,10 +163,15 @@ void APFuturesFramework::initLocalSystem()
 void APFuturesFramework::onCTPApiInited(BYTE flag)
 {
 	m_initFlag |= flag;
+}
 
+bool APFuturesFramework::isCTPInited()
+{
 	if (m_initFlag == CTP_Flag_All) {
-		initLocalSystem();
+		return true;
 	}
+
+	return false;
 }
 
 void APFuturesFramework::initCTP()

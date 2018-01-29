@@ -28,12 +28,13 @@ public:
 
 	virtual bool inited();
 
-protected:
+//protected:
 	void initLocalSystem();
 
 #ifdef USE_CTP
 public:
 	void onCTPApiInited(BYTE flag);
+	bool isCTPInited();
 
 protected:
 	void initCTP();
