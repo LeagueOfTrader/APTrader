@@ -56,7 +56,7 @@ public:
 
 	bool getOrderInfo(APORDERID orderID, APTradeOrderInfo& orderInfo);
 
-	void setOrderIDBase(APORDERID base);
+	void setOrderIDBase(UINT base);
 
 	// sync orders
 	void queryAllOrders();
@@ -108,7 +108,7 @@ protected:
 	//APOrderRecordInfo convertOrderInfo(APTradeOrderInfo& info);
 
 private:
-	std::vector<UINT> getRelatedOrders(APPositionCtrl* pc);
+	std::vector<APORDERID> getRelatedOrders(APPositionCtrl* pc);
 	APPositionCtrl* getPositionCtrlByOrder(APORDERID orderID);
 
 protected:
@@ -117,6 +117,7 @@ protected:
 	//std::map<APORDERID, UINT> m_orderPosCtrlRelation;
 	//std::map <UINT, std::set<UINT>> m_posCtrlOrders;
 	APIntAccumulator* m_idAccumulator;
+	APORDERID m_baseID;
 	
 //private:
 //	std::map<APORDERID, APOrderRecordInfo> m_orderRecordInfo;

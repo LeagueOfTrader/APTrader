@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+
 enum APTradeDirection {
 	TD_Buy,
 	TD_Sell,
@@ -133,5 +135,5 @@ enum APOrderContingentCondition {
 	OCC_Num
 };
 
-const unsigned int INVALID_ORDER_ID = 0;
+const std::string INVALID_ORDER_ID = "00";
 const double MARKET_ORDER_PRICE = -0.00999;

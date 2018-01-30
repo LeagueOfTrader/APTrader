@@ -61,15 +61,15 @@ public:
 	
 	void relateOrder(APORDERID orderID);
 
-	virtual void openPosition(APTradeDirection direction, long volume);
-	virtual void closePosition(APTradeDirection direction, long volume);
-	virtual void openFullPosition(APTradeDirection direction);
-	virtual void closeOffPosition(APTradeDirection direction);
+	virtual void openPosition(long volume);
+	virtual void closePosition(long volume);
+	virtual void openFullPosition();
+	virtual void closeOffPosition();
 
-	virtual void openPosition(APTradeDirection direction, double price, long volume);
-	virtual void closePosition(APTradeDirection direction, double price, long volume);
-	virtual void openFullPosition(APTradeDirection direction, double price);
-	virtual void closeOffPosition(APTradeDirection direction, double price);
+	virtual void openPosition(double price, long volume);
+	virtual void closePosition(double price, long volume);
+	virtual void openFullPosition(double price);
+	virtual void closeOffPosition(double price);
 	//void cancelTrade(APTradeType type, double price, long volume); // may implement later
 	virtual void cancelTrade(APTradeType type, double price, APTradeDirection direction);
 	virtual void cancelTrade(APTradeType type, APTradeDirection direction);

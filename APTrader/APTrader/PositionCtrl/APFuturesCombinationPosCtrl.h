@@ -56,10 +56,10 @@ public:
 	virtual void setHoldAmount(APASSETID instrumentID, long amount);
 	std::pair<std::vector<APASSETID>, std::vector<long>> getCombinationUnitVol();
 
-	virtual void openPosition(APTradeDirection direction, double price, long volume); // ignore price in this class
-	virtual void closePosition(APTradeDirection direction, double price, long volume);
-	virtual void openFullPosition(APTradeDirection direction, double price);
-	virtual void closeOffPosition(APTradeDirection direction, double price);
+	virtual void openPosition(long volume); // ignore price in this class
+	virtual void closePosition(long volume);
+	virtual void openFullPosition();
+	virtual void closeOffPosition();
 
 	virtual void cancel(APTradeType type);
 
@@ -74,12 +74,12 @@ protected:
 	virtual Json::Value serializeToJsonValue();
 	virtual void deserialize(std::string str);
 
-private:
 	void openPrPosition();
 	void openCoPosition();
 	void closePrPosition();
 	void closeCoPosition();
 
+private:	
 	//void onFinishOpenOperation();
 	//void onFinishCloseOperation();
 	Json::Value serializeOperationData(APCombinationOperationData& data);

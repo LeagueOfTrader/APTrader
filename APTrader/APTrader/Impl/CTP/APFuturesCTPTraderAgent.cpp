@@ -301,9 +301,7 @@ void APFuturesCTPTraderAgent::applyOrder(APTradeType tradeType, APASSETID instru
 	memset(&order, 0, sizeof(order));
 	strcpy(order.BrokerID, m_brokerID.c_str());
 	strcpy(order.InvestorID, m_userID.c_str());
-	char localID[32];
-	itoa(localOrderID, localID, 10);
-	strcpy(order.OrderRef, localID);
+	strcpy(order.OrderRef, localOrderID.c_str());
 
 	strcpy(order.InstrumentID, instrumentID.c_str());
 	
@@ -365,9 +363,9 @@ void APFuturesCTPTraderAgent::applyOrder(APTradeType tradeType, APASSETID instru
 	memset(&order, 0, sizeof(order));
 	strcpy(order.BrokerID, m_brokerID.c_str());
 	strcpy(order.InvestorID, m_userID.c_str());
-	char localID[32];
-	itoa(localOrderID, localID, 10);
-	strcpy(order.OrderRef, localID);
+	//char localID[32];
+	//itoa(localOrderID, localID, 10);
+	strcpy(order.OrderRef, localOrderID.c_str());
 
 	if (direction == TD_Buy) {
 		order.Direction = THOST_FTDC_D_Buy;
@@ -821,7 +819,7 @@ void APFuturesCTPTraderAgent::onRtnOrder(CThostFtdcOrderField * order)
 		tradeType = TT_Close; // 暂时只考虑普通平仓
 	}
 
-	APORDERID localOrderID = atoi(order->OrderLocalID);
+	APORDERID localOrderID = order->OrderLocalID;
 	APSYSTEMID sysOrderID = order->OrderSysID;	
 	APOrderState orderState = parseOrderState(order->OrderStatus);
 	APTradeDirection direction = TD_Buy;
@@ -874,7 +872,7 @@ void APFuturesCTPTraderAgent::onRtnTrade(CThostFtdcTradeField * info)
 	double price = info->Price;
 	long volume = info->Volume;
 
-	APORDERID orderID = atoi(info->OrderLocalID);
+	APORDERID orderID = info->OrderLocalID;
 	APSYSTEMID sysID = info->OrderSysID;
 	APTradeDirection direction = TD_Buy;
 	if (info->Direction == THOST_FTDC_D_Buy) {

@@ -26,6 +26,6 @@ public:
 protected:
 
 	//CycleBuffer<APSimTradeOrder>* m_orderRecord;
-	std::map<int, APTradeOrderInfo> m_orderRecord;
+	std::map<APORDERID, APTradeOrderInfo> m_orderRecord;
 };
 

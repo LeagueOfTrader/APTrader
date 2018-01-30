@@ -8,17 +8,19 @@
 #include "APGlobalConfig.h"
 #include "APPositionRepertory.h"
 #include "APMacro.h"
+//#include <math.h>
 
 #ifdef USE_CTP
 #include "Impl/CTP/APFuturesCTPTraderAgent.h"
 #endif
 
-//const UINT TRADE_ID_SHIFT = 1000;
+const UINT TRADE_ID_SHIFT = 1000;
 
 APTrade::APTrade()
 {
 	m_idAccumulator = new APIntAccumulator();
 	m_inited = false;
+	m_baseID = "";
 }
 
 APTrade::~APTrade()
@@ -112,11 +114,11 @@ void APTrade::cancel(APASSETID instrumentID, APTradeType type, APTradeDirection 
 		return;
 	}
 
-	std::vector<UINT> relatedOrders = getRelatedOrders(pc);
+	std::vector<APORDERID> relatedOrders = getRelatedOrders(pc);
 
-	std::vector<UINT> cancelOrders;
+	std::vector<APORDERID> cancelOrders;
 	for (int i = 0; i < relatedOrders.size(); i++) {
-		UINT id = relatedOrders[i];
+		APORDERID id = relatedOrders[i];
 		if (m_localOrders.find(id) != m_localOrders.end()) {
 			APTradeOrderInfo& info = m_localOrders[id];
 			if (info.instrumentID == instrumentID &&
@@ -125,7 +127,7 @@ void APTrade::cancel(APASSETID instrumentID, APTradeType type, APTradeDirection 
 				if ( fabs(info.price - price) < DBL_EPSILON ||
 					(((direction == TD_Buy && type == TT_Close) || (direction == TD_Sell && type == TT_Open)) && info.price > price) ||  // Long Close / Short Open, cancel higher offered price
 					(((direction == TD_Sell && type == TT_Close) || (direction == TD_Buy && type == TT_Open)) && info.price < price) ) { // Long Open / Short Close, cancel lower offered price
-					UINT orderID = info.orderID;
+					APORDERID orderID = info.orderID;
 					cancelOrders.push_back(orderID);
 				}
 			}
@@ -133,7 +135,7 @@ void APTrade::cancel(APASSETID instrumentID, APTradeType type, APTradeDirection 
 	}
 
 	for (int i = 0; i < cancelOrders.size(); i++) {
-		UINT orderID = cancelOrders[i];
+		APORDERID orderID = cancelOrders[i];
 		if (orderID != INVALID_ORDER_ID) {
 			cancel(orderID);
 		}
@@ -146,23 +148,23 @@ void APTrade::cancel(APASSETID instrumentID, APTradeType type, APPositionCtrl * 
 		return;
 	}
 
-	std::vector<UINT> relatedOrders = getRelatedOrders(pc);
+	std::vector<APORDERID> relatedOrders = getRelatedOrders(pc);
 
-	std::vector<UINT> cancelOrders;
+	std::vector<APORDERID> cancelOrders;
 	for (int i = 0; i < relatedOrders.size(); i++) {
-		UINT id = relatedOrders[i];
+		APORDERID id = relatedOrders[i];
 		if (m_localOrders.find(id) != m_localOrders.end()) {
 			APTradeOrderInfo& info = m_localOrders[id];
 			if (info.instrumentID == instrumentID &&
 				info.type == type) {
-				UINT orderID = info.orderID;
+				APORDERID orderID = info.orderID;
 				cancelOrders.push_back(orderID);
 			}
 		}
 	}
 
 	for (int i = 0; i < cancelOrders.size(); i++) {
-		UINT orderID = cancelOrders[i];
+		APORDERID orderID = cancelOrders[i];
 		if (orderID != INVALID_ORDER_ID) {
 			cancel(orderID);
 		}
@@ -175,22 +177,22 @@ void APTrade::cancelAll(APASSETID instrumentID, APPositionCtrl * pc)
 		return;
 	}
 
-	std::vector<UINT> relatedOrders = getRelatedOrders(pc);
+	std::vector<APORDERID> relatedOrders = getRelatedOrders(pc);
 
-	std::vector<UINT> cancelOrders;
+	std::vector<APORDERID> cancelOrders;
 	for (int i = 0; i < relatedOrders.size(); i++) {
-		UINT id = relatedOrders[i];
+		APORDERID id = relatedOrders[i];
 		if (m_localOrders.find(id) != m_localOrders.end()) {
 			APTradeOrderInfo& info = m_localOrders[id];
 			if (info.instrumentID == instrumentID) {
-				UINT orderID = info.orderID;
+				APORDERID orderID = info.orderID;
 				cancelOrders.push_back(orderID);
 			}
 		}
 	}
 
 	for (int i = 0; i < cancelOrders.size(); i++) {
-		UINT orderID = cancelOrders[i];
+		APORDERID orderID = cancelOrders[i];
 		if (orderID != INVALID_ORDER_ID) {
 			cancel(orderID);
 		}
@@ -277,7 +279,7 @@ bool APTrade::getOrderInfo(APORDERID orderID, APTradeOrderInfo& orderInfo)
 	return false;
 }
 
-void APTrade::setOrderIDBase(APORDERID base)
+void APTrade::setOrderIDBase(UINT base)
 {
 	m_idAccumulator->setBase(base);
 }
@@ -331,14 +333,23 @@ void APTrade::onSyncOrders()
 
 void APTrade::init()
 {
-	UINT base = APTimeUtility::getTimestamp() * 1000;
-	m_idAccumulator->setBase(base);
+	std::string dateStr = APTimeUtility::getDateTime();
+	//UINT base = atoi(dateStr.substr(0, 8).c_str()); //APTimeUtility::getTimestamp() * 1000;
+	//m_idAccumulator->setBase(base);
+	m_baseID = dateStr.substr(0, 8);
+#ifdef USE_CTP
+	int maxOrderRef = APFuturesCTPTraderAgent::getInstance()->getMaxOrderRef();
+	m_idAccumulator->setBase(maxOrderRef);
+#endif // USE_CTP
+
 }
 
 APORDERID APTrade::generateOrderID()
 {
 	UINT accumID = m_idAccumulator->generateID();
-	APORDERID orderID = accumID;//APTimeUtility::getTimestamp() * TRADE_ID_SHIFT + accumID % TRADE_ID_SHIFT;
+	char strAccumID[8];
+	sprintf(strAccumID, "%04d", accumID);
+	APORDERID orderID = m_baseID + strAccumID;// % TRADE_ID_SHIFT;//accumID;//
 	return orderID;
 }
 

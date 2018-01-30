@@ -248,35 +248,35 @@ void APPositionCtrl::relateOrder(APORDERID orderID)
 	}
 }
 
-void APPositionCtrl::openPosition(APTradeDirection direction, long volume)
+void APPositionCtrl::openPosition(long volume)
 {
 	double price = 0.0;
-	if (getMarketPrice(m_instrumentID, TT_Open, direction, price)) {
-		openPosition(direction, price, volume);
+	if (getMarketPrice(m_instrumentID, TT_Open, m_directionType, price)) {
+		openPosition(price, volume);
 	}
 }
 
-void APPositionCtrl::closePosition(APTradeDirection direction, long volume)
+void APPositionCtrl::closePosition(long volume)
 {
 	double price = 0.0;
-	if (getMarketPrice(m_instrumentID, TT_Close, direction, price)) {
-		closePosition(direction, price, volume);
+	if (getMarketPrice(m_instrumentID, TT_Close, m_directionType, price)) {
+		closePosition(price, volume);
 	}
 }
 
-void APPositionCtrl::openFullPosition(APTradeDirection direction)
+void APPositionCtrl::openFullPosition()
 {
 	double price = 0.0;
-	if (getMarketPrice(m_instrumentID, TT_Close, direction, price)) {
-		openFullPosition(direction, price);
+	if (getMarketPrice(m_instrumentID, TT_Close, m_directionType, price)) {
+		openFullPosition(price);
 	}
 }
 
-void APPositionCtrl::closeOffPosition(APTradeDirection direction)
+void APPositionCtrl::closeOffPosition()
 {
 	double price = 0.0;
-	if (getMarketPrice(m_instrumentID, TT_Close, direction, price)) {
-		closeOffPosition(direction, price);
+	if (getMarketPrice(m_instrumentID, TT_Close, m_directionType, price)) {
+		closeOffPosition(price);
 	}
 }
 
@@ -330,10 +330,14 @@ void APPositionCtrl::modifyOrdersPosition(const APTradeOrderInfo& info)
 	}
 }
 
-void APPositionCtrl::openPosition(APTradeDirection direction, double price, long volume)
+void APPositionCtrl::openPosition(double price, long volume)
 {	
-	if (volume > m_marginPosition) {
-		volume = m_marginPosition;
+	//if (volume > m_marginPosition) {
+	//	volume = m_marginPosition;
+	//}
+
+	if (volume <= 0) {
+		return;
 	}
 
 	double quotePrice = price;
@@ -341,20 +345,20 @@ void APPositionCtrl::openPosition(APTradeDirection direction, double price, long
 	if (m_quotation != NULL)
 	{
 		double marketPrice = m_quotation->getCurPrice();
-		if (direction == TD_Buy && price > marketPrice) {
+		if (m_directionType == TD_Buy && price > marketPrice) {
 			quotePrice = marketPrice;
 		}
-		else if (direction == TD_Sell && marketPrice > price) {
+		else if (m_directionType == TD_Sell && marketPrice > price) {
 			quotePrice = marketPrice;
 		}
 	}
 
 	m_marginPosition -= volume;
 	m_openOrdersPosition += volume;
-	open(direction, quotePrice, volume);
+	open(m_directionType, quotePrice, volume);
 }
 
-void APPositionCtrl::closePosition(APTradeDirection direction, double price, long volume)
+void APPositionCtrl::closePosition(double price, long volume)
 {
 	if (volume > m_availablePosition) {
 		volume = m_availablePosition;
@@ -365,29 +369,29 @@ void APPositionCtrl::closePosition(APTradeDirection direction, double price, lon
 	if (m_quotation != NULL)
 	{
 		double marketPrice = m_quotation->getCurPrice();
-		if (direction == TD_Buy && price < marketPrice) {
+		if (m_directionType == TD_Buy && price < marketPrice) {
 			quotePrice = marketPrice;
 		}
-		else if (direction == TD_Sell && marketPrice > price) {
+		else if (m_directionType == TD_Sell && marketPrice > price) {
 			quotePrice = marketPrice;
 		}
 	}
 	
 	m_availablePosition -= volume;
 	m_closeOrdersPosition += volume;
-	close(direction, quotePrice, volume);
+	close(m_directionType, quotePrice, volume);
 }
 
-void APPositionCtrl::openFullPosition(APTradeDirection direction, double price)
+void APPositionCtrl::openFullPosition(double price)
 {
-	openAll(direction, price);
+	openAll(m_directionType, price);
 	m_openOrdersPosition += m_marginPosition;
 	m_marginPosition = 0;	
 }
 
-void APPositionCtrl::closeOffPosition(APTradeDirection direction, double price)
+void APPositionCtrl::closeOffPosition(double price)
 {
-	closeAll(direction, price);
+	closeAll(m_directionType, price);
 	m_closeOrdersPosition += m_availablePosition;
 	m_availablePosition = 0;	
 }
@@ -585,13 +589,13 @@ void APPositionCtrl::deserialize(std::string str)
 
 	int count = jr.getArraySize("BidOrders");
 	for (int i = 0; i < count; i++) {
-		APORDERID orderID = jr.getArrayIntValue("BidOrders", 0);
+		APORDERID orderID = jr.getArrayStrValue("BidOrders", 0);
 		m_openOrderList.push_back(orderID);
 	}
 
 	count = jr.getArraySize("AskOrders");
 	for (int i = 0; i < count; i++) {
-		APORDERID orderID = jr.getArrayIntValue("AskOrders", 0);
+		APORDERID orderID = jr.getArrayStrValue("AskOrders", 0);
 		m_closeOrderList.push_back(orderID);
 	}
 
@@ -625,6 +629,8 @@ Json::Value APPositionCtrl::serializeToJsonValue()
 	int index = 0;
 	for (it = m_openOrderList.begin(); it != m_openOrderList.end(); it++) {
 		APORDERID orderID = *it;
+		//char strOrderID[64];
+		//sprintf(strOrderID, "%I64d", orderID);
 		bidArr[index++] = orderID;
 	}
 	v["BidOrders"] = bidArr;
@@ -632,6 +638,8 @@ Json::Value APPositionCtrl::serializeToJsonValue()
 	index = 0;
 	for (it = m_closeOrderList.begin(); it != m_closeOrderList.end(); it++) {
 		APORDERID orderID = *it;
+		//char strOrderID[64];
+		//sprintf(strOrderID, "%I64d", orderID);
 		askArr[index++] = orderID;
 	}
 	v["AskOrders"] = askArr;

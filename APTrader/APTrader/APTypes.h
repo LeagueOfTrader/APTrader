@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-typedef unsigned int APORDERID;
+typedef std::string APORDERID;
 
 typedef unsigned int UINT;
 

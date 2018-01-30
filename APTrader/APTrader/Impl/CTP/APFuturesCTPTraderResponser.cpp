@@ -465,7 +465,8 @@ void APFuturesCTPTraderResponser::OnRspUserLogin(CThostFtdcRspUserLoginField * p
 	//APFuturesCTPTraderAgent::getInstance()->setSessionID(pRspUserLogin->SessionID);
 
 	APFuturesCTPTraderAgent::getInstance()->reqSettlementInfoConfirm();
-
+	int maxOrderID = atoi(pRspUserLogin->MaxOrderRef);
+	APFuturesCTPTraderAgent::getInstance()->setMaxOrderRef(maxOrderID);
 	//APFuturesCTPTraderAgent::getInstance()->onLogin();
 	//APTrade* trade = APTradeManager::getInstance()->getTradeInstance();
 	//if (trade != NULL) {
@@ -507,7 +508,8 @@ void APFuturesCTPTraderResponser::OnRspOrderInsert(CThostFtdcInputOrderField * p
 	}
 
 	if (pInputOrder != NULL) {
-		pInputOrder->OrderRef;
+		APSYSTEMID orderRef = pInputOrder->OrderRef;
+		APLogger->log("Order: %s inserted. ", orderRef.c_str());
 	}
 }
 
@@ -535,7 +537,7 @@ void APFuturesCTPTraderResponser::OnRspQryOrder(CThostFtdcOrderField * pOrder, C
 {
 	if (isErrorRspInfo(pRspInfo)) {
 		if (pOrder != NULL) {
-			APFuturesCTPTraderAgent::getInstance()->onQryOrderFailed(atoi(pOrder->OrderLocalID));
+			APFuturesCTPTraderAgent::getInstance()->onQryOrderFailed(pOrder->OrderLocalID);
 		}
 		return;
 	}
@@ -546,7 +548,7 @@ void APFuturesCTPTraderResponser::OnRspQryOrder(CThostFtdcOrderField * pOrder, C
 		return;
 	}
 
-	APORDERID localID = atoi(pOrder->OrderLocalID);
+	APORDERID localID = pOrder->OrderLocalID;
 	APFuturesCTPTraderAgent::getInstance()->onQryOrder(localID, pOrder);
 
 	if (bIsLast)
@@ -629,7 +631,7 @@ void APFuturesCTPTraderResponser::OnRtnTrade(CThostFtdcTradeField * pTrade)
 
 void APFuturesCTPTraderResponser::OnErrRtnOrderInsert(CThostFtdcInputOrderField * pInputOrder, CThostFtdcRspInfoField * pRspInfo)
 {
-	APORDERID localID = atoi(pInputOrder->OrderRef);
+	APORDERID localID = pInputOrder->OrderRef;
 	APFuturesCTPTraderAgent::getInstance()->onTradeFailed(localID);
 }
 

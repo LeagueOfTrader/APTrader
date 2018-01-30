@@ -156,6 +156,7 @@
     <ClInclude Include="APDef.h" />
     <ClInclude Include="APFramework.h" />
     <ClInclude Include="APFundPool.h" />
+    <ClInclude Include="PositionCtrl\APFuturesSyncCombPosCtrl.h" />
     <ClInclude Include="APPositionRepertory.h" />
     <ClInclude Include="APStructs.h" />
     <ClInclude Include="APSystemSetting.h" />
@@ -232,6 +233,7 @@
     <ClCompile Include="APAccountInfo.cpp" />
     <ClCompile Include="APFramework.cpp" />
     <ClCompile Include="APFundPool.cpp" />
+    <ClCompile Include="PositionCtrl\APFuturesSyncCombPosCtrl.cpp" />
     <ClCompile Include="APPositionRepertory.cpp" />
     <ClCompile Include="APSystemSetting.cpp" />
     <ClCompile Include="QuotationDecision\APDualQuotationDecision.cpp" />

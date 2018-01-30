@@ -147,7 +147,8 @@ std::string APTimeUtility::getDateTime()
 	SYSTEMTIME sys;
 	GetLocalTime(&sys);
 	char strDateTime[64];
-	sprintf(strDateTime, "%4d%2d%2d%2d%2d%2d", sys.wYear, sys.wMonth, sys.wDay, sys.wHour, sys.wMinute, sys.wSecond);
+
+	sprintf(strDateTime, "%4d%02d%02d%02d%02d%02d", sys.wYear, sys.wMonth, sys.wDay, sys.wHour, sys.wMinute, sys.wSecond);
 	std::string dateTime = strDateTime;
 	return dateTime;
 }
@@ -160,7 +161,7 @@ std::string APTimeUtility::getLastFutureTransactionDay()
 		//
 	}
 	char strDateTime[64];
-	sprintf(strDateTime, "%4d%2d%2d%2d%2d%2d", sys.wYear, sys.wMonth, sys.wDay, sys.wHour, sys.wMinute, sys.wSecond);
+	sprintf(strDateTime, "%4d%02d%02d%02d%02d%02d", sys.wYear, sys.wMonth, sys.wDay, sys.wHour, sys.wMinute, sys.wSecond);
 	std::string dateTime = strDateTime;
 	return dateTime;
 }

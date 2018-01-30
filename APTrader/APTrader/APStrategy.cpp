@@ -132,6 +132,31 @@ void APStrategy::initQuotationDecision(std::string quotationInfo)
 	
 }
 
+void APStrategy::open(long volume)
+{
+	if (m_positionCtrl != NULL) {
+		m_positionCtrl->openPosition(volume);
+	}
+}
+
+void APStrategy::close(long volume)
+{
+	if (m_positionCtrl != NULL) {
+		m_positionCtrl->closePosition(volume);
+	}
+}
+
+void APStrategy::open(double price, long volume)
+{
+	if (m_positionCtrl != NULL) {
+		m_positionCtrl->openPosition(price, volume);
+	}
+}
+
+void APStrategy::close(double price, long volume)
+{
+}
+
 void APStrategy::setInstrumentID(APASSETID instrumentID)
 {
 	m_instrumentID = instrumentID;

@@ -40,6 +40,11 @@ public:
 protected:
 	void initQuotationDecision(std::string quotationInfo);	
 
+	virtual void open(long volume);
+	virtual void close(long volume);
+	virtual void open(double price, long volume);
+	virtual void close(double price, long volume);
+
 protected:
 	APASSETID m_instrumentID;
 

@@ -243,6 +243,9 @@
     <ClInclude Include="Common\Ticker.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="PositionCtrl\APFuturesSyncCombPosCtrl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APPositionCtrl.cpp">
@@ -420,6 +423,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="APSystemSetting.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PositionCtrl\APFuturesSyncCombPosCtrl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

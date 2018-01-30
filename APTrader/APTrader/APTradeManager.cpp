@@ -27,12 +27,13 @@ void APTradeManager::init()
 #ifdef USE_CTP
 	int maxOrderRef = APFuturesCTPTraderAgent::getInstance()->getMaxOrderRef();
 	if (m_trader != NULL) {
-		m_trader->setOrderIDBase(maxOrderRef);
+		//m_trader->setOrderIDBase(maxOrderRef);
 	}
 #endif
 	
 	if (m_trader != NULL) {
 		//m_trader->load();
+		m_trader->init();
 		m_trader->queryAllOrders();
 		setInited();
 	}

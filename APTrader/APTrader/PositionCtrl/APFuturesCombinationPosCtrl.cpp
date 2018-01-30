@@ -100,7 +100,7 @@ std::pair<std::vector<APASSETID>, std::vector<long>> APFuturesCombinationPosCtrl
 	return combinationUnitVol;
 }
 
-void APFuturesCombinationPosCtrl::openPosition(APTradeDirection direction, double price, long volume)
+void APFuturesCombinationPosCtrl::openPosition(long volume)
 {
 	if (m_curOpenOperation.hasTarget() 
 		|| m_curCloseOperation.hasTarget()) {
@@ -116,7 +116,7 @@ void APFuturesCombinationPosCtrl::openPosition(APTradeDirection direction, doubl
 	m_positionMutex.unlock();
 }
 
-void APFuturesCombinationPosCtrl::closePosition(APTradeDirection direction, double price, long volume)
+void APFuturesCombinationPosCtrl::closePosition(long volume)
 {
 	if (m_curCloseOperation.hasTarget() 
 		|| m_curOpenOperation.hasTarget()) {
@@ -132,14 +132,14 @@ void APFuturesCombinationPosCtrl::closePosition(APTradeDirection direction, doub
 	m_positionMutex.unlock();
 }
 
-void APFuturesCombinationPosCtrl::openFullPosition(APTradeDirection direction, double price)
+void APFuturesCombinationPosCtrl::openFullPosition()
 {
-	openPosition(direction, price, m_availablePosition);	
+	openPosition( m_availablePosition);	
 }
 
-void APFuturesCombinationPosCtrl::closeOffPosition(APTradeDirection direction, double price)
+void APFuturesCombinationPosCtrl::closeOffPosition()
 {
-	closePosition(direction, price, m_holdPosition);
+	closePosition(m_holdPosition);
 }
 
 void APFuturesCombinationPosCtrl::cancel(APTradeType type)
@@ -359,28 +359,28 @@ void APFuturesCombinationPosCtrl::openPrPosition()
 {
 	long vol = m_curOpenOperation.prTarget;
 	double price = m_quotation->getCurPrice();
-	open(m_instrumentID, m_directionType, OPT_AnyPrice, price);
+	open(m_instrumentID, m_directionType, price, vol);
 }
 
 void APFuturesCombinationPosCtrl::openCoPosition()
 {
 	long vol = m_curOpenOperation.coTarget;
 	double price = m_coQuotation->getCurPrice();
-	open(m_coInstrumentID, m_coDirectionType, OPT_AnyPrice, price);
+	open(m_coInstrumentID, m_coDirectionType, price, vol);
 }
 
 void APFuturesCombinationPosCtrl::closePrPosition()
 {
 	long vol = m_curCloseOperation.prTarget;
 	double price = m_quotation->getCurPrice();
-	close(m_instrumentID, m_directionType, OPT_AnyPrice, price);
+	close(m_instrumentID, m_directionType, price, vol);
 }
 
 void APFuturesCombinationPosCtrl::closeCoPosition()
 {
 	long vol = m_curCloseOperation.coTarget;
 	double price = m_coQuotation->getCurPrice();
-	open(m_coInstrumentID, m_coDirectionType, OPT_AnyPrice, price);
+	open(m_coInstrumentID, m_coDirectionType, price, vol);
 }
 
 Json::Value APFuturesCombinationPosCtrl::serializeOperationData(APCombinationOperationData & data)

@@ -16,7 +16,7 @@ struct APSimTradeStub {
 	APTradeDirection direction;
 	double costPrice;
 	long volume;
-	UINT orderID;
+	APORDERID orderID;
 };
 
 class APSimTradeSystem : public Singleton<APSimTradeSystem>
