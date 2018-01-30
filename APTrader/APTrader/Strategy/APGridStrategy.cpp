@@ -205,7 +205,7 @@ int APGridStrategy::getGridIndex(std::vector<APGridData>& grids, double value, b
 
 	if (!reverse) {
 		for (i = 0; i < grids.size(); i++) {
-			if (value - grids[i].valueRef > 0.0f
+			if (grids[i].valueRef - value > 0.0f
 				//&& curPrice - grids[i].price < APGlobalConfig::getInstance()->getNearByPrice()
 				) {
 				break;
@@ -218,9 +218,13 @@ int APGridStrategy::getGridIndex(std::vector<APGridData>& grids, double value, b
 	}
 	else {
 		for (i = grids.size() - 1; i >= 0; i--) {
-			if (grids[i].valueRef - value < APGlobalConfig::getInstance()->getNearByPrice()) {
+			if (grids[i].valueRef - value > 0.0f) {
 				break;
 			}
+		}
+
+		if (i < grids.size() - 1) {
+			i++;
 		}
 	}	
 
@@ -229,10 +233,10 @@ int APGridStrategy::getGridIndex(std::vector<APGridData>& grids, double value, b
 
 int APGridStrategy::getCurTrendGridIndex(std::vector<APGridData>& grids, double value, bool open)
 {
-	bool reverse = false;
+	bool reverse = true;
 	if ((m_direction == TD_Buy && open == false)
 		|| (m_direction == TD_Sell && open == true)) {
-		reverse = true;
+		reverse = false;
 	}
 
 	return getGridIndex(grids, value, reverse);
