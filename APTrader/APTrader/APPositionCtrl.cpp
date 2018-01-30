@@ -9,6 +9,7 @@
 #include "APTrade.h"
 #include "APPositionRepertory.h"
 
+#include "Utils/APLog.h"
 #include "Utils/APTimeUtility.h"
 
 APPositionCtrl::APPositionCtrl()

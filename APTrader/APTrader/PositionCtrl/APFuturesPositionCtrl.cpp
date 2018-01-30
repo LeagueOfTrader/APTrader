@@ -1,5 +1,6 @@
 #include "APFuturesPositionCtrl.h"
 #include "../APTradeManager.h"
+#include "../Utils/APLog.h"
 
 APFuturesPositionCtrl::APFuturesPositionCtrl()
 {
@@ -24,11 +25,15 @@ void APFuturesPositionCtrl::init(std::string positionInfo)
 
 void APFuturesPositionCtrl::open(APTradeDirection direction, double price, long volume)
 {
+	APLogger->log("Open position, InstrumentID: %s, Direction: %d, Price: %f, Volume: %d", 
+					m_instrumentID.c_str(), direction, price, volume);
 	open(m_instrumentID, direction, price, volume);
 }
 
 void APFuturesPositionCtrl::close(APTradeDirection direction, double price, long volume)
 {
+	APLogger->log("Close position, InstrumentID: %s, Direction: %d, Price: %f, Volume: %d",
+					m_instrumentID.c_str(), direction, price, volume);
 	close(m_instrumentID, direction, price, volume);
 }
 
