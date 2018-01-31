@@ -1,4 +1,5 @@
 #include "APInputSystem.h"
+#include "APInputCommandParser.h"
 
 void inputThread() {
 	APInputSystem::getInstance()->listenInput();
@@ -15,13 +16,13 @@ APInputSystem::~APInputSystem()
 
 void APInputSystem::init() 
 {
-	m_inputThread = std::thread(inputThread);
+	//m_inputThread = std::thread(inputThread);
 	setInited();
 }
 
 void APInputSystem::exit() 
 {
-	m_inputThread.detach();
+	//m_inputThread.detach();
 	m_exited = true;
 }
 
@@ -30,6 +31,7 @@ void APInputSystem::update()
 	m_cmdBufferMutex.lock();
 	while (m_commandBuffer.size() > 0) {
 		std::string& cmd = m_commandBuffer.front();
+		APInputCommandParser::parseCommand(cmd);
 		m_commandBuffer.pop_front();
 	}
 	m_cmdBufferMutex.unlock();

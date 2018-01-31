@@ -73,9 +73,11 @@ void APInputCommandParser::parseCommand(std::string cmd)
 	bool executed = false;
 	std::vector<std::string> commands = splitString(cmd, ' ');
 	if (ms_commandMap.find(commands[0]) != ms_commandMap.end()) {
-		processCommand(commands);
+		executed = processCommand(commands);
 	}
-	else {
+
+	if(!executed)
+	{
 		APLogger->log("Invalid command:[ %s ].", cmd.c_str());
 	}
 }

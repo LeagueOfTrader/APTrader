@@ -19,7 +19,6 @@ public:
 
 	void listenInput();
 
-private:
 	void pushCommand(std::string cmd);
 
 private:
