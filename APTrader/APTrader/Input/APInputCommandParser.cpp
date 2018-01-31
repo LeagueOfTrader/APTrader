@@ -3,6 +3,8 @@
 #include "../Utils/APLog.h"
 #include "../APPositionManager.h"
 #include "../APPositionCtrl.h"
+#include "../APStrategyManager.h"
+#include "../APStrategy.h"
 
 //std::vector<std::string> splitString(std::string srcStr, std::string delimStr)
 //{
@@ -37,6 +39,8 @@ const UINT CMD_QUIT = 1;
 const UINT CMD_RUN_STRATEGY = 10;
 const UINT CMD_STOP_STRATEGY = 11;
 const UINT CMD_SET_POSCTRL = 100;
+
+std::map<std::string, UINT> APInputCommandParser::ms_commandMap;
 
 std::vector<std::string> splitString(std::string strtem, char a)
 {
@@ -113,8 +117,34 @@ bool APInputCommandParser::processCommand(std::vector<std::string> param)
 		}
 		break;
 	case CMD_RUN_STRATEGY:
+		if (param.size() > 2) {
+			std::string strategyName = param[1];
+			APStrategy* pStrategy = APStrategyManager::getInstance()->getStrategy(strategyName);
+			if (pStrategy == NULL) {
+				ret = false;
+				break;
+			}
+			pStrategy->setWork(true);
+		}
+		else {
+			APStrategyManager::getInstance()->runAllStrategies();			
+		}
+		ret = true;
 		break;
 	case CMD_STOP_STRATEGY:
+		if (param.size() > 2) {
+			std::string strategyName = param[1];
+			APStrategy* pStrategy = APStrategyManager::getInstance()->getStrategy(strategyName);
+			if (pStrategy == NULL) {
+				ret = false;
+				break;
+			}
+			pStrategy->setWork(false);
+		}
+		else {
+			APStrategyManager::getInstance()->stopAllStrategies();
+		}
+		ret = true;
 		break;
 	default:
 		break;

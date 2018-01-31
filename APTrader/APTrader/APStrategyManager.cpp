@@ -129,6 +129,24 @@ APStrategy * APStrategyManager::getStrategy(std::string strategyName)
 	return NULL;
 }
 
+void APStrategyManager::runAllStrategies()
+{
+	std::map<std::string, APStrategy*>::iterator it;
+	for (it = m_strategies.begin(); it != m_strategies.end(); it++) {
+		APStrategy* strategy = it->second;
+		strategy->setWork(true);
+	}
+}
+
+void APStrategyManager::stopAllStrategies()
+{
+	std::map<std::string, APStrategy*>::iterator it;
+	for (it = m_strategies.begin(); it != m_strategies.end(); it++) {
+		APStrategy* strategy = it->second;
+		strategy->setWork(false);
+	}
+}
+
 std::string APStrategyManager::makeUpStrategyFileName(std::string strategyName)
 {
 	return strategyPath + strategyName + ".stg";

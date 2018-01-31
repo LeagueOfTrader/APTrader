@@ -12,6 +12,7 @@ public:
 	virtual void closePosition(long volume);
 	//virtual void openFullPosition();
 	//virtual void closeOffPosition();
+	virtual void setHoldPosition(long position);
 
 	virtual void cancel(APTradeType type);
 

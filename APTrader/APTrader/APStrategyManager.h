@@ -28,6 +28,9 @@ public:
 
 	APStrategy* getStrategy(std::string strategyName);
 
+	void runAllStrategies();
+	void stopAllStrategies();
+
 private:
 	std::string makeUpStrategyFileName(std::string strategyName);
 
