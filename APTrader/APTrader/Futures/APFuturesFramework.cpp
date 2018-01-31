@@ -133,13 +133,13 @@ void APFuturesFramework::initLocalSystem()
 	}
 
 	while (!trader->inited() ) {
-		Sleep(500);
+		Sleep(1000);
 	}
 
 	APAccountInfo::getInstance()->init();
 
 	while (!APAccountInfo::getInstance()->inited()) {
-		Sleep(500);
+		Sleep(1000);
 	}
 
 	APStrategyManager::getInstance()->init();

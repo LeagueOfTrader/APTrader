@@ -51,6 +51,14 @@ void APFuturesSyncCombPosCtrl::closePosition(long volume)
 //{
 //}
 
+void APFuturesSyncCombPosCtrl::setHoldPosition(long position)
+{
+	APPositionCtrl::setHoldPosition(position);
+
+	m_prVolume = m_holdPosition * m_prUnitVol;
+	m_coVolume = m_holdPosition * m_coUnitVol;
+}
+
 void APFuturesSyncCombPosCtrl::cancel(APTradeType type)
 {
 }

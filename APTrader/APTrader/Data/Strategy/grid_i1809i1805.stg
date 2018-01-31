@@ -1,0 +1,36 @@
+{	
+	"Tag":"i1809-i1805",
+    "StrategyType": "Grid",
+    "Priority": 20,
+    "StrategyInfo": {
+        "Position": {
+			"Type": "Combine",
+            "InstrumentID": "i1809",
+            "TotalPosition": 50,
+            "Direction": "Sell",
+			"CoInstrumentID": "i1805",
+			"CoDirection": "Buy",
+			"PrUnit": 1,
+			"CoUnit": 1
+        },
+        "Quotation": {
+            "QuotationDecisionType": 2,
+            "SrcID": "i1805",
+            "TargetID": "i1809",
+            "UpperLimit": 1000.0,
+			"LowerLimit": -1000.0
+        },
+        "Grids": {
+			"GridType": 3,
+			"Diff": 3,
+            "Direction": "Sell",
+            "Ceil": 14.0,
+            "Floor": 7.0,
+            "DeltaPosition": 3,
+            "BasePosition": 10,
+            "GridsCount": 7,
+            "LongValue": 14.0,
+            "ShortValue": 7.0
+        }
+    }
+}

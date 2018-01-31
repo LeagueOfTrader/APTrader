@@ -37,8 +37,10 @@ public:
 	double getFrozenFund();
 
 	void setMaxPosition(long position);
-	void setFrozenPosition(long position);
+	
 	void setMarginPosition(long position);
+	virtual void setHoldPosition(long position);
+	virtual void setFrozenPosition(long position);
 	void resetAvailablePosition();
 	long getMaxPosition();
 	long getAvailablePosition();

@@ -115,11 +115,24 @@ void APPositionCtrl::setMaxPosition(long position)
 void APPositionCtrl::setFrozenPosition(long position)
 {
 	m_frozenPosition = position;
+
+	if (m_holdPosition > 0) {
+		m_availableFund = m_holdPosition - m_frozenPosition;
+	}
 }
 
 void APPositionCtrl::setMarginPosition(long position)
 {
 	m_marginPosition = position;
+}
+
+void APPositionCtrl::setHoldPosition(long position)
+{
+	m_holdPosition = position;
+
+	if (m_holdPosition > 0) {
+		m_availableFund = m_holdPosition - m_frozenPosition;
+	}
 }
 
 void APPositionCtrl::resetAvailablePosition()

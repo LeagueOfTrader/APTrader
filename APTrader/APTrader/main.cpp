@@ -60,8 +60,20 @@ void runSimulation() {
 	//delete framework;
 }
 
+void inputThreadLoop() {
+	char cmd[64];
+	while (scanf("%s", &cmd) != EOF) {
+		if (strcmp(cmd, "quit") == 0) {
+			APTestFramework::getInstance()->terminate();
+		}
+	}
+}
+
 void runTest() {
+	std::thread inputThread(inputThreadLoop);
+	
 	APTestFramework* framework = APTestFramework::getInstance();
+
 	framework->init();
 	while (!framework->inited()) {
 		Sleep(1000);
@@ -86,10 +98,12 @@ void runTest() {
 	//APFuturesCTPTraderAgent::getInstance()->reqQryTradingAccount();
 	//APFuturesCTPTraderAgent::getInstance()->reqQryAllOrders();
 
-	while (true) {
+	while (!framework->finished()) {
 		framework->update();
 		Sleep(1000);
 	}
+
+	inputThread.detach();
 }
 
 void runFuturesFramework() {
@@ -116,9 +130,12 @@ void runFuturesFramework() {
 	framework->exit();
 }
 
+
+
 void main() {
-	runFuturesFramework();
-	//runTest();
+	//runFuturesFramework();
+	
+	runTest();
 }
 
 

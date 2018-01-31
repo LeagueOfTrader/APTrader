@@ -3,6 +3,7 @@
 #include "./Quotation/APSharesQuotation.h"
 #include "./PositionCtrl/APFuturesPositionCtrl.h"
 #include "./PositionCtrl/APFuturesCombinationPosCtrl.h"
+#include "./PositionCtrl/APFuturesSyncCombPosCtrl.h"
 #include "./PositionCtrl/APSharesPositionCtrl.h"
 #include "./QuotationDecision/APSingleQuotationDecision.h"
 #include "./QuotationDecision/APPriceMarginQuotationDecision.h"
@@ -51,7 +52,7 @@ APPositionCtrl * APObjectFactory::newPositionCtrl(APFinancialInstrumentType mark
 			pc = new APFuturesPositionCtrl();
 		}
 		else if (pcType == "Combine") {
-			pc = new APFuturesCombinationPosCtrl();
+			pc = new APFuturesSyncCombPosCtrl(); //APFuturesCombinationPosCtrl();
 		}
 		break;
 	case FCT_Options:

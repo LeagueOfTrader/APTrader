@@ -156,6 +156,8 @@
     <ClInclude Include="APDef.h" />
     <ClInclude Include="APFramework.h" />
     <ClInclude Include="APFundPool.h" />
+    <ClInclude Include="Input\APInputCommandParser.h" />
+    <ClInclude Include="Input\APInputSystem.h" />
     <ClInclude Include="PositionCtrl\APFuturesSyncCombPosCtrl.h" />
     <ClInclude Include="APPositionRepertory.h" />
     <ClInclude Include="APStructs.h" />
@@ -233,6 +235,8 @@
     <ClCompile Include="APAccountInfo.cpp" />
     <ClCompile Include="APFramework.cpp" />
     <ClCompile Include="APFundPool.cpp" />
+    <ClCompile Include="Input\APInputCommandParser.cpp" />
+    <ClCompile Include="Input\APInputSystem.cpp" />
     <ClCompile Include="PositionCtrl\APFuturesSyncCombPosCtrl.cpp" />
     <ClCompile Include="APPositionRepertory.cpp" />
     <ClCompile Include="APSystemSetting.cpp" />
