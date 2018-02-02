@@ -91,6 +91,8 @@ public:
 	void syncPosition();
 	virtual void correctPosition();
 
+	void outputInfo();
+
 protected:
 	virtual void open(APTradeDirection direction, double price, long volume) = 0;
 	virtual void close(APTradeDirection direction, double price, long volume) = 0;

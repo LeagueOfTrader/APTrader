@@ -514,6 +514,13 @@ void APPositionCtrl::correctPosition()
 	}
 }
 
+void APPositionCtrl::outputInfo()
+{
+	APLogger->log("PositionCtrl: %d, hold: %d, frozen: %d, opening: %d, closing: %d. ", 
+		getID(), m_holdPosition, m_frozenPosition, 
+		m_openOrdersPosition, m_closeOrdersPosition);
+}
+
 //void APPositionCtrl::onSyncPositionStatus(const APPositionData & pd)
 //{
 //	//m_marginPosition = m_maxPosition - pd.holdPosition;

@@ -8,6 +8,7 @@
 #include "../APSystemSetting.h"
 #include <windows.h>
 #include "../APStrategyFactory.h"
+#include "../Input/APInputSystem.h"
 
 #ifdef USE_CTP
 #include "../Impl/CTP/APFuturesCTPMDAgent.h"
@@ -49,6 +50,9 @@ APFuturesFramework::APFuturesFramework()
 
 APFuturesFramework::~APFuturesFramework()
 {
+	if (APGlobalConfig::getInstance()->useInput()) {
+		APInputSystem::getInstance()->exit();
+	}
 }
 
 //void APFuturesFramework::init() 
@@ -143,6 +147,10 @@ void APFuturesFramework::initLocalSystem()
 	}
 
 	APStrategyManager::getInstance()->init();
+
+	if (APGlobalConfig::getInstance()->useInput()) {
+		APInputSystem::getInstance()->init();
+	}
 	//init();
 
 	//long waitInterval = APSystemSetting::getInstance()->getInitializeStateWaitInterval();

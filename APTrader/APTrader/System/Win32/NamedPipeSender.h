@@ -10,7 +10,7 @@ public:
 	~NamedPipeSender();
 
 	virtual void init();
-	bool send(void* buf, long bufSize, unsigned long len);
+	bool send(void* buf, long bufSize, unsigned long &len);
 
 private:
 	HANDLE m_hPipe;

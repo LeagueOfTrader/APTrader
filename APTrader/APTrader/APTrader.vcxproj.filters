@@ -258,6 +258,9 @@
     <ClInclude Include="System\Win32\NamedPipeSender.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Input\APInputCmdDef.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APPositionCtrl.cpp">

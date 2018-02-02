@@ -6,6 +6,7 @@
 #include "APPositionManager.h"
 #include "APStrategyManager.h"
 #include "APQuotationDecision.h"
+#include "Utils/APLog.h"
 
 APStrategy::APStrategy()
 {
@@ -67,6 +68,11 @@ void APStrategy::init(std::string strategyInfo)
 	//		}
 	//	}
 	//}
+
+	if (m_positionCtrl != NULL) {
+		APLogger->log("Strategy: %s inited, PositionCtrl: %d", m_tag.c_str(), m_positionCtrl->getID());
+		m_positionCtrl->outputInfo();
+	}
 }
 
 //void APStrategy::setPositionCtrl(APPositionCtrl * positionCtrl)

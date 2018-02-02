@@ -60,17 +60,17 @@ void runSimulation() {
 	//delete framework;
 }
 
-void inputThreadLoop() {
-	char cmd[64];
-	while (scanf("%s", &cmd) != EOF) {
-		if (strcmp(cmd, "quit") == 0) {
-			APTestFramework::getInstance()->terminate();
-		}
-	}
-}
+//void inputThreadLoop() {
+//	char cmd[64];
+//	while (scanf("%s", &cmd) != EOF) {
+//		if (strcmp(cmd, "quit") == 0) {
+//			APTestFramework::getInstance()->terminate();
+//		}
+//	}
+//}
 
 void runTest() {
-	std::thread inputThread(inputThreadLoop);
+	//std::thread inputThread(inputThreadLoop);
 	
 	APTestFramework* framework = APTestFramework::getInstance();
 
@@ -79,31 +79,31 @@ void runTest() {
 		Sleep(1000);
 	}
 
-	APTradeManager::getInstance()->init();
+	//APTradeManager::getInstance()->init();
 
-	APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
-	trader->init();
+	//APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
+	//trader->init();
 
-	APFuturesPositionCtrl* posCtrl = new APFuturesPositionCtrl();
-	std::string instID = "j1805";
-	APTradeDirection dir = TD_Sell;
-	posCtrl->setInstrumentID(instID);
-	posCtrl->setTradeDirection(dir);
-	posCtrl->setTrade(trader);
+	//APFuturesPositionCtrl* posCtrl = new APFuturesPositionCtrl();
+	//std::string instID = "j1805";
+	//APTradeDirection dir = TD_Sell;
+	//posCtrl->setInstrumentID(instID);
+	//posCtrl->setTradeDirection(dir);
+	//posCtrl->setTrade(trader);
 
-	//posCtrl->open(instID, dir, 2030.0, 10);
+	////posCtrl->open(instID, dir, 2030.0, 10);
 
-	//APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPosition();
-	//APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPositionDetail();
-	//APFuturesCTPTraderAgent::getInstance()->reqQryTradingAccount();
-	//APFuturesCTPTraderAgent::getInstance()->reqQryAllOrders();
+	////APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPosition();
+	////APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPositionDetail();
+	////APFuturesCTPTraderAgent::getInstance()->reqQryTradingAccount();
+	////APFuturesCTPTraderAgent::getInstance()->reqQryAllOrders();
 
 	while (!framework->finished()) {
 		framework->update();
 		Sleep(1000);
 	}
 
-	inputThread.detach();
+	//inputThread.detach();
 }
 
 void runFuturesFramework() {

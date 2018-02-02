@@ -5,6 +5,7 @@
 #include "../APStrategyManager.h"
 #include "../APMarketDataManager.h"
 #include "../APGlobalConfig.h"
+#include "../Input/APInputSystem.h"
 
 #ifdef USE_CTP
 #include "../Impl/CTP/APFuturesCTPMDAgent.h"
@@ -25,13 +26,16 @@ APTestFramework::APTestFramework()
 
 APTestFramework::~APTestFramework()
 {
+	APInputSystem::getInstance()->exit();
 }
 
 void APTestFramework::init()
 {
 	APGlobalConfig::getInstance()->init();
 
-	initCTP();
+	//initCTP();
+	APInputSystem::getInstance()->init();
+	setInited();
 }
 
 void APTestFramework::update()

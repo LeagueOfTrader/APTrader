@@ -10,6 +10,7 @@ APGlobalConfig::APGlobalConfig()
 	m_counteractPosition = true;
 	m_manualPosition = false;
 	m_autoRunStrategy = true;
+	m_useInput = true;
 }
 
 APGlobalConfig::~APGlobalConfig()
@@ -127,4 +128,9 @@ bool APGlobalConfig::isManualPosition()
 bool APGlobalConfig::isAutoRunStrategy()
 {
 	return m_autoRunStrategy;
+}
+
+bool APGlobalConfig::useInput()
+{
+	return m_useInput;
 }

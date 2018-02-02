@@ -23,7 +23,7 @@ void NamedPipeSender::init()
 	}
 }
 
-bool NamedPipeSender::send(void * buf, long bufSize, unsigned long len)
+bool NamedPipeSender::send(void * buf, long bufSize, unsigned long & len)
 {
 	bool ret = false;
 	if (m_hPipe != INVALID_HANDLE_VALUE) {

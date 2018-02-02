@@ -156,6 +156,7 @@
     <ClInclude Include="APDef.h" />
     <ClInclude Include="APFramework.h" />
     <ClInclude Include="APFundPool.h" />
+    <ClInclude Include="Input\APInputCmdDef.h" />
     <ClInclude Include="Input\APInputCommandParser.h" />
     <ClInclude Include="Input\APInputSystem.h" />
     <ClInclude Include="PositionCtrl\APFuturesSyncCombPosCtrl.h" />

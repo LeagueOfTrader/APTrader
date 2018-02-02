@@ -24,6 +24,7 @@ public:
 	bool counteractPosition();
 	bool isManualPosition();
 	bool isAutoRunStrategy();
+	bool useInput();
 
 private:
 	APFinancialInstrumentType m_financialInstrumentType;
@@ -36,4 +37,6 @@ private:
 	bool m_counteractPosition;
 	bool m_manualPosition;
 	bool m_autoRunStrategy;
+
+	bool m_useInput;
 };

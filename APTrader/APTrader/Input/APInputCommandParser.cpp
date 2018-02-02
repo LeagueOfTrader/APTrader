@@ -35,10 +35,7 @@
 //	return resultStringVector;
 //}
 
-const UINT CMD_QUIT = 1;
-const UINT CMD_RUN_STRATEGY = 10;
-const UINT CMD_STOP_STRATEGY = 11;
-const UINT CMD_SET_POSCTRL = 100;
+#include "APInputCmdDef.h"
 
 std::map<std::string, UINT> APInputCommandParser::ms_commandMap;
 
@@ -62,10 +59,10 @@ std::vector<std::string> splitString(std::string strtem, char a)
 
 void APInputCommandParser::init() 
 {
-	ms_commandMap["quit"] = CMD_QUIT;
-	ms_commandMap["setpc"] = CMD_SET_POSCTRL;
-	ms_commandMap["run"] = CMD_RUN_STRATEGY;
-	ms_commandMap["stop"] = CMD_STOP_STRATEGY;
+	ms_commandMap[CMD_QUIT_STR] = CMD_QUIT;
+	ms_commandMap[CMD_SET_POSCTRL_STR] = CMD_SET_POSCTRL;
+	ms_commandMap[CMD_RUN_STRATEGY_STR] = CMD_RUN_STRATEGY;
+	ms_commandMap[CMD_STOP_STRATEGY_STR] = CMD_STOP_STRATEGY;
 }
 
 void APInputCommandParser::parseCommand(std::string cmd) 
@@ -77,10 +74,10 @@ void APInputCommandParser::parseCommand(std::string cmd)
 	}
 
 	if(!executed){
-		APLogger->log("Invalid command:[ %s ].", cmd.c_str());
+		APLogger->log("---- Invalid command:[ %s ]. ----", cmd.c_str());
 	}
 	else {
-		APLogger->log("Executed command:[ %s ].", cmd.c_str());
+		APLogger->log("---- Executed command:[ %s ]. ----", cmd.c_str());
 	}
 }
 
