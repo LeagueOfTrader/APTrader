@@ -76,9 +76,11 @@ void APInputCommandParser::parseCommand(std::string cmd)
 		executed = processCommand(commands);
 	}
 
-	if(!executed)
-	{
+	if(!executed){
 		APLogger->log("Invalid command:[ %s ].", cmd.c_str());
+	}
+	else {
+		APLogger->log("Executed command:[ %s ].", cmd.c_str());
 	}
 }
 

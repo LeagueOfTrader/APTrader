@@ -162,8 +162,12 @@
     <ClInclude Include="Common\InitializableObject.h" />
     <ClInclude Include="Common\Ticker.h" />
     <ClInclude Include="Impl\CTP\APMacroCTP.h" />
+    <ClInclude Include="Input\APInputCommandParser.h" />
+    <ClInclude Include="Input\APInputSystem.h" />
     <ClInclude Include="PositionCtrl\APFuturesSyncCombPosCtrl.h" />
     <ClInclude Include="QuotationDecision\APDualQuotationDecision.h" />
+    <ClInclude Include="System\Win32\NamedPipeListener.h" />
+    <ClInclude Include="System\Win32\NamedPipeSender.h" />
     <ClInclude Include="Test\APTestFramework.h" />
     <ClInclude Include="Utils\APRedisSerializedObject.h" />
     <ClInclude Include="Common\ThreadSafeQueue.h" />
@@ -235,8 +239,12 @@
     <ClCompile Include="APFundPool.cpp" />
     <ClCompile Include="APPositionRepertory.cpp" />
     <ClCompile Include="APSystemSetting.cpp" />
+    <ClCompile Include="Input\APInputCommandParser.cpp" />
+    <ClCompile Include="Input\APInputSystem.cpp" />
     <ClCompile Include="PositionCtrl\APFuturesSyncCombPosCtrl.cpp" />
     <ClCompile Include="QuotationDecision\APDualQuotationDecision.cpp" />
+    <ClCompile Include="System\Win32\NamedPipeListener.cpp" />
+    <ClCompile Include="System\Win32\NamedPipeSender.cpp" />
     <ClCompile Include="Test\APTestFramework.cpp" />
     <ClCompile Include="Utils\APRedisSerializedObject.cpp" />
     <ClCompile Include="Utils\APRedisAgent.cpp" />

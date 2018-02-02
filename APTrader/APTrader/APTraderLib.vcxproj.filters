@@ -246,6 +246,18 @@
     <ClInclude Include="PositionCtrl\APFuturesSyncCombPosCtrl.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="System\Win32\NamedPipeListener.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="System\Win32\NamedPipeSender.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\APInputCommandParser.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\APInputSystem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APPositionCtrl.cpp">
@@ -426,6 +438,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="PositionCtrl\APFuturesSyncCombPosCtrl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="System\Win32\NamedPipeListener.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="System\Win32\NamedPipeSender.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\APInputCommandParser.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\APInputSystem.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
