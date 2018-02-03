@@ -1,12 +1,6 @@
 #pragma once
 #include "APGridStrategy.h"
 
-enum APGridType {
-	GT_Fix = 1,
-	GT_Ratio,
-	GT_Diff,
-	GT_Num
-};
 
 class APStandardGridStrategy : public APGridStrategy
 {
@@ -16,27 +10,25 @@ public:
 
 	static APStrategy* create();
 
-	virtual void buildGrids(std::string gridsInfo);
+protected:
+	//virtual void buildGrids(std::string gridsInfo);
 	//virtual void resetGrids();
+	virtual void buildBuyGrids(std::vector<double>& longValues, std::vector<double>& shortValues);
+	virtual void buildSellGrids(std::vector<double>& longValues, std::vector<double>& shortValues);
+	virtual void goGrids(double valueRef);
+
+	void locateGrids(double valueRef);
+
+#ifdef _DEBUG
+	virtual void printGrids();
+#endif
+
 
 private:
-	//void buildGrids();
-	void buildBuyGrids(std::vector<double>& longValues, std::vector<double>& shortValues);
-	void buildSellGrids(std::vector<double>& longValues, std::vector<double>& shortValues);
+	std::vector<APGridData> m_grids;
 
-	void buildEqualRatioGrids(std::string info);
-	void buildEqualDiffGrids(std::string info);
-	void buildFixedDataGrids(std::string info);
+	int m_openIndex;
 
-private:
-	//double m_gridPercent;
-	//double m_pricePercent;
-	long m_deltaPosition;
-	int m_gridsCount;
-	double m_longValue;
-	double m_shortValue;
-	long m_basePosition;
-
-	APGridType m_gridType;
+	bool m_located;
 };
 

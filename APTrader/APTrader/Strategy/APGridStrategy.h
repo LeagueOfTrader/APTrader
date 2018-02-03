@@ -8,14 +8,19 @@ class APInstrumentQuotation;
 
 struct APGridData {
 	double valueRef;
-	//double price;
 	long position;
 
-	//APGridData(double theValueRef, double thePrice, long thePosition) {
-	//	valueRef = theValueRef;
-	//	price = thePrice;
-	//	position = thePosition;
-	//}
+	void assign(double val, long vol) {
+		valueRef = val;
+		position = vol;
+	}
+};
+
+enum APGridType {
+	GT_Fix = 1,
+	GT_Ratio,
+	GT_Diff,
+	GT_Num
 };
 
 class APGridStrategy : public APStrategy 
@@ -28,36 +33,42 @@ public:
 	virtual void update();
 	virtual void alert();
 
-	//test function
-	void printGrids();
-
 protected:
-	virtual void buildGrids(std::string gridsInfo) = 0;
+	virtual void buildGrids(std::string gridsInfo);
 
-	int getGridIndex(std::vector<APGridData>& grids, double value, bool reverse = false);
+	//void buildEqualRatioArray(std::vector<double>& arr, double baseVal, double ratio, int count);
+	//void buildEqualDiffArray(std::vector<double>& arr, double baseVal, double diff, int count);
 
-	int getCurTrendGridIndex(std::vector<APGridData>& grids, double value, bool open);
+	void buildEqualRatioGrids(std::string info);
+	void buildEqualDiffGrids(std::string info);
+	void buildFixedDataGrids(std::string info);
 
-	void goTrendGrid(double curPrice);// , std::vector<APGridData>& openGrids, std::vector<APGridData>& closeGrids);
+	virtual void buildBuyGrids(std::vector<double>& longValues, std::vector<double>& shortValues) = 0;
+	virtual void buildSellGrids(std::vector<double>& longValues, std::vector<double>& shortValues) = 0;
 
-	bool inOpenSection(double value);
-	bool inCloseSection(double value);
+	virtual void goGrids(double valueRef) = 0;
 
-	void goThroughGrids();
+#ifdef _DEBUG
+	virtual void printGrids() = 0;
+#endif
 
 protected:
 	APTradeDirection m_direction;
-	
-	//APASSETID m_instrumentID;
+	APGridType m_gridType;
 
-	std::vector<APGridData> m_openGrids;
-	std::vector<APGridData> m_closeGrids;
+	double m_longValue;
+	double m_shortValue;
 
-	double m_indeterminateFloor;
-	double m_indeterminateCeil;
+	long m_basePosition;
+	long m_deltaPosition;
+
+	int m_gridsCount;
 
 	int m_curIndex;
 	int m_lastIndex;
 
+
+	double m_indeterminateFloor;
+	double m_indeterminateCeil;
 	//bool m_closeOnly;
 };

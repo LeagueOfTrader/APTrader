@@ -9,12 +9,32 @@
 #include <sstream>  
 #include "../Utils/APLog.h"
 
+// ----
+void buildEqualRatioArray(std::vector<double>& arr, double baseVal, double ratio, int count) {
+	arr.clear();
+	double accumVal = 1.0;
+	for (int i = 0; i < count; i++) {
+		double val = accumVal * baseVal;
+		arr.push_back(val);
+		accumVal *= ratio;
+	}
+}
+
+void buildEqualDiffArray(std::vector<double>& arr, double baseVal, double diff, int count) {
+	double val = baseVal;
+	for (int i = 0; i < count; i++) {
+		arr.push_back(val);
+		val += diff;
+	}
+}
+// ----
+
+
 APGridStrategy::APGridStrategy()
 {
 	m_curIndex = 0;
 	m_lastIndex = 0;
-	m_openGrids.clear();
-	m_closeGrids.clear();
+	
 
 	/*m_closeOnly = false;*/
 }
@@ -38,9 +58,13 @@ void APGridStrategy::init(std::string strategyInfo)
 
 	buildGrids(gridsInfo);
 
-#if _DEBUG
+#ifdef _DEBUG
 	printGrids();
 #endif
+}
+
+void APGridStrategy::alert()
+{
 }
 
 void APGridStrategy::update()
@@ -55,192 +79,113 @@ void APGridStrategy::update()
 			return;
 		}
 
-		m_curIndex = 0;
-		goTrendGrid(curValue);
-		goThroughGrids();
-		m_lastIndex = m_curIndex;
-	}
-}
-
-void APGridStrategy::alert()
-{
-}
-
-void APGridStrategy::printGrids()
-{
-	std::cout << "Open grids" << std::endl;
-	
-	for (int i = 0; i < m_openGrids.size(); i++) {
-		APGridData& data = m_openGrids[i];
-		std::stringstream ss;
-		ss << "[" << i + 1 << "], quotation: " << data.valueRef << ", position: " << data.position << ". ";
-		APLogger->log(ss.str().c_str());
-		//std::cout << "[" << i + 1 << "], quotation: " << data.valueRef << ", price: " << data.price << ", position: " << data.position << ". " << std::endl;
-	}
-
-	std::cout << "Close grids" << std::endl;
-
-	for (int i = 0; i < m_closeGrids.size(); i++) {
-		APGridData& data = m_closeGrids[i];
-		std::stringstream ss;
-		ss << "[" << i + 1 << "], quotation: " << data.valueRef << ", position: " << data.position << ". ";
-		APLogger->log(ss.str().c_str());
-		//std::cout << "[" << i + 1 << "], quotation: " << data.valueRef << ", price: " << data.price << ", position: " << data.position << ". " << std::endl;
-	}
-}
-
-void APGridStrategy::goTrendGrid(double value) // , std::vector<APGridData>& openGrids, std::vector<APGridData>& closeGrids)
-{
-	if (m_positionCtrl == NULL) {
-		return;
-	}
-
-	double price = 0.0;
-	if (inCloseSection(value)) {
-		if (m_positionCtrl->getAvailablePosition() == 0) {
-			return;
-		}
-
-		int i = getCurTrendGridIndex(m_closeGrids, value, false);
-		if (i < 0) {
-			i = 0;
-		}
-
-		m_curIndex = i + 1;
-
-		if (m_curIndex > m_lastIndex) {
-			long volume = std::min(m_positionCtrl->getAvailablePosition(), m_closeGrids[i].position);
-			if (i == m_closeGrids.size() - 1) {
-				volume = m_positionCtrl->getAvailablePosition();
-			}
-			//m_positionCtrl->closePosition(m_direction, volume);
-			close(volume);
-		}
-	}
-	else if (inOpenSection(value)) {
-		if (m_closeOnly) {
-			return;
-		}
-
-		int i = getCurTrendGridIndex(m_openGrids, value, true);
-
-		if (i >= m_openGrids.size()) {
-			//m_positionCtrl->openFullPosition(m_direction);
-			return;
-		}
-
-		m_curIndex = -(i + 1);
-
-		long amount = m_positionCtrl->getForeseeableHoldPosition();
-		if (amount < m_openGrids[i].position) {
-			long volume = m_openGrids[i].position - amount;
-			//m_positionCtrl->openPosition(m_direction, volume);
-			open(volume);
-		}
+		goGrids(curValue);
 	}
 }
 
 
-void APGridStrategy::goThroughGrids()
+void APGridStrategy::buildGrids(std::string gridsInfo)
 {
-	if (m_curIndex == m_lastIndex || m_lastIndex == 0) {
-		return;
-	}	
-
-	APTradeType type = TT_Num;
-	if(m_lastIndex < 0){
-		type = TT_Open;
+	APJsonReader jr;
+	jr.initWithString(gridsInfo);
+	std::string strDirection = jr.getStrValue("Direction");
+	if (strDirection == "Buy") {
+		m_direction = TD_Buy;
 	}
-	else {
-		type = TT_Close;
+	else if (strDirection == "Sell") {
+		m_direction = TD_Sell;
 	}
 
-	int gridIndex = m_lastIndex;
+	m_indeterminateCeil = jr.getDoubleValue("Ceil");
+	m_indeterminateFloor = jr.getDoubleValue("Floor");
+	m_deltaPosition = jr.getIntValue("DeltaPosition");
+	m_basePosition = jr.getIntValue("BasePosition");
+	m_gridsCount = jr.getIntValue("GridsCount");
+	m_longValue = jr.getDoubleValue("LongValue");
+	m_shortValue = jr.getDoubleValue("ShortValue");
 
-	//bool isGoingPoles = true;
-	//if (abs(m_curIndex) > abs(m_lastIndex)) {
-	//	isGoingPoles = false;
-	//}
+	m_gridType = (APGridType)jr.getIntValue("GridType");
 
-	double refPrice = 0.0;
-	if (gridIndex > 0) {
-		refPrice = m_closeGrids[gridIndex - 1].valueRef;
+	//resetGrids();
+	switch (m_gridType)
+	{
+	case GT_Diff:
+		buildEqualDiffGrids(gridsInfo);
+		break;
+	case GT_Ratio:
+		buildEqualRatioGrids(gridsInfo);
+		break;
+	case GT_Fix:
+		buildFixedDataGrids(gridsInfo);
+		break;
+	default:
+		break;
 	}
-	else {
-		refPrice = m_openGrids[-gridIndex - 1].valueRef;
-	}
 
-	//if (m_positionCtrl != NULL) {
-	//	m_positionCtrl->cancelTrade(type, refPrice, m_direction);
-	//}
+#ifdef _DEBUG
+	printGrids();
+#endif
 }
 
-bool APGridStrategy::inOpenSection(double value)
+
+void APGridStrategy::buildEqualRatioGrids(std::string info)
 {
+	APJsonReader jr;
+	jr.initWithString(info);
+
+	double ratio = jr.getDoubleValue("Ratio");
+	std::vector<double> longVals;
+	buildEqualRatioArray(longVals, m_longValue, ratio, m_gridsCount);
+	std::vector<double> shortVals;
+	buildEqualRatioArray(shortVals, m_shortValue, -ratio, m_gridsCount);
+
 	if (m_direction == TD_Buy) {
-		return value < m_indeterminateFloor;
-	}
-	else if (m_direction == TD_Sell) {
-		return value > m_indeterminateCeil;
-	}
-
-	return false;
-}
-
-bool APGridStrategy::inCloseSection(double value)
-{
-	if (m_direction == TD_Buy) {
-		return value >= m_indeterminateCeil;
-	}
-	else if (m_direction == TD_Sell) {
-		return value <= m_indeterminateFloor;
-	}
-
-	return false;
-}
-
-int APGridStrategy::getGridIndex(std::vector<APGridData>& grids, double value, bool reverse)
-{
-	int i = 0;
-
-	if (!reverse) {
-		for (i = 0; i < grids.size(); i++) {
-			if (grids[i].valueRef - value > 0.0f
-				//&& curPrice - grids[i].price < APGlobalConfig::getInstance()->getNearByPrice()
-				) {
-				break;
-			}
-		}
-
-		if (i > 0) {
-			i--;
-		}
+		buildBuyGrids(longVals, shortVals);
 	}
 	else {
-		for (i = grids.size() - 1; i >= 0; i--) {
-			if (grids[i].valueRef - value > 0.0f) {
-				break;
-			}
-		}
-
-		if (i < grids.size() - 1) {
-			i++;
-		}
-	}	
-
-	return i;
+		buildSellGrids(longVals, shortVals);
+	}
 }
 
-int APGridStrategy::getCurTrendGridIndex(std::vector<APGridData>& grids, double value, bool open)
+void APGridStrategy::buildEqualDiffGrids(std::string info)
 {
-	bool reverse = true;
-	if ((m_direction == TD_Buy && open == false)
-		|| (m_direction == TD_Sell && open == true)) {
-		reverse = false;
+	APJsonReader jr;
+	jr.initWithString(info);
+
+	double diff = jr.getDoubleValue("Diff");
+	std::vector<double> longVals;
+	buildEqualDiffArray(longVals, m_longValue, diff, m_gridsCount);
+	std::vector<double> shortVals;
+	buildEqualDiffArray(shortVals, m_shortValue, -diff, m_gridsCount);
+
+	if (m_direction == TD_Buy) {
+		buildBuyGrids(longVals, shortVals);
+	}
+	else {
+		buildSellGrids(longVals, shortVals);
+	}
+}
+
+void APGridStrategy::buildFixedDataGrids(std::string info)
+{
+	APJsonReader jr;
+	jr.initWithString(info);
+
+	std::vector<double> longVals;
+	for (int i = 0; i < m_gridsCount; i++) {
+		double val = jr.getArrayDoubleValue("LongValues", i);
+		longVals.push_back(val);
+	}
+	std::vector<double> shortVals;
+	for (int i = 0; i < m_gridsCount; i++) {
+		double val = jr.getArrayDoubleValue("ShortValues", i);
+		shortVals.push_back(val);
 	}
 
-	return getGridIndex(grids, value, reverse);
+	if (m_direction == TD_Buy) {
+		buildBuyGrids(longVals, shortVals);
+	}
+	else {
+		buildSellGrids(longVals, shortVals);
+	}
 }
-
-
-

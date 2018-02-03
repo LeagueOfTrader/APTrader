@@ -77,7 +77,7 @@ void APTransferPositionStrategy::update()
 		APFuturesPosCtrlWithTransfer* pc = dynamic_cast<APFuturesPosCtrlWithTransfer*>(m_positionCtrl);
 		if (pc != NULL) {
 			if (pc->isTransferFinished()) {
-				onFinishTransfer();
+				//onFinishTransfer();
 				return;
 			}
 
@@ -178,19 +178,19 @@ bool APTransferPositionStrategy::canTransferWithCurrentPrice()
 	return false;
 }
 
-void APTransferPositionStrategy::onFinishTransfer()
-{
-	// set parent strategy's new instrumentID, also position ctrl's instrumentID and sync positionCtrl's status
-	if (m_positionCtrl != NULL) {
-		m_positionCtrl->setInstrumentID(m_targetContractID);
-		//m_positionCtrl->syncPositionStatus();
-	}
-	// detach from parent strategy -- or generate new delivery date
-	APStrategy* parentStrategy = getParent();
-	if (parentStrategy != NULL) {
-		parentStrategy->setInstrumentID(m_targetContractID);
-		//parentStrategy->detach(this);
-	}
-
-	detachFromParent();
-}
+//void APTransferPositionStrategy::onFinishTransfer()
+//{
+//	// set parent strategy's new instrumentID, also position ctrl's instrumentID and sync positionCtrl's status
+//	if (m_positionCtrl != NULL) {
+//		m_positionCtrl->setInstrumentID(m_targetContractID);
+//		//m_positionCtrl->syncPositionStatus();
+//	}
+//	// detach from parent strategy -- or generate new delivery date
+//	APStrategy* parentStrategy = getParent();
+//	if (parentStrategy != NULL) {
+//		parentStrategy->setInstrumentID(m_targetContractID);
+//		//parentStrategy->detach(this);
+//	}
+//
+//	detachFromParent();
+//}

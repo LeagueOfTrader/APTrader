@@ -28,7 +28,7 @@ private:
 	double getCurPriceMargin();
 	bool canTransferWithCurrentPrice();
 
-	void onFinishTransfer();
+	//void onFinishTransfer();
 
 private:
 	//APASSETID m_srcContractID; //use m_instrumentID

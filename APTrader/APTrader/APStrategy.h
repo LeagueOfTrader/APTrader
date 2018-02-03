@@ -7,7 +7,7 @@
 class APPositionCtrl;
 class APQuotationDecision;
 
-class APStrategy : public ParentChildrenHierarchy<APStrategy>
+class APStrategy //: public ParentChildrenHierarchy<APStrategy>
 {
 public:
 	APStrategy();
