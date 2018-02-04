@@ -7,6 +7,12 @@
 class APPositionCtrl;
 class APQuotationDecision;
 
+enum APGridSectionType {
+	GST_Open = 1,
+	GST_Close = -1,
+	GST_Indeterminate = 0
+};
+
 class APStrategy //: public ParentChildrenHierarchy<APStrategy>
 {
 public:

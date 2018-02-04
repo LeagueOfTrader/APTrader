@@ -23,6 +23,14 @@ protected:
 	virtual void printGrids();
 #endif
 
+private:
+	int getGridIndex(double curValue);// , bool reversed = false);
+	//bool inOpenSection(int curIndex);
+	APGridSectionType getSection(double valueRef);
+	//void goBuyGrids(double valueRef);
+	//void goSellGrids(double valueRef);
+	void enterGridInOpenWay(int gridIndex, APGridSectionType section);
+	void enterGridInCloseWay(int gridIndex, APGridSectionType section);
 
 private:
 	std::vector<APGridData> m_grids;
@@ -30,5 +38,7 @@ private:
 	int m_openIndex;
 
 	bool m_located;
+	int m_prevIndex;
+	int m_nextIndex;
 };
 
