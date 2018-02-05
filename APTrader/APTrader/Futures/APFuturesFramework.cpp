@@ -98,6 +98,10 @@ void APFuturesFramework::ready()
 	addTicker(APMarketDataMgr);
 	//addTicker(APAccountInfo::getInstance());
 	addTicker(APStrategyManager::getInstance());
+
+	if (APGlobalConfig::getInstance()->useInput()) {
+		addTicker(APInputSystem::getInstance());
+	}
 }
 
 void APFuturesFramework::start()
@@ -148,9 +152,6 @@ void APFuturesFramework::initLocalSystem()
 
 	APStrategyManager::getInstance()->init();
 
-	if (APGlobalConfig::getInstance()->useInput()) {
-		APInputSystem::getInstance()->init();
-	}
 	//init();
 
 	//long waitInterval = APSystemSetting::getInstance()->getInitializeStateWaitInterval();
@@ -162,6 +163,10 @@ void APFuturesFramework::initLocalSystem()
 
 	if (!APGlobalConfig::getInstance()->isManualPosition()) {
 		APAccountInfo::getInstance()->verify();
+	}
+
+	if (APGlobalConfig::getInstance()->useInput()) {
+		APInputSystem::getInstance()->init();
 	}
 
 	setInited();

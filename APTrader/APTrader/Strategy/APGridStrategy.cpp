@@ -58,9 +58,9 @@ void APGridStrategy::init(std::string strategyInfo)
 
 	buildGrids(gridsInfo);
 
-#ifdef _DEBUG
-	printGrids();
-#endif
+//#ifdef _DEBUG
+//	printGrids();
+//#endif
 }
 
 void APGridStrategy::alert()

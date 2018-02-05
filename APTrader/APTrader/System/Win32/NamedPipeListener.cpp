@@ -32,13 +32,15 @@ void NamedPipeListener::init()
 		return;
 	}
 
-	if (ConnectNamedPipe(m_hPipe, NULL) != NULL) {
-		setInited();
-		m_run = true;
-	}
+	//if (ConnectNamedPipe(m_hPipe, NULL) != NULL) {
+	//	setInited();
+	//	m_run = true;
+	//}
 
 	m_criticalSection = (LPCRITICAL_SECTION)malloc(sizeof(LPCRITICAL_SECTION));
 	m_semaphore = CreateSemaphore(NULL, 1, 1, TEXT("semaphore"));
+
+	setInited();
 }
 
 void NamedPipeListener::start()
@@ -54,6 +56,11 @@ void NamedPipeListener::listenPipe()
 {	
 	char buf[BUFFER_MAX_LEN];
 	DWORD dwLen;
+
+	if (ConnectNamedPipe(m_hPipe, NULL) != NULL) {
+		setInited();
+		m_run = true;
+	}
 
 	while (m_run)
 	{

@@ -1,8 +1,8 @@
-{
-	"Tag":"hc1805sell",
+{	
     "StrategyType": "Grid",
     "Priority": 10,
     "StrategyInfo": {
+		"Tag":"hc1805sell",
         "Position": {
             "InstrumentID": "hc1805",
             "TotalPosition": 100,

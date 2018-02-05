@@ -40,6 +40,7 @@ void APTestFramework::init()
 
 void APTestFramework::update()
 {
+	APInputSystem::getInstance()->update();
 }
 
 void APTestFramework::exit()

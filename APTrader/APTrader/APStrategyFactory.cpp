@@ -2,6 +2,7 @@
 #include "APStrategy.h"
 #include "Strategy/APStandardGridStrategy.h"
 #include "Strategy/APTransferPositionStrategy.h"
+#include "Strategy/APTrendGridStrategy.h"
 
 //std::map<std::string, StrategyCreateMethod> APStrategyFactory::m_createMethods;
 
@@ -10,6 +11,7 @@ void APStrategyFactory::init()
 	//m_createMethods.clear();
 
 	registerCreator("Grid", APStandardGridStrategy::create);
+	registerCreator("Trend", APTrendGridStrategy::create);
 	registerCreator("Transfer", APStandardGridStrategy::create);
 
 	setInited();

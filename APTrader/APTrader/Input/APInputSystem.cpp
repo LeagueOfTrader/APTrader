@@ -22,7 +22,10 @@ APInputSystem::~APInputSystem()
 
 void APInputSystem::init() 
 {
+	APInputCommandParser::init();
+
 	m_pipeListener = new NamedPipeListener("APTrader_CmdLine");
+	m_pipeListener->init();
 	bool ret = m_pipeListener->inited();
 	if (ret) {
 		m_pipeListener->registerPipeCallback(onGetInput);
@@ -36,6 +39,7 @@ void APInputSystem::exit()
 {
 	//m_inputThread.detach();
 	if (m_pipeListener != NULL) {
+		m_pipeListener->exit();
 		delete m_pipeListener;
 		m_pipeListener = NULL;
 	}
@@ -47,9 +51,9 @@ void APInputSystem::update()
 	m_cmdBufferMutex.lock();
 	while (m_commandBuffer.size() > 0) {
 		std::string& cmd = m_commandBuffer.front();
-		//APInputCommandParser::parseCommand(cmd);
+		APInputCommandParser::parseCommand(cmd);
 
-		printf("Get command: %s\n", cmd.c_str());
+		//printf("Get command: %s\n", cmd.c_str());
 		m_commandBuffer.pop_front();
 	}
 	m_cmdBufferMutex.unlock();

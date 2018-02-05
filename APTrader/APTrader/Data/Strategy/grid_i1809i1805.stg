@@ -1,8 +1,8 @@
-{	
-	"Tag":"i1809-i1805",
-    "StrategyType": "Grid",
+{		
+    "StrategyType": "Trend",
     "Priority": 20,
     "StrategyInfo": {
+		"Tag":"i1809-i1805",
         "Position": {
 			"Type": "Combine",
             "InstrumentID": "i1809",

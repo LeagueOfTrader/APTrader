@@ -13,6 +13,10 @@ NamedPipeSender::~NamedPipeSender()
 void NamedPipeSender::init()
 {
 	bool ret = WaitNamedPipeA(m_pipeName.c_str(), NMPWAIT_WAIT_FOREVER);
+	while (!ret) {
+		Sleep(1000);
+		ret = WaitNamedPipeA(m_pipeName.c_str(), NMPWAIT_WAIT_FOREVER);		
+	}
 	if (ret) {
 		m_hPipe = CreateFileA(m_pipeName.c_str(), GENERIC_WRITE, 0,
 			NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);

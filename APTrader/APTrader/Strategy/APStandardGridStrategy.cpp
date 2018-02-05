@@ -8,8 +8,9 @@ APStandardGridStrategy::APStandardGridStrategy()
 {
 	m_located = false;
 	m_curIndex = -1;
-	m_prevIndex = -1;
-	m_nextIndex = -1;
+	//m_prevIndex = -1;
+	//m_nextIndex = -1;
+	m_lastValue = 0.0;
 }
 
 
@@ -21,27 +22,6 @@ APStrategy * APStandardGridStrategy::create()
 {
 	return new APStandardGridStrategy();
 }
-
-//void APStandardGridStrategy::buildGrids(std::string gridsInfo)
-//{
-//	APJsonReader jr;
-//	jr.initWithString(gridsInfo);
-//	std::string strDirection = jr.getStrValue("Direction");
-//	if (strDirection == "Buy") {
-//		m_direction = TD_Buy;
-//	}
-//	else if (strDirection == "Sell") {
-//		m_direction = TD_Sell;
-//	}
-//
-//	m_deltaPosition = jr.getIntValue("DeltaPosition");
-//	m_basePosition = jr.getIntValue("BasePosition");
-//	m_gridsCount = jr.getIntValue("GridsCount");
-//	m_longValue = jr.getDoubleValue("LongValue");
-//	m_shortValue = jr.getDoubleValue("ShortValue");
-//
-//	m_gridType = (APGridType)jr.getIntValue("GridType");
-//}
 
 void APStandardGridStrategy::buildBuyGrids(std::vector<double>& longValues, std::vector<double>& shortValues)
 {
@@ -96,9 +76,10 @@ void APStandardGridStrategy::goGrids(double valueRef)
 		return;
 	}
 
-	if (valueRef > m_grids[m_curIndex].valueRef) {
-		if (m_nextIndex < 2 * m_gridsCount) {
-			if (valueRef > m_grids[m_nextIndex].valueRef) {
+	int nextIndex = m_curIndex + 1;
+	if (valueRef > m_lastValue) {
+		if (nextIndex < 2 * m_gridsCount) {
+			if (valueRef > m_grids[nextIndex].valueRef) {
 				int index = getGridIndex(valueRef);
 				// move to new grid;
 				if (m_direction == TD_Buy) {
@@ -111,9 +92,9 @@ void APStandardGridStrategy::goGrids(double valueRef)
 			}
 		}
 	}
-	else if (valueRef < m_grids[m_curIndex].valueRef) {
-		if (m_prevIndex >= 0) {
-			if (valueRef < m_grids[m_prevIndex].valueRef) {
+	else if (valueRef < m_lastValue) {
+		if (m_curIndex > 0) {
+			if (valueRef < m_grids[m_curIndex].valueRef) {
 				int index = getGridIndex(valueRef);
 
 				if (m_direction == TD_Buy) {
@@ -134,80 +115,105 @@ void APStandardGridStrategy::locateGrids(double valueRef)
 	
 	m_curIndex = getGridIndex(valueRef);
 
-	m_prevIndex = m_curIndex - 1;
-	m_nextIndex = m_curIndex + 1;
+	//m_prevIndex = m_curIndex - 1;
+	//m_nextIndex = m_curIndex + 1;
 
 	if (m_positionCtrl == NULL) {
 		return;
 	}
 
 	APGridSectionType section = getSection(valueRef);
+	int targetIndex = m_curIndex;
+	
 	if (section == GST_Open) {	
+		if (m_direction == TD_Buy) {
+			targetIndex = m_curIndex + 1;
+		}
+		else {
+			targetIndex = m_curIndex;
+		}
+
 		long hold = m_positionCtrl->getForeseeableHoldPosition();
-		if (hold < m_grids[m_curIndex].position) {
-			long volume = m_grids[m_curIndex].position - hold;
+		if (hold < m_grids[targetIndex].position) {
+			long volume = m_grids[targetIndex].position - hold;
 			m_positionCtrl->openPosition(volume);
 		}
 	}
 	else if(section == GST_Close){
+		if (m_direction == TD_Buy) {
+			targetIndex = m_curIndex;
+		}
+		else {
+			targetIndex = m_curIndex + 1;
+		}
+
 		long available = m_positionCtrl->getAvailablePosition();
-		if (available > m_grids[m_curIndex].position) {
-			long volume = available - m_grids[m_curIndex].position;
+		if (available > m_grids[targetIndex].position) {
+			long volume = available - m_grids[targetIndex].position;
 			m_positionCtrl->closePosition(volume);
 		}
 	}
 
 	m_located = true;
 	m_lastIndex = m_curIndex;
+	m_lastValue = valueRef;
 }
 
 int APStandardGridStrategy::getGridIndex(double curValue)//, bool reversed)
 {
-	bool reversed = false;
+	//bool reversed = false;
+	//if (curValue > m_longValue)
+	//{
+	//	if (m_direction == TD_Buy) {
+	//		reversed = false;
+	//	}
+	//	else {
+	//		reversed = true;
+	//	}
+	//}
+	//else if (curValue < m_shortValue)
+	//{
+	//	if (m_direction == TD_Buy) {
+	//		reversed = true;
+	//	}
+	//	else {
+	//		reversed = false;
+	//	}
+	//}
+	//else {
+	//	m_curIndex = m_openIndex;
+	//}
+
+	//if (!reversed) {
+	//	int i = 0;
+	//	for (i = 0; i < m_grids.size(); i++) {
+	//		if (curValue < m_grids[i].valueRef) {
+	//			break;
+	//		}
+	//	}
+
+	//	index = std::min(i, (int)m_grids.size() - 1);
+	//}
+	//else
+	//{
+	//	int i = 0;
+	//	for (i = m_grids.size() - 1; i > 0; i--) {
+	//		if (curValue > m_grids[i].valueRef) {
+	//			break;
+	//		}
+	//	}
+	//	index = std::max(i, 0);
+	//}
+
 	int index = 0;
-	if (curValue > m_longValue)
-	{
-		if (m_direction == TD_Buy) {
-			reversed = false;
+	int i = 0;
+	for (i = 0; i < m_grids.size(); i++) {
+		if (curValue < m_grids[i].valueRef) {
+			break;
 		}
-		else {
-			reversed = true;
-		}
-	}
-	else if (curValue < m_shortValue)
-	{
-		if (m_direction == TD_Buy) {
-			reversed = true;
-		}
-		else {
-			reversed = false;
-		}
-	}
-	else {
-		m_curIndex = m_openIndex;
 	}
 
-	if (!reversed) {
-		int i = 0;
-		for (i = 0; i < m_grids.size(); i++) {
-			if (curValue > m_grids[i].valueRef) {
-				continue;
-			}
-		}
-
-		index = std::min(i, (int)m_grids.size() - 1);
-	}
-	else
-	{
-		int i = 0;
-		for (i = m_grids.size() - 1; i > 0; i--) {
-			if (curValue < m_grids[i].valueRef) {
-				continue;
-			}
-		}
-
-		index = std::max(i, 0);
-	}
+	index = std::min(i, (int)m_grids.size() - 1);
 
 	return index;
 }
@@ -254,34 +260,59 @@ void APStandardGridStrategy::enterGridInOpenWay(int gridIndex, APGridSectionType
 	}
 
 	m_curIndex = gridIndex;
+	int targetIndex = m_curIndex;
+	long hold = m_positionCtrl->getForeseeableHoldPosition();
 	if (section == GST_Open) {
-		long hold = m_positionCtrl->getForeseeableHoldPosition();
+		if (m_direction == TD_Buy) {
+			targetIndex = m_curIndex + 1;
+		}
+		else {
+			targetIndex = m_curIndex;
+		}
+
 		if (hold < m_grids[m_curIndex].position) {
 			long volume = m_grids[m_curIndex].position - hold;
 			m_positionCtrl->openPosition(volume);
 		}
 	}
+	//else {
+	//	if (hold < m_basePosition) {
+	//		m_positionCtrl->openPosition(m_deltaPosition);
+	//	}
+	//}
 }
 
 void APStandardGridStrategy::enterGridInCloseWay(int gridIndex, APGridSectionType section)
 {
-		if (m_positionCtrl == NULL) {
+	if (m_positionCtrl == NULL) {
 		return;
 	}
 
+	int targetIndex = m_curIndex;
 	m_curIndex = gridIndex;
-	m_prevIndex = m_curIndex - 1;
 	if (section == GST_Open) {
+		if (m_direction == TD_Buy) {
+			targetIndex = m_curIndex + 1;
+		}
+		else {
+			targetIndex = m_curIndex;
+		}
 		long hold = m_positionCtrl->getForeseeableHoldPosition();
-		long base = std::max(m_basePosition, m_grids[m_prevIndex].position);
+		long base = std::max(m_basePosition, m_grids[targetIndex].position);
 		if (hold > base) {
-			long volume = base - hold;
+			long volume = hold - base;
 			m_positionCtrl->closePosition(volume);
 		}
 	}
 	else {
+		if (m_direction == TD_Buy) {
+			targetIndex = m_curIndex;
+		}
+		else {
+			targetIndex = m_curIndex + 1;
+		}
 		long available = m_positionCtrl->getAvailablePosition();
-		long target = m_grids[m_curIndex].position;
+		long target = m_grids[targetIndex].position;
 		if (available > target) {
 			long volume = available - target;
 			m_positionCtrl->closePosition(volume);
