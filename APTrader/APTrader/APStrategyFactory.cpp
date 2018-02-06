@@ -3,6 +3,8 @@
 #include "Strategy/APStandardGridStrategy.h"
 #include "Strategy/APTransferPositionStrategy.h"
 #include "Strategy/APTrendGridStrategy.h"
+#include "Strategy/APFloatingGridStrategy.h"
+#include "Strategy/APFloatingGridOrderedStrategy.h"
 
 //std::map<std::string, StrategyCreateMethod> APStrategyFactory::m_createMethods;
 
@@ -13,6 +15,8 @@ void APStrategyFactory::init()
 	registerCreator("Grid", APStandardGridStrategy::create);
 	registerCreator("Trend", APTrendGridStrategy::create);
 	registerCreator("Transfer", APStandardGridStrategy::create);
+	registerCreator("FloatingGrid", APFloatingGridStrategy::create);
+	registerCreator("FloatingOrderGrid", APFloatingGridOrderedStrategy::create);
 
 	setInited();
 }

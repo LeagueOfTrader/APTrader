@@ -91,6 +91,7 @@ public:
 	void syncPosition();
 	virtual void correctPosition();
 
+	void removeAllLocalOrders();
 	void outputInfo();
 
 protected:

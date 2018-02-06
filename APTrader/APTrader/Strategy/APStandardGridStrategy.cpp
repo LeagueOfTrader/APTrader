@@ -77,6 +77,7 @@ void APStandardGridStrategy::goGrids(double valueRef)
 	}
 
 	int nextIndex = m_curIndex + 1;
+	//int prevIndex = m_curIndex - 1;
 	if (valueRef > m_lastValue) {
 		if (nextIndex < 2 * m_gridsCount) {
 			if (valueRef > m_grids[nextIndex].valueRef) {
@@ -107,16 +108,14 @@ void APStandardGridStrategy::goGrids(double valueRef)
 			}
 		}
 	}
+
+	m_lastValue = valueRef;
 }
 
 void APStandardGridStrategy::locateGrids(double valueRef)
 {
-	// todo: init location of grids
-	
+	// [n ~ n+1] : index = n, <= max(n)
 	m_curIndex = getGridIndex(valueRef);
-
-	//m_prevIndex = m_curIndex - 1;
-	//m_nextIndex = m_curIndex + 1;
 
 	if (m_positionCtrl == NULL) {
 		return;
@@ -258,6 +257,9 @@ void APStandardGridStrategy::enterGridInOpenWay(int gridIndex, APGridSectionType
 	if (m_positionCtrl == NULL) {
 		return;
 	}
+
+	int nextIndex = m_curIndex + 1;
+	int prevIndex = m_curIndex - 1;
 
 	m_curIndex = gridIndex;
 	int targetIndex = m_curIndex;

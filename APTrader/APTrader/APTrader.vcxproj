@@ -167,6 +167,7 @@
     <ClInclude Include="Common\Ticker.h" />
     <ClInclude Include="Impl\CTP\APMacroCTP.h" />
     <ClInclude Include="QuotationDecision\APDualQuotationDecision.h" />
+    <ClInclude Include="Strategy\APFloatingGridOrderedStrategy.h" />
     <ClInclude Include="Strategy\APFloatingGridStrategy.h" />
     <ClInclude Include="Strategy\APTrendGridStrategy.h" />
     <ClInclude Include="System\Win32\NamedPipeListener.h" />
@@ -246,6 +247,7 @@
     <ClCompile Include="APPositionRepertory.cpp" />
     <ClCompile Include="APSystemSetting.cpp" />
     <ClCompile Include="QuotationDecision\APDualQuotationDecision.cpp" />
+    <ClCompile Include="Strategy\APFloatingGridOrderedStrategy.cpp" />
     <ClCompile Include="Strategy\APFloatingGridStrategy.cpp" />
     <ClCompile Include="Strategy\APTrendGridStrategy.cpp" />
     <ClCompile Include="System\Win32\NamedPipeListener.cpp" />

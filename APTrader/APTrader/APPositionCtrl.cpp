@@ -514,6 +514,12 @@ void APPositionCtrl::correctPosition()
 	}
 }
 
+void APPositionCtrl::removeAllLocalOrders()
+{
+	m_openOrderList.clear();
+	m_closeOrderList.clear();
+}
+
 void APPositionCtrl::outputInfo()
 {
 	APLogger->log("PositionCtrl: %d, hold: %d, frozen: %d, opening: %d, closing: %d. ", 

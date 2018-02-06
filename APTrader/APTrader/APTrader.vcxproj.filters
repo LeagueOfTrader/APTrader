@@ -267,6 +267,9 @@
     <ClInclude Include="Strategy\APFloatingGridStrategy.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Strategy\APFloatingGridOrderedStrategy.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APPositionCtrl.cpp">
@@ -468,6 +471,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Strategy\APFloatingGridStrategy.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Strategy\APFloatingGridOrderedStrategy.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
