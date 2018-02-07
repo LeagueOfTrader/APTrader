@@ -177,7 +177,8 @@ std::vector<APPositionData> APPositionCtrl::getHoldPositionDetail()
 {
 	std::vector<APPositionData> holdPosList;
 	APPositionData pd;
-	memset(&pd, 0, sizeof(pd));
+	//memset(&pd, 0, sizeof(pd));
+	pd.clear();
 	pd.instrumentID = m_instrumentID;
 	pd.direction = m_directionType;
 	pd.holdPosition = m_holdPosition;

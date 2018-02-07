@@ -12,6 +12,16 @@ struct APPositionData {
 	long yesterdayPosition;
 	long todayPosition;
 
+	void clear() {
+		instrumentID = "";
+		direction = TD_Buy;
+		holdPosition = 0;
+		longFrozenPosition = 0;
+		shortFrozenPosition = 0;
+		yesterdayPosition = 0;
+		todayPosition = 0;
+	}
+
 	void assign(const APPositionData& refData) {
 		instrumentID = refData.instrumentID;
 		direction = refData.direction;

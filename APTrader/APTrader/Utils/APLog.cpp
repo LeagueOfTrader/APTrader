@@ -47,6 +47,7 @@ void APLog::log(const char* charFormat, ...) {
 
 #ifdef OUTPUT_DBG_WND
 	OutputDebugString(s2ws(content + "\n").c_str());
+	//OutputDebugString((content + "\n").c_str());
 #endif
 }
 

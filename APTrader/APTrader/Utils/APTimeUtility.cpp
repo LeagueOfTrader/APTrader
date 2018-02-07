@@ -75,7 +75,7 @@ int APTimeUtility::getMonth(std::string ym)
 std::string APTimeUtility::generateYearMonth(int year, int month)
 {
 	char* ym = new char[8];
-	sprintf(ym, "%2d%2d", year, month);
+	sprintf(ym, "%02d%02d", year, month);
 	std::string yearMonth = ym;
 	return yearMonth;
 }
@@ -132,7 +132,7 @@ std::string APTimeUtility::getDate()
 	SYSTEMTIME sys;
 	GetLocalTime(&sys);
 	char strDate[64];
-	sprintf(strDate, "%4d%2d%2d", sys.wYear, sys.wMonth, sys.wDay);
+	sprintf(strDate, "%04d%02d%02d", sys.wYear, sys.wMonth, sys.wDay);
 	std::string date = strDate;
 	return date;
 }
@@ -157,13 +157,18 @@ std::string APTimeUtility::getLastFutureTransactionDay()
 {
 	SYSTEMTIME sys;
 	GetLocalTime(&sys);
-	if (sys.wDayOfWeek == 0 || sys.wDayOfWeek == 6) {
-		//
+	int bias = -1;
+	if (sys.wDayOfWeek == 0) {
+		bias = -2;
 	}
-	char strDateTime[64];
-	sprintf(strDateTime, "%4d%02d%02d%02d%02d%02d", sys.wYear, sys.wMonth, sys.wDay, sys.wHour, sys.wMinute, sys.wSecond);
-	std::string dateTime = strDateTime;
-	return dateTime;
+	//else if (sys.wDayOfWeek == 6) {
+	//	bias = -1;
+	//}
+	else if (sys.wDayOfWeek == 1) {
+		bias = -3;
+	}
+	std::string today = getDate();
+	return calcDateByDeltaDays(today, bias);
 }
 
 int APTimeUtility::compareDateTime(std::string dt0, std::string dt1)
@@ -249,7 +254,7 @@ std::string APTimeUtility::calcDateByDeltaDays(std::string srcDate, int deltaDay
 	}
 
 	char strDateTime[64];
-	sprintf(strDateTime, "%4d%2d%2d", sys.wYear, sys.wMonth, sys.wDay);
+	sprintf(strDateTime, "%04d%02d%02d", year, month, day);
 	std::string ymd = strDateTime;
 
 	return ymd;

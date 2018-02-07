@@ -287,7 +287,8 @@ void APTrade::setOrderIDBase(UINT base)
 void APTrade::queryAllOrders()
 {
 #ifdef USE_CTP
-	APFuturesCTPTraderAgent::getInstance()->reqQryAllOrders();
+	//APFuturesCTPTraderAgent::getInstance()->reqQryAllOrders();
+	APFuturesCTPTraderAgent::getInstance()->reqQryLastOrders();
 #endif
 }
 
@@ -316,7 +317,8 @@ void APTrade::queryOrder(APORDERID localOrderID)
 void APTrade::onQueryOrder(APORDERID localOrderID)
 {
 #ifdef USE_CTP
-	APTradeOrderInfo toi = APFuturesCTPTraderAgent::getInstance()->getOrderInfo(localOrderID);
+	APTradeOrderInfo toi;
+	APFuturesCTPTraderAgent::getInstance()->getOrderInfo(localOrderID, toi);
 	m_localOrders[localOrderID] = toi;
 #endif
 }

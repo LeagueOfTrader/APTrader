@@ -52,7 +52,8 @@ std::vector<APPositionData> APFuturesCombinationPosCtrl::getHoldPositionDetail()
 {
 	std::vector<APPositionData> holdPosList;
 	APPositionData pd;
-	memset(&pd, 0, sizeof(pd));
+	//memset(&pd, 0, sizeof(pd));
+	pd.clear();
 	pd.instrumentID = m_instrumentID;
 	pd.direction = m_directionType;
 	pd.holdPosition = m_prVolume; // + m_curOpenOperation.prVolume - m_curCloseOperation.prVolume;
@@ -64,7 +65,8 @@ std::vector<APPositionData> APFuturesCombinationPosCtrl::getHoldPositionDetail()
 	}
 	holdPosList.push_back(pd);
 
-	memset(&pd, 0, sizeof(pd));
+	//memset(&pd, 0, sizeof(pd));
+	pd.clear();
 	pd.instrumentID = m_coInstrumentID;
 	pd.direction = m_coDirectionType;
 	pd.holdPosition = m_coVolume; // + m_curOpenOperation.coVolume - m_curCloseOperation.coVolume;

@@ -179,11 +179,13 @@ void APAccountInfo::appendPositionInfo(APPositionData & pd, CThostFtdcInvestorPo
 void APAccountInfo::onGetPositionData(APASSETID instrumentID, std::vector<CThostFtdcInvestorPositionField>& posData)
 {
 	APPositionData posDataBuy;
-	memset(&posDataBuy, 0, sizeof(posDataBuy));
+	//memset(&posDataBuy, 0, sizeof(posDataBuy));
+	posDataBuy.clear();
 	posDataBuy.direction = TD_Buy;
 	posDataBuy.instrumentID = instrumentID;
 	APPositionData posDataSell;
-	memset(&posDataSell, 0, sizeof(posDataSell));
+	//memset(&posDataSell, 0, sizeof(posDataSell));
+	posDataSell.clear();
 	posDataSell.direction = TD_Sell;
 	posDataSell.instrumentID = instrumentID;
 

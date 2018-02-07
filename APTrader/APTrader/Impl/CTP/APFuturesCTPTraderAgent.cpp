@@ -661,6 +661,26 @@ int APFuturesCTPTraderAgent::reqQryAllOrders()
 	return ret;
 }
 
+int APFuturesCTPTraderAgent::reqQryLastOrders()
+{
+	if (m_traderApi == NULL) {
+		return -1;
+	}
+
+	m_orderInfo.clear();
+
+	CThostFtdcQryOrderField req;
+	memset(&req, 0, sizeof(req));
+	strcpy(req.BrokerID, m_brokerID.c_str());
+	strcpy(req.InvestorID, m_userID.c_str());
+	std::string today = APTimeUtility::getDate();
+	std::string lastDay = APTimeUtility::getLastFutureTransactionDay();
+	strcpy(req.InsertTimeStart, lastDay.c_str());
+	strcpy(req.InsertTimeEnd, today.c_str());
+	int ret = m_traderApi->ReqQryOrder(&req, genReqID());
+	return ret;
+}
+
 int APFuturesCTPTraderAgent::reqQryTrade(APASSETID instrumentID, std::string startDate, std::string endDate)
 {
 	if (m_traderApi == NULL) {
@@ -872,7 +892,7 @@ void APFuturesCTPTraderAgent::onRtnTrade(CThostFtdcTradeField * info)
 	double price = info->Price;
 	long volume = info->Volume;
 
-	APORDERID orderID = info->OrderLocalID;
+	APORDERID orderID = info->OrderRef;//info->OrderLocalID;
 	APSYSTEMID sysID = info->OrderSysID;
 	APTradeDirection direction = TD_Buy;
 	if (info->Direction == THOST_FTDC_D_Buy) {
@@ -930,26 +950,26 @@ void APFuturesCTPTraderAgent::onQryOrderFailed(APORDERID orderID)
 	trader->onQueryOrderFailed(orderID);
 }
 
-APTradeOrderInfo APFuturesCTPTraderAgent::getOrderInfo(APORDERID orderID)
+void APFuturesCTPTraderAgent::getOrderInfo(APORDERID orderID, APTradeOrderInfo& info)
 {
-	APTradeOrderInfo info;
-	memset(&info, 0, sizeof(info));
+	//memset(&info, 0, sizeof(info));
 	if (m_orderInfo.find(orderID) != m_orderInfo.end()) {
 		CThostFtdcOrderField& of = m_orderInfo[orderID];
 		info.instrumentID = of.InstrumentID;
+		//info.instrumentID.assign(of.InstrumentID);
 		if (of.Direction == THOST_FTDC_D_Buy) {
 			info.direction = TD_Buy;
 		}
 		else if (of.Direction == THOST_FTDC_D_Sell) {
 			info.direction = TD_Sell;
 		}
-		info.orderID = orderID;
+		info.orderID.assign(orderID);
 		info.positionCtrlID = 0;
 		info.price = of.LimitPrice;
 		info.state = parseOrderState(of.OrderStatus);
-		info.sysID = of.OrderSysID;
-		info.orderRef = of.OrderRef;
-		info.exchangeID = of.ExchangeID;
+		info.sysID.assign(of.OrderSysID);
+		info.orderRef.assign(of.OrderRef);
+		info.exchangeID.assign(of.ExchangeID);
 		info.sessionID = of.SessionID;
 		info.frontID = of.FrontID;
 
@@ -965,8 +985,6 @@ APTradeOrderInfo APFuturesCTPTraderAgent::getOrderInfo(APORDERID orderID)
 		info.volumeSurplus = of.VolumeTotal;
 		info.volumeTraded = of.VolumeTraded;
 	}
-	
-	return info;
 }
 
 void APFuturesCTPTraderAgent::onQryTrade(APORDERID localOrderID, CThostFtdcTradeField * pTradeInfo)
@@ -1015,7 +1033,7 @@ std::vector<APTradeDetailInfo> APFuturesCTPTraderAgent::getTradeInfo(APORDERID l
 			}
 
 			APTradeDetailInfo tdi;
-			memset(&tdi, 0, sizeof(tdi));
+			//memset(&tdi, 0, sizeof(tdi));
 			tdi.dateTime = tradeDateTime;
 			if (tf.OffsetFlag == THOST_FTDC_OF_Open) {
 				tdi.tradeType = TT_Open;
@@ -1030,12 +1048,12 @@ std::vector<APTradeDetailInfo> APFuturesCTPTraderAgent::getTradeInfo(APORDERID l
 			tdi.price = tf.Price;
 			tdi.volume = tf.Volume;
 
-			tdi.localID = atoi(tf.OrderLocalID);
-			tdi.sysID = tf.OrderSysID;
-			tdi.exchangeID = tf.ExchangeID;
+			tdi.localID.assign(tf.OrderRef); //= atoi(tf.OrderLocalID);
+			tdi.sysID.assign(tf.OrderSysID);
+			tdi.exchangeID.assign(tf.ExchangeID);
 			tdi.frontID = 0;
 			tdi.sessionID = 0;
-			tdi.orderRef = tf.OrderRef;
+			tdi.orderRef.assign(tf.OrderRef);
 			APTradeDirection direction = TD_Buy;
 			if (tf.Direction == THOST_FTDC_D_Buy) {
 				direction = TD_Buy;

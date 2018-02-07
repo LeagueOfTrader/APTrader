@@ -56,6 +56,7 @@ public:
 	//	∂©µ•≤È—Ø
 	int reqQryOrder(APASSETID instrumentID, APSYSTEMID sysID, APSYSTEMID exchangeID);
 	int reqQryAllOrders();
+	int reqQryLastOrders();
 
 	int reqQryTrade(APASSETID InstrumentID, std::string startDate = "", std::string endDate = "");
 	int reqQryAllTrades(std::string startDate = "", std::string endDate = "");
@@ -76,7 +77,7 @@ public:
 	void onQryOrder(APORDERID localOrderID, CThostFtdcOrderField* pOrderInfo);
 	void onQryOrderFinished();
 	void onQryOrderFailed(APORDERID localOrderID);
-	APTradeOrderInfo getOrderInfo(APORDERID orderID);
+	void getOrderInfo(APORDERID orderID, APTradeOrderInfo& toi);
 
 	void onQryTrade(APORDERID localOrderID, CThostFtdcTradeField* pTradeInfo);
 	void onQryTradeFinished(APORDERID localOrderID);

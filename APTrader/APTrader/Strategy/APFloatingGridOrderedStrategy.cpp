@@ -73,7 +73,11 @@ void APFloatingGridOrderedStrategy::locateGrids(double valueRef)
 	
 	int openIndex = getReferIndex(m_curIndex, TT_Open);
 	if (m_grids[openIndex].position > 0) {
-		open(m_grids[openIndex].valueRef, m_grids[openIndex].position);
+		long hold = m_positionCtrl->getHoldPosition();
+		if (hold < m_grids[openIndex].position) {
+			open(m_grids[openIndex].valueRef, m_grids[openIndex].position - hold);
+		}
+		
 		//APLogger->log("Open index: %d, price: %f, volume: %d. ", openIndex, m_grids[openIndex].valueRef, m_grids[openIndex].position);
 		m_gridsOverlapped[openIndex] = true;
 
