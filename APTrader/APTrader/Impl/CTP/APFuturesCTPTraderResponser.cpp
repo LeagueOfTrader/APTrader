@@ -548,7 +548,7 @@ void APFuturesCTPTraderResponser::OnRspQryOrder(CThostFtdcOrderField * pOrder, C
 		return;
 	}
 
-	APORDERID localID = pOrder->OrderLocalID;
+	APORDERID localID = pOrder->OrderRef;//pOrder->OrderLocalID;
 	APFuturesCTPTraderAgent::getInstance()->onQryOrder(localID, pOrder);
 
 	if (bIsLast)

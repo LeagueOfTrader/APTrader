@@ -2,11 +2,13 @@
 #include "../Utils/APJsonReader.h"
 #include "../QuotationDecision/APSingleQuotationDecision.h"
 #include "../APPositionCtrl.h"
+#include "../Utils/APLog.h"
 
 APFloatingGridOrderedStrategy::APFloatingGridOrderedStrategy()
 {
 	m_valid = false;
-	m_ordered = false;
+	//m_ordered = false;
+	m_ignoreSection = true;
 }
 
 APStrategy * APFloatingGridOrderedStrategy::create()
@@ -27,12 +29,19 @@ void APFloatingGridOrderedStrategy::init(std::string strategyInfo)
 	for (int i = 0; i < m_grids.size(); i++) {
 		m_gridsOverlapped.push_back(false);
 	}
+
+	if (m_positionCtrl != NULL) {
+		if (m_positionCtrl->getOpenOrdersPosition() + m_positionCtrl->getCloseOrdersPosition() > 0) {
+			m_positionCtrl->cancelAllTrade();
+			m_positionCtrl->removeAllLocalOrders();
+		}
+	}
 }
 
-void APFloatingGridOrderedStrategy::setOrdered(bool ordered)
-{
-	m_ordered = ordered;
-}
+//void APFloatingGridOrderedStrategy::setOrdered(bool ordered)
+//{
+//	m_ordered = ordered;
+//}
 
 void APFloatingGridOrderedStrategy::exit()
 {
@@ -58,144 +67,40 @@ void APFloatingGridOrderedStrategy::locateGrids(double valueRef)
 		return;
 	}
 
-	if (!m_ordered) {
-		if (m_positionCtrl->getOpenOrdersPosition() + m_positionCtrl->getCloseOrdersPosition() > 0) {
-			m_ordered = true;
-		}
-	}
-
-	APFloatingGridStrategy::locateGrids(valueRef);
+	m_curIndex = getGridIndex(valueRef);
+	m_nextIndex = m_curIndex + 1;
+	m_prevIndex = m_curIndex;
 	
-	int targetIndex = m_curIndex;
-	APGridSectionType section = getSection(valueRef);
-	if (section == GST_Open) {
-		if (m_direction == TD_Buy) {
-			targetIndex = m_curIndex + 1;
-		}
-		else {
-			targetIndex = m_curIndex;
-		}		
+	int openIndex = getReferIndex(m_curIndex, TT_Open);
+	if (m_grids[openIndex].position > 0) {
+		open(m_grids[openIndex].valueRef, m_grids[openIndex].position);
+		//APLogger->log("Open index: %d, price: %f, volume: %d. ", openIndex, m_grids[openIndex].valueRef, m_grids[openIndex].position);
+		m_gridsOverlapped[openIndex] = true;
+
+		setAdjacentIndex(m_direction);
+		tryOrderAdjacentGrid();
 	}
-	else if (section == GST_Close) {
-		if (m_direction == TD_Buy) {
-			targetIndex = m_curIndex;
-		}
-		else {
-			targetIndex = m_curIndex + 1;
-		}
-	}
-	m_gridsOverlapped[targetIndex] = true;
 
-	if (!m_ordered) {
-		long hold = m_positionCtrl->getHoldPosition();
-		int closeCount = hold / m_deltaPosition;
-
-		if (m_direction == TD_Buy) {
-			for (int i = targetIndex - 1; i >= 0; i--) {
-				open(m_grids[i].valueRef, m_deltaPosition);
-				m_gridsOverlapped[i] = true;
-			}
-			for (int i = targetIndex + 1; i < targetIndex + 1 + closeCount && i < 2 * m_gridsCount; i++) {
-				closeIfAvailable(i);
-			}
-		}
-		else {
-			for (int i = targetIndex - 1; i >= targetIndex - 1 - closeCount && i >= 0; i--) {
-				closeIfAvailable(i);
-			}
-			for (int i = targetIndex + 1; i < 2 * m_gridsCount; i++) {
-				open(m_grids[i].valueRef, m_deltaPosition);
-				m_gridsOverlapped[i] = true;
-			}
-		}
-	}
-	else {
-		long openPos = m_positionCtrl->getOpenOrdersPosition();
-		long closePos = m_positionCtrl->getCloseOrdersPosition();
-		long openCount = openPos / m_deltaPosition;
-		long closeCount = closePos / m_deltaPosition;
-
-		if (m_direction == TD_Buy) {
-			for (int i = targetIndex - 1; i >= targetIndex - 1 - openCount && i >= 0; i--) {
-				m_gridsOverlapped[i] = true;
-			}
-			for (int i = targetIndex + 1; i < targetIndex + 1 + closeCount && i < 2 * m_gridsCount; i++) {
-				m_gridsOverlapped[i] = true;
-			}
-		}
-		else {
-			for (int i = targetIndex - 1; i >= targetIndex - 1 - closeCount && i >= 0; i--) {
-				m_gridsOverlapped[i] = true;
-			}
-			for (int i = targetIndex + 1; i < targetIndex + 1 + openCount && i < 2 * m_gridsCount; i++) {
-				m_gridsOverlapped[i] = true;
-			}
-		}
-
-		if (openCount == 0) {
-			long openIndex = 0;
-			if (m_direction == TD_Buy) {
-				openIndex = m_curIndex;
-			}
-			else {
-				openIndex = m_curIndex + 1;
-			}
-
-			openIfNotOverlapped(openIndex);
-		}
-
-		if (closeCount == 0) {
-			long closeIndex = 0;
-			if (m_direction == TD_Buy) {
-				closeIndex = m_curIndex + 1;
-			}
-			else {
-				closeIndex = m_curIndex;
-			}
-
-			closeIfNotOverlapped(closeIndex);
-		}
-	}
+	m_located = true;
+	m_lastIndex = m_curIndex;
+	m_lastValue = valueRef;
 }
 
 void APFloatingGridOrderedStrategy::enterGridInOpenWay(int gridIndex, APGridSectionType section)
 {
-	if (!m_valid) {
-		return;
-	}
-
-	int nextIndex = gridIndex + 1;
-	//int prevIndex = gridIndex - 1;
-	m_curIndex = gridIndex;
-
-	if (m_direction == TD_Buy) {
-		close(m_grids[nextIndex].valueRef, m_deltaPosition);
-		openIfNotOverlapped(gridIndex);
-	}
-	else {
-		close(m_grids[gridIndex].valueRef, m_deltaPosition);
-		openIfNotOverlapped(nextIndex);
-	}
+	enterGrid(gridIndex);
 }
 
 void APFloatingGridOrderedStrategy::enterGridInCloseWay(int gridIndex, APGridSectionType section)
 {
-	if (!m_valid) {
-		return;
-	}
+	enterGrid(gridIndex);
+}
 
-	int nextIndex = gridIndex + 1;
-	//int prevIndex = gridIndex - 1;
-	m_curIndex = gridIndex;
+void APFloatingGridOrderedStrategy::goGrids(double valueRef)
+{
+	APFloatingGridStrategy::goGrids(valueRef);
 
-	if (m_direction == TD_Buy) {
-		open(m_grids[gridIndex].valueRef, m_deltaPosition);
-		closeIfNotOverlapped(nextIndex);
-	}
-	else {
-		open(m_grids[nextIndex].valueRef, m_deltaPosition);
-		closeIfNotOverlapped(gridIndex);
-	}
+	tryOrderAdjacentGrid();
 }
 
 void APFloatingGridOrderedStrategy::openIfNotOverlapped(int index)
@@ -204,9 +109,10 @@ void APFloatingGridOrderedStrategy::openIfNotOverlapped(int index)
 		return;
 	}
 
-	if (index >= 0 && index < m_gridsCount * 2) {
+	if (isIndexValid(index)) {
 		if (m_gridsOverlapped[index] == false) {
 			open(m_grids[index].valueRef, m_deltaPosition);
+			//APLogger->log("Open index: %d, price: %f, volume: %d. ", index, m_grids[index].valueRef, m_deltaPosition);
 			m_gridsOverlapped[index] = true;
 		}
 	}
@@ -222,9 +128,10 @@ void APFloatingGridOrderedStrategy::closeIfNotOverlapped(int index)
 		return;
 	}
 	long available = m_positionCtrl->getAvailablePosition();
-	if (index >= 0 && index < m_gridsCount * 2) {
+	if (isIndexValid(index)) {
 		if (m_gridsOverlapped[index] == false && available >= m_deltaPosition) {
 			close(m_grids[index].valueRef, m_deltaPosition);
+			//APLogger->log("Close index: %d, price: %f, volume: %d. ", index, m_grids[index].valueRef, m_deltaPosition);
 			m_gridsOverlapped[index] = true;
 		}
 	}
@@ -238,12 +145,94 @@ bool APFloatingGridOrderedStrategy::closeIfAvailable(int index)
 
 	bool ret = false;
 	long available = m_positionCtrl->getAvailablePosition();
-	if (index >= 0 && index < m_gridsCount * 2) {
+	if (isIndexValid(index)) {
 		if (available >= m_deltaPosition) {
 			close(m_grids[index].valueRef, m_deltaPosition);
+			//APLogger->log("Close index: %d, price: %f, volume: %d. ", index, m_grids[index].valueRef, m_deltaPosition);
 			m_gridsOverlapped[index] = true;
 			ret = true;
 		}
 	}
 	return ret;
+}
+
+void APFloatingGridOrderedStrategy::setAdjacentIndex(APTradeDirection direction)
+{
+	if (direction == TD_Buy) {
+		m_nextIndex = m_curIndex + 1;
+		m_prevIndex = m_curIndex - 1;
+	}
+	else {
+		m_nextIndex = m_curIndex + 2;
+		m_prevIndex = m_curIndex;
+	}
+}
+
+bool APFloatingGridOrderedStrategy::isIndexValid(int index)
+{
+	if (index < 0 || index >= 2 * m_gridsCount) {
+		return false;
+	}
+
+	return true;
+}
+
+int APFloatingGridOrderedStrategy::getReferIndex(int index, APTradeType tradeType)
+{
+	int targetIndex = index;
+	if (tradeType == TT_Open) {
+		if (m_direction == TD_Buy) {
+			targetIndex = index + 1;
+		}
+	}
+	else {
+		if (m_direction == TD_Sell) {
+			targetIndex = index + 1;
+		}
+	}
+
+	return targetIndex;
+}
+
+void APFloatingGridOrderedStrategy::enterGrid(int gridIndex)
+{
+	if (!m_valid) {
+		return;
+	}
+
+	if (gridIndex > m_curIndex) {
+		for (int i = m_curIndex; i <= gridIndex; i++) {
+			m_gridsOverlapped[i] = false;
+		}
+	}
+	else if (gridIndex < m_curIndex) {
+		for (int i = gridIndex; i <= m_curIndex; i++) {
+			m_gridsOverlapped[i] = false;
+		}
+	}
+
+	m_curIndex = gridIndex;
+
+	if (m_direction == TD_Buy) {
+		setAdjacentIndex(TD_Buy);
+		openIfNotOverlapped(m_prevIndex);
+		closeIfNotOverlapped(m_nextIndex);
+	}
+	else {
+		setAdjacentIndex(TD_Sell);
+		openIfNotOverlapped(m_nextIndex);
+		closeIfNotOverlapped(m_prevIndex);
+	}
+}
+
+void APFloatingGridOrderedStrategy::tryOrderAdjacentGrid()
+{
+	if (m_direction == TD_Buy) {
+		openIfNotOverlapped(m_prevIndex);
+		closeIfNotOverlapped(m_nextIndex);
+	}
+	else {
+		openIfNotOverlapped(m_nextIndex);
+		closeIfNotOverlapped(m_prevIndex);
+	}
 }

@@ -1,5 +1,5 @@
 {	
-    "StrategyType": "Grid",
+    "StrategyType": "FloatingOrderGrid",
     "Priority": 10,
     "StrategyInfo": {
 		"Tag":"hc1805sell",
@@ -17,15 +17,15 @@
         },
         "Grids": {
 			"GridType": 3,
-			"Diff": 50,
+			"Diff": 30,
             "Direction": "Sell",
             "Ceil": 3890,
             "Floor": 3850,
-            "DeltaPosition": 5,
-            "BasePosition": 20,
-            "GridsCount": 5,
+            "DeltaPosition": 1,
+            "BasePosition": 5,
+            "GridsCount": 15,
             "LongValue": 3900,
-            "ShortValue": 3850
+            "ShortValue": 3950
         }
     }
 }

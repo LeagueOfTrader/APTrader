@@ -2,7 +2,8 @@
 #include "../Utils/APJsonReader.h"
 #include <algorithm>
 #include "../APPositionCtrl.h"
-
+#include "../Utils/APLog.h"
+#include <sstream>
 
 APStandardGridStrategy::APStandardGridStrategy()
 {
@@ -11,6 +12,7 @@ APStandardGridStrategy::APStandardGridStrategy()
 	//m_prevIndex = -1;
 	//m_nextIndex = -1;
 	m_lastValue = 0.0;
+	m_ignoreSection = false;
 }
 
 
@@ -72,7 +74,7 @@ void APStandardGridStrategy::goGrids(double valueRef)
 	}
 
 	APGridSectionType section = getSection(valueRef);
-	if (section == GST_Indeterminate) {
+	if (section == GST_Indeterminate && !m_ignoreSection) {
 		return;
 	}
 
@@ -160,50 +162,6 @@ void APStandardGridStrategy::locateGrids(double valueRef)
 
 int APStandardGridStrategy::getGridIndex(double curValue)//, bool reversed)
 {
-	//bool reversed = false;
-	//if (curValue > m_longValue)
-	//{
-	//	if (m_direction == TD_Buy) {
-	//		reversed = false;
-	//	}
-	//	else {
-	//		reversed = true;
-	//	}
-	//}
-	//else if (curValue < m_shortValue)
-	//{
-	//	if (m_direction == TD_Buy) {
-	//		reversed = true;
-	//	}
-	//	else {
-	//		reversed = false;
-	//	}
-	//}
-	//else {
-	//	m_curIndex = m_openIndex;
-	//}
-
-	//if (!reversed) {
-	//	int i = 0;
-	//	for (i = 0; i < m_grids.size(); i++) {
-	//		if (curValue < m_grids[i].valueRef) {
-	//			break;
-	//		}
-	//	}
-
-	//	index = std::min(i, (int)m_grids.size() - 1);
-	//}
-	//else
-	//{
-	//	int i = 0;
-	//	for (i = m_grids.size() - 1; i > 0; i--) {
-	//		if (curValue > m_grids[i].valueRef) {
-	//			break;
-	//		}
-	//	}
-	//	index = std::max(i, 0);
-	//}
-
 	int index = 0;
 	int i = 0;
 	for (i = 0; i < m_grids.size(); i++) {
@@ -212,7 +170,7 @@ int APStandardGridStrategy::getGridIndex(double curValue)//, bool reversed)
 		}
 	}
 
-	index = std::min(i, (int)m_grids.size() - 1);
+	index = std::max(i - 1, 0);
 
 	return index;
 }
@@ -331,5 +289,11 @@ void APStandardGridStrategy::enterGridInCloseWay(int gridIndex, APGridSectionTyp
 #ifdef _DEBUG
 void APStandardGridStrategy::printGrids()
 {
+	for (int i = 0; i < m_grids.size(); i++) {
+		APGridData& data = m_grids[i];
+		std::stringstream ss;
+		ss << "[" << i << "], quotation: " << data.valueRef << ", position: " << data.position << ". ";
+		APLogger->log(ss.str().c_str());
+	}
 }
 #endif

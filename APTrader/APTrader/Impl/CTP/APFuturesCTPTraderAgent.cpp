@@ -819,7 +819,7 @@ void APFuturesCTPTraderAgent::onRtnOrder(CThostFtdcOrderField * order)
 		tradeType = TT_Close; // 暂时只考虑普通平仓
 	}
 
-	APORDERID localOrderID = order->OrderLocalID;
+	APORDERID localOrderID = order->OrderRef;//order->OrderLocalID;
 	APSYSTEMID sysOrderID = order->OrderSysID;	
 	APOrderState orderState = parseOrderState(order->OrderStatus);
 	APTradeDirection direction = TD_Buy;
@@ -832,7 +832,7 @@ void APFuturesCTPTraderAgent::onRtnOrder(CThostFtdcOrderField * order)
 	long volumeTotal = order->VolumeTotal;
 	long volumeTraded = order->VolumeTraded;
 	APSYSTEMID exchangeID = order->ExchangeID;
-	APSYSTEMID orderRef = order->OrderRef;
+	APSYSTEMID orderRef = order->OrderLocalID;//order->OrderRef;
 	int sessionID = order->SessionID;
 	int frontID = order->FrontID;
 

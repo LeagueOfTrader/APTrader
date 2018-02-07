@@ -161,6 +161,9 @@ void APStrategy::open(double price, long volume)
 
 void APStrategy::close(double price, long volume)
 {
+	if (m_positionCtrl != NULL) {
+		m_positionCtrl->closePosition(price, volume);
+	}
 }
 
 void APStrategy::setInstrumentID(APASSETID instrumentID)

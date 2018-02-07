@@ -15,7 +15,7 @@ protected:
 	//virtual void resetGrids();
 	void buildBuyGrids(std::vector<double>& longValues, std::vector<double>& shortValues);
 	void buildSellGrids(std::vector<double>& longValues, std::vector<double>& shortValues);
-	void goGrids(double valueRef);
+	virtual void goGrids(double valueRef);
 
 	virtual void locateGrids(double valueRef);
 
@@ -40,5 +40,6 @@ protected:
 	//int m_prevIndex;
 	//int m_nextIndex;
 	double m_lastValue;
+	bool m_ignoreSection;
 };
 
