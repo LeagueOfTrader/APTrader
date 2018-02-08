@@ -8,13 +8,14 @@
 #include "APGlobalConfig.h"
 #include "APPositionRepertory.h"
 #include "APMacro.h"
+#include "Utils/APRedisAgent.h"
 //#include <math.h>
 
 #ifdef USE_CTP
 #include "Impl/CTP/APFuturesCTPTraderAgent.h"
 #endif
 
-const UINT TRADE_ID_SHIFT = 1000;
+const UINT TRADE_ID_SHIFT = 1000000;
 
 APTrade::APTrade()
 {
@@ -287,8 +288,8 @@ void APTrade::setOrderIDBase(UINT base)
 void APTrade::queryAllOrders()
 {
 #ifdef USE_CTP
-	//APFuturesCTPTraderAgent::getInstance()->reqQryAllOrders();
-	APFuturesCTPTraderAgent::getInstance()->reqQryLastOrders();
+	APFuturesCTPTraderAgent::getInstance()->reqQryAllOrders();
+	//APFuturesCTPTraderAgent::getInstance()->reqQryLastOrders();
 #endif
 }
 
@@ -338,19 +339,39 @@ void APTrade::init()
 	std::string dateStr = APTimeUtility::getDateTime();
 	//UINT base = atoi(dateStr.substr(0, 8).c_str()); //APTimeUtility::getTimestamp() * 1000;
 	//m_idAccumulator->setBase(base);
-	m_baseID = dateStr.substr(0, 8);
+	m_baseID = dateStr.substr(2, 6); //dateStr.substr(0, 8);
 #ifdef USE_CTP
-	int maxOrderRef = APFuturesCTPTraderAgent::getInstance()->getMaxOrderRef();
-	m_idAccumulator->setBase(maxOrderRef);
+	//int maxOrderRef = APFuturesCTPTraderAgent::getInstance()->getMaxOrderRef();
+	//m_idAccumulator->setBase(maxOrderRef);
 #endif // USE_CTP
-
+	bool newDay = false;
+	if (APRedisAgent::getInstance()->hasKey("TradeDate")) {
+		std::string strLastDate = APRedisAgent::getInstance()->read("TradeDate");
+		if (APTimeUtility::compareDateTime(dateStr, strLastDate) != 0) {
+			newDay = true;
+			m_idAccumulator->setBase(0);
+		}
+	}
+	if (!newDay) {
+		if (APRedisAgent::getInstance()->hasKey("TradeID")) {
+			std::string strID = APRedisAgent::getInstance()->read("TradeID");
+			UINT lastID = atoi(strID.c_str());
+			if (lastID >= TRADE_ID_SHIFT) {
+				lastID = 0; // turn back to 0
+			}
+			m_idAccumulator->setBase(lastID);
+		}
+	}
 }
 
 APORDERID APTrade::generateOrderID()
 {
 	UINT accumID = m_idAccumulator->generateID();
+	saveOrderAccumID(accumID);
+
 	char strAccumID[8];
-	sprintf(strAccumID, "%04d", accumID);
+	sprintf(strAccumID, "%06d", accumID);
+
 	APORDERID orderID = m_baseID + strAccumID;// % TRADE_ID_SHIFT;//accumID;//
 	return orderID;
 }
@@ -535,4 +556,14 @@ APPositionCtrl * APTrade::getPositionCtrlByOrder(APORDERID orderID)
 		return posCtrl;
 	}
 	return NULL;
+}
+
+void APTrade::saveOrderAccumID(UINT accumID)
+{
+	std::string today = APTimeUtility::getDate();
+	char buf[8];
+	sprintf(buf, "%d", accumID);
+	std::string strAccumID = buf;
+	APRedisAgent::getInstance()->writeAsync("TradeID", strAccumID);
+	APRedisAgent::getInstance()->writeAsync("TradeDate", today);
 }

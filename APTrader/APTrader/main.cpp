@@ -92,7 +92,7 @@ void runTest() {
 	//posCtrl->setTrade(trader);
 
 	////posCtrl->open(instID, dir, 2030.0, 10);
-
+	//APFuturesCTPTraderAgent::getInstance()->reqQryLastOrders();
 	////APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPosition();
 	////APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPositionDetail();
 	////APFuturesCTPTraderAgent::getInstance()->reqQryTradingAccount();

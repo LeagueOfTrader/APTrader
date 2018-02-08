@@ -111,6 +111,8 @@ private:
 	std::vector<APORDERID> getRelatedOrders(APPositionCtrl* pc);
 	APPositionCtrl* getPositionCtrlByOrder(APORDERID orderID);
 
+	void saveOrderAccumID(UINT accumID);
+
 protected:
 	std::map<APORDERID, APTradeOrderInfo> m_localOrders;
 

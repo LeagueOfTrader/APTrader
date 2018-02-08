@@ -26,21 +26,21 @@ APTestFramework::APTestFramework()
 
 APTestFramework::~APTestFramework()
 {
-	APInputSystem::getInstance()->exit();
+	//APInputSystem::getInstance()->exit();
 }
 
 void APTestFramework::init()
 {
 	APGlobalConfig::getInstance()->init();
 
-	//initCTP();
-	APInputSystem::getInstance()->init();
-	setInited();
+	initCTP();
+	//APInputSystem::getInstance()->init();
+	//setInited();
 }
 
 void APTestFramework::update()
 {
-	APInputSystem::getInstance()->update();
+	//APInputSystem::getInstance()->update();
 }
 
 void APTestFramework::exit()
@@ -66,7 +66,7 @@ void APTestFramework::initLocalSystem()
 	APMarketDataMgr->init();
 	//APRedisAgent::getInstance()->init();
 	//APAccountInfo::getInstance()->init();
-	//APTradeManager::getInstance()->init();
+	APTradeManager::getInstance()->init();
 	//
 	//APStrategyManager::getInstance()->init();
 	//APAccountInfo::getInstance()->beginVerify();

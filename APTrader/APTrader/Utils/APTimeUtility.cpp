@@ -124,7 +124,8 @@ UINT APTimeUtility::getTimestamp()
 {
 	time_t t = time(0);
 	localtime(&t);
-	return t;
+	UINT ts = t;
+	return ts;
 }
 
 std::string APTimeUtility::getDate()

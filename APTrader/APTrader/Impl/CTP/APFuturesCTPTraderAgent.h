@@ -56,7 +56,7 @@ public:
 	//	∂©µ•≤È—Ø
 	int reqQryOrder(APASSETID instrumentID, APSYSTEMID sysID, APSYSTEMID exchangeID);
 	int reqQryAllOrders();
-	int reqQryLastOrders();
+	//int reqQryLastOrders();
 
 	int reqQryTrade(APASSETID InstrumentID, std::string startDate = "", std::string endDate = "");
 	int reqQryAllTrades(std::string startDate = "", std::string endDate = "");

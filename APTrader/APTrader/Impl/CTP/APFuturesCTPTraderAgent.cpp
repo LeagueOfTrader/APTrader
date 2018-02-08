@@ -661,25 +661,25 @@ int APFuturesCTPTraderAgent::reqQryAllOrders()
 	return ret;
 }
 
-int APFuturesCTPTraderAgent::reqQryLastOrders()
-{
-	if (m_traderApi == NULL) {
-		return -1;
-	}
-
-	m_orderInfo.clear();
-
-	CThostFtdcQryOrderField req;
-	memset(&req, 0, sizeof(req));
-	strcpy(req.BrokerID, m_brokerID.c_str());
-	strcpy(req.InvestorID, m_userID.c_str());
-	std::string today = APTimeUtility::getDate();
-	std::string lastDay = APTimeUtility::getLastFutureTransactionDay();
-	strcpy(req.InsertTimeStart, lastDay.c_str());
-	strcpy(req.InsertTimeEnd, today.c_str());
-	int ret = m_traderApi->ReqQryOrder(&req, genReqID());
-	return ret;
-}
+//int APFuturesCTPTraderAgent::reqQryLastOrders()
+//{
+//	if (m_traderApi == NULL) {
+//		return -1;
+//	}
+//
+//	m_orderInfo.clear();
+//
+//	CThostFtdcQryOrderField req;
+//	memset(&req, 0, sizeof(req));
+//	strcpy(req.BrokerID, m_brokerID.c_str());
+//	strcpy(req.InvestorID, m_userID.c_str());
+//	std::string today = "22:00:00";//APTimeUtility::getDate();
+//	std::string lastDay = "21:00:00";// APTimeUtility::getLastFutureTransactionDay();
+//	//strcpy(req.InsertTimeStart, lastDay.c_str());
+//	//strcpy(req.InsertTimeEnd, today.c_str());
+//	int ret = m_traderApi->ReqQryOrder(&req, genReqID());
+//	return ret;
+//}
 
 int APFuturesCTPTraderAgent::reqQryTrade(APASSETID instrumentID, std::string startDate, std::string endDate)
 {
