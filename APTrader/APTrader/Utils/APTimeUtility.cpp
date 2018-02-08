@@ -174,6 +174,10 @@ std::string APTimeUtility::getLastFutureTransactionDay()
 
 int APTimeUtility::compareDateTime(std::string dt0, std::string dt1)
 {
+	if (dt0 == dt1) {
+		return 0;
+	}
+
 	UINT y0 = getYearInDateTime(dt0);
 	UINT y1 = getYearInDateTime(dt1);
 	if (y0 > y1) {
@@ -225,6 +229,42 @@ int APTimeUtility::compareDateTime(std::string dt0, std::string dt1)
 		return 1;
 	}
 	else if (sec0 < sec1) {
+		return -1;
+	}
+
+	return 0;
+}
+
+int APTimeUtility::compareDate(std::string dt0, std::string dt1)
+{
+	if (dt0 == dt1) {
+		return 0;
+	}
+
+	UINT y0 = getYearInDateTime(dt0);
+	UINT y1 = getYearInDateTime(dt1);
+	if (y0 > y1) {
+		return 1;
+	}
+	else if (y0 < y1) {
+		return -1;
+	}
+
+	UINT m0 = getMonthInDateTime(dt0);
+	UINT m1 = getMonthInDateTime(dt1);
+	if (m0 > m1) {
+		return 1;
+	}
+	else if (m0 < m1) {
+		return -1;
+	}
+
+	UINT d0 = getDayInDateTime(dt0);
+	UINT d1 = getDayInDateTime(dt1);
+	if (d0 > d1) {
+		return 1;
+	}
+	else if (d0 < d1) {
 		return -1;
 	}
 

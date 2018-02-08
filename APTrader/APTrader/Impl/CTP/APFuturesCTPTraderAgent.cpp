@@ -343,10 +343,10 @@ void APFuturesCTPTraderAgent::applyOrder(APTradeType tradeType, APASSETID instru
 
 	int ret = m_traderApi->ReqOrderInsert(&order, genReqID());
 	if (ret == 0) {
-		APLogger->log("Submit Order %d Success. ", localOrderID);
+		APLogger->log("Submit Order %d Success. ", localOrderID.c_str());
 	}
 	else {
-		APLogger->log("Submit Order %d Fail! ", localOrderID);
+		APLogger->log("Submit Order %d Fail! ", localOrderID.c_str());
 	}
 }
 
@@ -430,10 +430,10 @@ void APFuturesCTPTraderAgent::applyOrder(APTradeType tradeType, APASSETID instru
 
 	int ret = m_traderApi->ReqOrderInsert(&order, genReqID());
 	if (ret == 0) {
-		APLogger->log("Apply Order %s Success. ", localOrderID);
+		APLogger->log("Apply Order %s Success. ", localOrderID.c_str());
 	}
 	else {
-		APLogger->log("Apply Order %s Fail! ", localOrderID);
+		APLogger->log("Apply Order %s Fail! ", localOrderID.c_str());
 	}
 }
 

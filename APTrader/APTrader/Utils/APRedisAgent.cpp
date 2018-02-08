@@ -91,9 +91,8 @@ bool APRedisAgent::hasKey(std::string key)
 	bool exists = false;
 	std::string cmd = "EXISTS " + key;
 	redisReply* r = (redisReply*)redisCommand(m_context, cmd.c_str());
-	if (r->type == REDIS_REPLY_STRING) {
-		int ret = atoi(r->str);
-		if (ret == 1) {
+	if (r->type == REDIS_REPLY_INTEGER) {
+		if (r->integer == 1) {
 			exists = true;
 		}
 	}

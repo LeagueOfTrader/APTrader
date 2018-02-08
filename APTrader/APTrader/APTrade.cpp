@@ -336,7 +336,7 @@ void APTrade::onSyncOrders()
 
 void APTrade::init()
 {
-	std::string dateStr = APTimeUtility::getDateTime();
+	std::string dateStr = APTimeUtility::getDate();
 	//UINT base = atoi(dateStr.substr(0, 8).c_str()); //APTimeUtility::getTimestamp() * 1000;
 	//m_idAccumulator->setBase(base);
 	m_baseID = dateStr.substr(2, 6); //dateStr.substr(0, 8);
@@ -347,7 +347,7 @@ void APTrade::init()
 	bool newDay = false;
 	if (APRedisAgent::getInstance()->hasKey("TradeDate")) {
 		std::string strLastDate = APRedisAgent::getInstance()->read("TradeDate");
-		if (APTimeUtility::compareDateTime(dateStr, strLastDate) != 0) {
+		if (APTimeUtility::compareDate(dateStr, strLastDate) != 0) {
 			newDay = true;
 			m_idAccumulator->setBase(0);
 		}
@@ -356,8 +356,8 @@ void APTrade::init()
 		if (APRedisAgent::getInstance()->hasKey("TradeID")) {
 			std::string strID = APRedisAgent::getInstance()->read("TradeID");
 			UINT lastID = atoi(strID.c_str());
-			if (lastID >= TRADE_ID_SHIFT) {
-				lastID = 0; // turn back to 0
+			if (++lastID >= TRADE_ID_SHIFT) {
+				lastID = 1; // turn back to 1
 			}
 			m_idAccumulator->setBase(lastID);
 		}

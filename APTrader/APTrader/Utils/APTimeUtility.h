@@ -25,6 +25,7 @@ public:
 	static std::string getDateTime();
 	static std::string getLastFutureTransactionDay();
 	static int compareDateTime(std::string dt0, std::string dt1);
+	static int compareDate(std::string dt0, std::string dt1);
 	
 	static std::string calcDateByDeltaDays(std::string srcDate, int deltaDays);
 	static UINT getYearInDateTime(std::string dateTime);
