@@ -343,10 +343,10 @@ void APFuturesCTPTraderAgent::applyOrder(APTradeType tradeType, APASSETID instru
 
 	int ret = m_traderApi->ReqOrderInsert(&order, genReqID());
 	if (ret == 0) {
-		APLogger->log("Submit Order %d Success. ", localOrderID.c_str());
+		APLogger->log("Submit Order %s Success. ", localOrderID.c_str());
 	}
 	else {
-		APLogger->log("Submit Order %d Fail! ", localOrderID.c_str());
+		APLogger->log("Submit Order %s Fail! ", localOrderID.c_str());
 	}
 }
 
@@ -500,10 +500,15 @@ int APFuturesCTPTraderAgent::getFrontID()
 	return m_frontID;
 }
 
-//void APFuturesCTPTraderAgent::setSessionID(TThostFtdcSessionIDType sessionID)
-//{
-//	m_sessionID = sessionID;
-//}
+int APFuturesCTPTraderAgent::getSessionID()
+{
+	return m_sessionID;
+}
+
+void APFuturesCTPTraderAgent::setSessionID(TThostFtdcSessionIDType sessionID)
+{
+	m_sessionID = sessionID;
+}
 
 void APFuturesCTPTraderAgent::setMaxOrderRef(int id)
 {
@@ -908,6 +913,10 @@ void APFuturesCTPTraderAgent::onRtnTrade(CThostFtdcTradeField * info)
 void APFuturesCTPTraderAgent::onQryOrder(APORDERID localOrderID, CThostFtdcOrderField * pOrderInfo)
 {
 	if (pOrderInfo == NULL) {
+		return;
+	}
+
+	if (pOrderInfo->OrderStatus == THOST_FTDC_OST_Canceled) {
 		return;
 	}
 

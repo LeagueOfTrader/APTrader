@@ -162,14 +162,17 @@ bool APFloatingGridOrderedStrategy::closeIfAvailable(int index)
 
 void APFloatingGridOrderedStrategy::setAdjacentIndex(APTradeDirection direction)
 {
-	if (direction == TD_Buy) {
-		m_nextIndex = m_curIndex + 1;
-		m_prevIndex = m_curIndex - 1;
-	}
-	else {
-		m_nextIndex = m_curIndex + 2;
-		m_prevIndex = m_curIndex;
-	}
+	//if (direction == TD_Buy) {
+	//	m_nextIndex = m_curIndex + 2;
+	//	m_prevIndex = m_curIndex;
+	//}
+	//else {
+	//	m_nextIndex = m_curIndex + 1;
+	//	m_prevIndex = m_curIndex - 1;
+	//}
+
+	m_nextIndex = m_curIndex + 1;
+	m_prevIndex = m_curIndex - 1;
 }
 
 bool APFloatingGridOrderedStrategy::isIndexValid(int index)

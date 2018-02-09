@@ -215,6 +215,13 @@ void APTrade::onTraded(APASSETID instrumentID, APTradeType type, double price, l
 		if (posCtrl != NULL) {			
 			posCtrl->onTradeDealt(instrumentID, type, price, volume, orderID, direction);
 		}
+
+		if (orderInfo.state == OS_AllTraded || orderInfo.state == OS_PartTradedNotQueueing) {
+			if (posCtrl != NULL) {
+				posCtrl->onCompleteOrder(orderID, type);
+			}
+			removeLocalOrder(orderID);
+		}
 	}
 }
 
@@ -232,15 +239,6 @@ void APTrade::onOrderStatusChanged(APASSETID instrumentID, APTradeType type, APO
 		info.orderRef = orderRef;
 		info.volumeSurplus = volumeSurplus;
 		info.volumeTraded = volumeTraded;
-
-		//
-		APPositionCtrl* posCtrl = getPositionCtrlByOrder(orderID);
-		if (state == OS_AllTraded || state == OS_PartTradedNotQueueing) {
-			if (posCtrl != NULL) {
-				posCtrl->onCompleteOrder(orderID, type);
-			}
-			removeLocalOrder(orderID);
-		}
 
 		if (state == OS_Canceled || state == OS_NoTradeNotQueueing) {
 			onCanceled(orderID);

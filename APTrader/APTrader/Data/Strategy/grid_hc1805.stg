@@ -17,15 +17,15 @@
         },
         "Grids": {
 			"GridType": 3,
-			"Diff": 30,
+			"Diff": 40,
             "Direction": "Sell",
-            "Ceil": 3890,
-            "Floor": 3850,
+            "Ceil": 3920,
+            "Floor": 3880,
             "DeltaPosition": 1,
-            "BasePosition": 5,
+            "BasePosition": 2,
             "GridsCount": 15,
-            "LongValue": 3900,
-            "ShortValue": 3950
+            "LongValue": 3920,
+            "ShortValue": 3880
         }
     }
 }

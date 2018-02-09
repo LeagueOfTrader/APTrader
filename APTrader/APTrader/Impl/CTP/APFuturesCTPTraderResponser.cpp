@@ -462,7 +462,7 @@ void APFuturesCTPTraderResponser::OnRspUserLogin(CThostFtdcRspUserLoginField * p
 
 	// on login
 	APFuturesCTPTraderAgent::getInstance()->setFrontID(pRspUserLogin->FrontID);
-	//APFuturesCTPTraderAgent::getInstance()->setSessionID(pRspUserLogin->SessionID);
+	APFuturesCTPTraderAgent::getInstance()->setSessionID(pRspUserLogin->SessionID);
 
 	APFuturesCTPTraderAgent::getInstance()->reqSettlementInfoConfirm();
 	int maxOrderID = atoi(pRspUserLogin->MaxOrderRef);

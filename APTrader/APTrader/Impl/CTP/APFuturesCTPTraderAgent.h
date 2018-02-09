@@ -37,7 +37,9 @@ public:
 
 	void setFrontID(TThostFtdcFrontIDType frontID);
 	int getFrontID();
-	//void setSessionID(TThostFtdcSessionIDType sessionID);
+	void setSessionID(TThostFtdcSessionIDType sessionID);
+	int getSessionID();
+
 	void setMaxOrderRef(int id);
 	int getMaxOrderRef();
 
@@ -90,7 +92,7 @@ private:
 	CThostFtdcTraderApi* m_traderApi;
 	APFuturesCTPTraderResponser* m_tradeResponser;
 	TThostFtdcFrontIDType m_frontID;
-	//TThostFtdcSessionIDType m_sessionID;
+	TThostFtdcSessionIDType m_sessionID;
 	std::string m_tradingDay;
 
 	std::map<APASSETID, std::vector<CThostFtdcInvestorPositionField>> m_positionInfo;
