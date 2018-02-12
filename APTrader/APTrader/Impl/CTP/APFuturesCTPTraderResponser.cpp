@@ -504,6 +504,9 @@ void APFuturesCTPTraderResponser::OnRspQryTradingAccount(CThostFtdcTradingAccoun
 void APFuturesCTPTraderResponser::OnRspOrderInsert(CThostFtdcInputOrderField * pInputOrder, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
 	if (isErrorRspInfo(pRspInfo)) {
+		if (pRspInfo != NULL) {
+			APLogger->log("Insert Order Error, %s. ", pRspInfo->ErrorMsg);
+		}
 		return;
 	}
 

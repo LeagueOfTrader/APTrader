@@ -117,7 +117,7 @@ void APPositionCtrl::setFrozenPosition(long position)
 	m_frozenPosition = position;
 
 	if (m_holdPosition > 0) {
-		m_availableFund = m_holdPosition - m_frozenPosition;
+		m_availablePosition = m_holdPosition - m_frozenPosition;
 	}
 }
 
@@ -131,7 +131,7 @@ void APPositionCtrl::setHoldPosition(long position)
 	m_holdPosition = position;
 
 	if (m_holdPosition > 0) {
-		m_availableFund = m_holdPosition - m_frozenPosition;
+		m_availablePosition = m_holdPosition - m_frozenPosition;
 	}
 }
 

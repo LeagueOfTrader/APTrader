@@ -98,6 +98,7 @@ void runTest() {
 	////APFuturesCTPTraderAgent::getInstance()->reqQryTradingAccount();
 	////APFuturesCTPTraderAgent::getInstance()->reqQryAllOrders();
 
+
 	while (!framework->finished()) {
 		framework->update();
 		Sleep(1000);

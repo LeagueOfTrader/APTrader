@@ -322,8 +322,13 @@ void APFuturesCTPTraderAgent::applyOrder(APTradeType tradeType, APASSETID instru
 		order.CombOffsetFlag[0] = THOST_FTDC_OF_Open;
 	}
 	else if (tradeType == TT_Close) {
-		order.Direction = THOST_FTDC_D_Sell;
 		order.CombOffsetFlag[0] = THOST_FTDC_OF_Close;
+	}
+	else if (tradeType == TT_CloseToday) {
+		order.CombOffsetFlag[0] = THOST_FTDC_OF_CloseToday;
+	}
+	else if (tradeType == TT_CloseYesterday) {
+		order.CombOffsetFlag[0] = THOST_FTDC_OF_CloseYesterday;
 	}
 	else {
 		// error type
