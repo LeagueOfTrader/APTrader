@@ -8,9 +8,12 @@ public:
 	APFuturesTrade();
 	~APFuturesTrade();
 
+	virtual APORDERID close(APASSETID instrumentID, APTradeDirection direction, double price, long volume,
+						APPositionCtrl* pc, APOrderTimeCondition ot = OTC_GoodForDay);
+
 	virtual void open(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, 
 						APOrderTimeCondition ot = OTC_GoodForDay);
-	virtual void close(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, 
+	virtual long close(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume,
 						APOrderTimeCondition ot = OTC_GoodForDay);
 
 	virtual void open(APASSETID instrumentID, APORDERID localOrderID, APTradeDirection direction,
@@ -25,5 +28,17 @@ public:
 						APOrderContingentCondition orderContingentCondition = OCC_Immediately, double stopPrice = 0.0);
 
 	virtual void cancel(APORDERID orderID);
+
+	virtual void init();
+
+	static bool isInstrumentCloseTodayFirst(APASSETID instrumentID);
+
+	virtual void onTraded(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
+	virtual void onCanceled(APORDERID orderID);
+
+protected:
+	static std::set<std::string> m_closeTodayFirstList;
+
+	std::set<APORDERID> m_closeTodayOrders;
 };
 

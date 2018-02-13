@@ -89,6 +89,7 @@ void APFuturesSyncCombPosCtrl::onTradeDealt(APASSETID instrumentID, APTradeType 
 		m_positionMutex.unlock();
 		break;
 	case TT_Close:
+	case TT_CloseToday:
 		m_positionMutex.lock();
 		if (instrumentID == m_instrumentID) {
 			// pr traded

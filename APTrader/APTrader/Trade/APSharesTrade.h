@@ -10,7 +10,7 @@ public:
 
 public:
 	virtual void open(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot = OTC_GoodForDay);
-	virtual void close(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot = OTC_GoodForDay);
+	virtual long close(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot = OTC_GoodForDay);
 
 	virtual void open(APASSETID instrumentID, APORDERID localOrderID, APTradeDirection direction,
 		APOrderPriceType orderPriceType, double price,

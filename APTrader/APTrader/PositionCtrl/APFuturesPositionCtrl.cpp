@@ -136,6 +136,7 @@ void APFuturesPositionCtrl::onTradeDealt(APASSETID instrumentID, APTradeType typ
 		m_openOrdersPosition -= deltaVolume;
 		break;
 	case TT_Close:
+	case TT_CloseToday:
 		m_marginPosition += deltaVolume;
 		m_holdPosition -= deltaVolume;
 		m_closeOrdersPosition -= deltaVolume;

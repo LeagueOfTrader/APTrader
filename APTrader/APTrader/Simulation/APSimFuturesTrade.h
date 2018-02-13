@@ -10,7 +10,7 @@ public:
 	~APSimFuturesTrade();
 
 	virtual void open(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot = OTC_GoodForDay);
-	virtual void close(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot = OTC_GoodForDay);
+	virtual long close(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot = OTC_GoodForDay);
 	virtual void cancel(APORDERID orderID);
 
 	virtual void onFundChanged(APASSETID instrumentID, APTradeType type, double variableFund, APORDERID orderID, APTradeDirection direction = TD_Buy);

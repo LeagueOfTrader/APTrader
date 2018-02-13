@@ -61,13 +61,18 @@ public:
 	void verify();
 	void queryAllPosition();
 
-	const std::vector<APPositionData>& getPositionInfo();
+	//const std::vector<APPositionData>& getPositionInfo();
+	const std::map<APASSETID, APPositionData>& getPositionInfo();
 	
 	std::string getAccountID();
 	std::string getInterfaceType();
 
+	void onOpenPosition(APASSETID instrumentID, long volume);
+	void onClosePosition(APASSETID instrumentID, long volume);
+	APPositionData& getPositionData(APASSETID instrumentID);
+
 #ifdef USE_CTP
-	void onGetPositionData(APASSETID instrumentID, std::vector<CThostFtdcInvestorPositionField>& positionData);
+	void onQueryPositionData(APASSETID instrumentID, std::vector<CThostFtdcInvestorPositionField>& positionData);
 	void onSyncPositionData();
 #endif
 
@@ -84,8 +89,9 @@ private:
 	std::priority_queue<APPositionCtrlWrapper, std::vector<APPositionCtrlWrapper>, APPositionCtrlWrapperComparer> m_verificationQueue;
 
 	//std::set<APASSETID> m_instruments;
-	std::vector<APPositionData> m_positionInfo;
-	std::vector<APPositionData> m_cachedPositionInfo;
+	//std::vector<APPositionData> m_positionInfo;
+	std::map<APASSETID, APPositionData> m_positionInfo;
+	//std::vector<APPositionData> m_cachedPositionInfo;
 
 	std::string m_accountID;
 	std::string m_interfaceType;

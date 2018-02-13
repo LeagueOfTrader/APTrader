@@ -1,16 +1,25 @@
 #pragma once
 #include <string>
+#include <map>
+#include <set>
 #include "../APTypes.h"
 
 class APFuturesIDSelector
 {
 public:
-	APFuturesIDSelector();
-	~APFuturesIDSelector();
 
-	static bool isMultipleID(APASSETID futuresID);
-	static APASSETID getVarietyID(APASSETID futuresID);
-	static std::string getTimeSymbolInMultiID(APASSETID futuresID);
-	static std::string getTimeSymbolInFuturesID(APASSETID futuresID);
+	//static bool isMultipleID(APASSETID futuresID);
+	//static APASSETID getVarietyID(APASSETID futuresID);
+	//static std::string getTimeSymbolInMultiID(APASSETID futuresID);
+
+	static std::string getTimeSymbol(APASSETID futuresID);
+	static std::string getTypeID(APASSETID instrumentID);
+
+	static void init();
+
+	static std::string getDomesticExchangeID(APASSETID instrumentID);
+
+protected:
+	static std::map<std::string, std::set<std::string>> m_exchangeInstrumentsList;
 };
 

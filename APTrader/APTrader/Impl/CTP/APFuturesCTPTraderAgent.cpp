@@ -778,7 +778,7 @@ void APFuturesCTPTraderAgent::onQryInstrumentPositionFinished()
 	for (it = m_positionInfo.begin(); it != m_positionInfo.end(); it++) {
 		APASSETID instrumentID = it->first;
 		std::vector<CThostFtdcInvestorPositionField>& posInfo = it->second;
-		APAccountInfo::getInstance()->onGetPositionData(instrumentID, posInfo);
+		APAccountInfo::getInstance()->onQueryPositionData(instrumentID, posInfo);
 	}
 	m_mutex.unlock();
 
@@ -893,10 +893,13 @@ void APFuturesCTPTraderAgent::onRtnTrade(CThostFtdcTradeField * info)
 		tradeType = TT_Open;
 	}
 	else if (info->OffsetFlag == THOST_FTDC_OF_Close
-		|| info->OffsetFlag == THOST_FTDC_OF_CloseToday
+		//|| info->OffsetFlag == THOST_FTDC_OF_CloseToday
 		|| info->OffsetFlag == THOST_FTDC_OF_CloseYesterday
 		|| info->OffsetFlag == THOST_FTDC_OF_ForceClose) {
 		tradeType = TT_Close; // 暂时只考虑普通平仓
+	}
+	else if (info->OffsetFlag == THOST_FTDC_OF_CloseToday) {
+		tradeType = TT_CloseToday;
 	}
 
 	double price = info->Price;

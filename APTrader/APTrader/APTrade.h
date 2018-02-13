@@ -73,7 +73,7 @@ public:
 protected:
 	virtual void open(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, 
 						APOrderTimeCondition ot = OTC_GoodForDay) = 0;
-	virtual void close(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume,
+	virtual long close(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume,
 						APOrderTimeCondition ot = OTC_GoodForDay) = 0;
 	virtual void cancel(APORDERID orderID) = 0;
 
@@ -100,6 +100,8 @@ protected:
 	int getSessionIDByOrderID(APORDERID orderID);
 	int getFrontIDByOrderID(APORDERID orderID);
 	APSYSTEMID getExchangeIDByOrderID(APORDERID orderID);
+
+	APORDERID initializeLocalOrder(APASSETID instrumentID, APTradeType type, APTradeDirection direction, double price, long volume, APPositionCtrl* pc);
 
 	//// serialize
 	//virtual std::string serialize();

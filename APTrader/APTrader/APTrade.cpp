@@ -33,20 +33,22 @@ APTrade::~APTrade()
 }
 
 APORDERID APTrade::open(APASSETID instrumentID, APTradeDirection direction, double price, long volume, APPositionCtrl* pc, APOrderTimeCondition ot) {
-	if (pc == NULL) {
-		return INVALID_ORDER_ID;
-	}
-
-	APORDERID orderID = generateOrderID();
-	APTradeOrderInfo info = { orderID, TT_Open, instrumentID, price, volume, direction, OS_None, pc->getID()};
-	m_localOrders[orderID] = info;
 	
-	if (APGlobalConfig::getInstance()->useRepertory()) {
-		long vol = APPositionRepertory::getInstance()->distribute(instrumentID, TT_Open, direction, volume);
-		if (vol > 0) {
-			pc->onTradeDealt(instrumentID, TT_Open, price, volume, orderID, direction);
-			volume -= vol;
-		}		
+	//APORDERID orderID = generateOrderID();
+	//APTradeOrderInfo info = { orderID, TT_Open, instrumentID, price, volume, direction, OS_None, pc->getID()};
+	//m_localOrders[orderID] = info;
+	//
+	//if (APGlobalConfig::getInstance()->useRepertory()) {
+	//	long vol = APPositionRepertory::getInstance()->distribute(instrumentID, TT_Open, direction, volume);
+	//	if (vol > 0) {
+	//		pc->onTradeDealt(instrumentID, TT_Open, price, volume, orderID, direction);
+	//		volume -= vol;
+	//	}		
+	//}
+	APORDERID orderID = initializeLocalOrder(instrumentID, TT_Open, direction, price, volume, pc);
+
+	if (orderID == INVALID_ORDER_ID) {
+		return orderID;
 	}
 
 	open(orderID, instrumentID, direction, price, volume, ot);
@@ -54,20 +56,25 @@ APORDERID APTrade::open(APASSETID instrumentID, APTradeDirection direction, doub
 }
 
 APORDERID APTrade::close(APASSETID instrumentID, APTradeDirection direction, double price, long volume, APPositionCtrl* pc, APOrderTimeCondition ot) {
-	if (pc == NULL) {
-		return INVALID_ORDER_ID;
-	}
+	//if (pc == NULL) {
+	//	return INVALID_ORDER_ID;
+	//}
 
-	APORDERID orderID = generateOrderID();
-	APTradeOrderInfo info = { orderID, TT_Close, instrumentID, price, volume, direction, OS_None, pc->getID() };
-	m_localOrders[orderID] = info;
+	//APORDERID orderID = generateOrderID();
+	//APTradeOrderInfo info = { orderID, TT_Close, instrumentID, price, volume, direction, OS_None, pc->getID() };
+	//m_localOrders[orderID] = info;
 
-	if (APGlobalConfig::getInstance()->useRepertory()) {
-		long vol = APPositionRepertory::getInstance()->distribute(instrumentID, TT_Close, direction, volume);
-		if (vol > 0) {
-			pc->onTradeDealt(instrumentID, TT_Close, price, volume, orderID, direction);
-			volume -= vol;
-		}
+	//if (APGlobalConfig::getInstance()->useRepertory()) {
+	//	long vol = APPositionRepertory::getInstance()->distribute(instrumentID, TT_Close, direction, volume);
+	//	if (vol > 0) {
+	//		pc->onTradeDealt(instrumentID, TT_Close, price, volume, orderID, direction);
+	//		volume -= vol;
+	//	}
+	//}
+	APORDERID orderID = initializeLocalOrder(instrumentID, TT_Close, direction, price, volume, pc);
+
+	if (orderID == INVALID_ORDER_ID) {
+		return orderID;
 	}
 	
 	close(orderID, instrumentID, direction, price, volume,  ot);
@@ -76,13 +83,18 @@ APORDERID APTrade::close(APASSETID instrumentID, APTradeDirection direction, dou
 
 APORDERID APTrade::open(APASSETID instrumentID, APTradeDirection direction, APOrderPriceType orderPriceType, double price, APPositionCtrl * pc, APOrderTimeCondition orderTimeCondition, std::string date, APOrderVolumeCondition orderVolumeCondition, long volume, long minVolume, APOrderContingentCondition orderContingentCondition, double stopPrice)
 {
-	if (pc == NULL) {
-		return INVALID_ORDER_ID;
-	}
+	//if (pc == NULL) {
+	//	return INVALID_ORDER_ID;
+	//}
+	//APORDERID orderID = generateOrderID();
+	//APTradeOrderInfo info = { orderID, TT_Open, instrumentID, price, volume, direction, OS_None, pc->getID() };
+	//m_localOrders[orderID] = info;
 
-	APORDERID orderID = generateOrderID();
-	APTradeOrderInfo info = { orderID, TT_Open, instrumentID, price, volume, direction, OS_None, pc->getID() };
-	m_localOrders[orderID] = info;
+	APORDERID orderID = initializeLocalOrder(instrumentID, TT_Open, direction, price, volume, pc);
+
+	if (orderID == INVALID_ORDER_ID) {
+		return orderID;
+	}
 
 	open(instrumentID, orderID, direction, 
 		orderPriceType, price,
@@ -94,13 +106,18 @@ APORDERID APTrade::open(APASSETID instrumentID, APTradeDirection direction, APOr
 
 APORDERID APTrade::close(APASSETID instrumentID, APTradeDirection direction, APOrderPriceType orderPriceType, double price, APPositionCtrl * pc, APOrderTimeCondition orderTimeCondition, std::string date, APOrderVolumeCondition orderVolumeCondition, long volume, long minVolume, APOrderContingentCondition orderContingentCondition, double stopPrice)
 {
-	if (pc == NULL) {
-		return INVALID_ORDER_ID;
-	}
+	//if (pc == NULL) {
+	//	return INVALID_ORDER_ID;
+	//}
+	//APORDERID orderID = generateOrderID();
+	//APTradeOrderInfo info = { orderID, TT_Close, instrumentID, price, volume, direction, OS_None, pc->getID() };
+	//m_localOrders[orderID] = info;
 
-	APORDERID orderID = generateOrderID();
-	APTradeOrderInfo info = { orderID, TT_Close, instrumentID, price, volume, direction, OS_None, pc->getID() };
-	m_localOrders[orderID] = info;
+	APORDERID orderID = initializeLocalOrder(instrumentID, TT_Close, direction, price, volume, pc);
+
+	if (orderID == INVALID_ORDER_ID) {
+		return orderID;
+	}
 
 	close(instrumentID, orderID, direction,
 		orderPriceType, price,
@@ -437,6 +454,27 @@ APSYSTEMID APTrade::getExchangeIDByOrderID(APORDERID orderID)
 		exchangeID = m_localOrders[orderID].exchangeID;
 	}
 	return exchangeID;
+}
+
+APORDERID APTrade::initializeLocalOrder(APASSETID instrumentID, APTradeType type, APTradeDirection direction, double price, long volume, APPositionCtrl * pc)
+{
+	if (pc == NULL) {
+		return INVALID_ORDER_ID;
+	}
+
+	APORDERID orderID = generateOrderID();
+	APTradeOrderInfo info = { orderID, type, instrumentID, price, volume, direction, OS_None, pc->getID() };
+	m_localOrders[orderID] = info;
+
+	if (APGlobalConfig::getInstance()->useRepertory()) {
+		long vol = APPositionRepertory::getInstance()->distribute(instrumentID, type, direction, volume);
+		if (vol > 0) {
+			pc->onTradeDealt(instrumentID, type, price, volume, orderID, direction);
+			volume -= vol;
+		}
+	}
+
+	return orderID;
 }
 
 //std::string APTrade::serialize()

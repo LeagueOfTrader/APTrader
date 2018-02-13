@@ -69,8 +69,9 @@ void APAccountInfo::verifyPosition(APASSETID instrumentID, APTradeDirection dir,
 
 void APAccountInfo::verify()
 {
-	for (int i = 0; i < m_positionInfo.size(); i++) {
-		APPositionRepertory::getInstance()->store(m_positionInfo[i]);
+	std::map<APASSETID, APPositionData>::iterator it;
+	for (it = m_positionInfo.begin(); it != m_positionInfo.end(); it++) {
+		APPositionRepertory::getInstance()->store(it->second);
 	}
 
 	processVerification();
@@ -78,13 +79,14 @@ void APAccountInfo::verify()
 
 void APAccountInfo::queryAllPosition()
 {
-	m_cachedPositionInfo.clear();
+	//m_cachedPositionInfo.clear();
 #ifdef USE_CTP
 	APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPosition();
 #endif
 }
 
-const std::vector<APPositionData>& APAccountInfo::getPositionInfo()
+//const std::vector<APPositionData>& 
+const std::map<APASSETID, APPositionData>& APAccountInfo::getPositionInfo()
 {
 	return m_positionInfo;
 }
@@ -176,7 +178,26 @@ void APAccountInfo::appendPositionInfo(APPositionData & pd, CThostFtdcInvestorPo
 	pd.yesterdayPosition += info.YdPosition;
 }
 
-void APAccountInfo::onGetPositionData(APASSETID instrumentID, std::vector<CThostFtdcInvestorPositionField>& posData)
+void APAccountInfo::onOpenPosition(APASSETID instrumentID, long volume)
+{
+}
+
+void APAccountInfo::onClosePosition(APASSETID instrumentID, long volume)
+{
+}
+
+APPositionData & APAccountInfo::getPositionData(APASSETID instrumentID)
+{
+	if (m_positionInfo.find(instrumentID) != m_positionInfo.end()) {
+		return m_positionInfo[instrumentID];
+	}
+
+	APPositionData emptyData;
+	emptyData.clear();
+	return emptyData;
+}
+
+void APAccountInfo::onQueryPositionData(APASSETID instrumentID, std::vector<CThostFtdcInvestorPositionField>& posData)
 {
 	APPositionData posDataBuy;
 	//memset(&posDataBuy, 0, sizeof(posDataBuy));
@@ -214,8 +235,8 @@ void APAccountInfo::onSyncPositionData()
 {
 	m_mutex.lock();
 
-	m_positionInfo.clear();
-	m_positionInfo.swap(m_cachedPositionInfo);
+	//m_positionInfo.clear();
+	//m_positionInfo.swap(m_cachedPositionInfo);
 
 	if (m_inited == false) {
 		setInited();
@@ -229,7 +250,8 @@ void APAccountInfo::onSyncPositionData()
 void APAccountInfo::onGetPositionData(APPositionData data)
 {
 	//APPositionRepertory::getInstance()->store(data);
-	m_cachedPositionInfo.push_back(data);
+	//m_cachedPositionInfo.push_back(data);
+	m_positionInfo[data.instrumentID] = data;
 }
 
 //void APAccountInfo::verifyAfterCheck()

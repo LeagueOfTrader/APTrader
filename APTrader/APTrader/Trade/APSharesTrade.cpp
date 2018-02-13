@@ -15,11 +15,13 @@ void APSharesTrade::open(APORDERID orderID, APASSETID instrumentID, APTradeDirec
 	}
 }
 
-void APSharesTrade::close(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot)
+long APSharesTrade::close(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot)
 {
 	if (direction == TD_Buy) {
 		//sell(instrumentID, price, volume);
 	}
+
+	return volume;
 }
 
 void APSharesTrade::open(APASSETID instrumentID, APORDERID localOrderID, APTradeDirection direction, APOrderPriceType orderPriceType, double price, APOrderTimeCondition orderTimeCondition, std::string date, APOrderVolumeCondition orderVolumeCondition, long volume, long minVolume, APOrderContingentCondition orderContingentCondition, double stopPrice)

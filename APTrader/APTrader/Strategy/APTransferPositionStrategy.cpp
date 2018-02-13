@@ -98,7 +98,7 @@ void APTransferPositionStrategy::alert()
 
 bool APTransferPositionStrategy::isCloseToDeliver()
 {
-	std::string ym = APFuturesIDSelector::getTimeSymbolInFuturesID(m_targetContractID);
+	std::string ym = APFuturesIDSelector::getTimeSymbol(m_targetContractID);
 	UINT months = APTimeUtility::getMonthsToFuturesDeliveryDate(ym);
 	if (months > BEYOND_TRANSFER_MONTHS) {
 		return false;
@@ -146,7 +146,7 @@ bool APTransferPositionStrategy::canArbitage()
 
 double APTransferPositionStrategy::getCurPriceMargin()
 {
-	std::string ym = APFuturesIDSelector::getTimeSymbolInFuturesID(m_targetContractID);
+	std::string ym = APFuturesIDSelector::getTimeSymbol(m_targetContractID);
 	UINT days = APTimeUtility::getDaysToFuturesDeliveryDate(ym);
 
 	double pm = APInterpolator::interplate<double, double>(m_priceMarginMax, m_priceMargin, (double)m_deadlineDays, (double)m_criticalDays, (double)days, m_interpType);
