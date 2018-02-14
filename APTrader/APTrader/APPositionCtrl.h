@@ -118,6 +118,8 @@ protected:
 	virtual std::string generateRedisKey();
 	virtual Json::Value serializeToJsonValue();
 
+	APTradeDirection getReversedDirection(APTradeDirection direction);
+
 protected:
 	long m_openOrdersPosition; // 开仓冻结量
 	long m_closeOrdersPosition; // 平仓冻结量

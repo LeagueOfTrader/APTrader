@@ -376,14 +376,16 @@ void APFuturesCombinationPosCtrl::closePrPosition()
 {
 	long vol = m_curCloseOperation.prTarget;
 	double price = m_quotation->getCurPrice();
-	close(m_instrumentID, m_directionType, price, vol);
+	APTradeDirection dir = getReversedDirection(m_directionType);
+	close(m_instrumentID, dir, price, vol);
 }
 
 void APFuturesCombinationPosCtrl::closeCoPosition()
 {
 	long vol = m_curCloseOperation.coTarget;
 	double price = m_coQuotation->getCurPrice();
-	open(m_coInstrumentID, m_coDirectionType, price, vol);
+	APTradeDirection dir = getReversedDirection(m_coDirectionType);
+	close(m_coInstrumentID, m_coDirectionType, price, vol);
 }
 
 Json::Value APFuturesCombinationPosCtrl::serializeOperationData(APCombinationOperationData & data)

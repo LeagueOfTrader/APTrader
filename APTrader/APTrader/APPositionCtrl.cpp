@@ -394,7 +394,8 @@ void APPositionCtrl::closePosition(double price, long volume)
 	
 	m_availablePosition -= volume;
 	m_closeOrdersPosition += volume;
-	close(m_directionType, quotePrice, volume);
+	APTradeDirection dir = getReversedDirection(m_directionType);
+	close(dir, quotePrice, volume);
 }
 
 void APPositionCtrl::openFullPosition(double price)
@@ -406,7 +407,8 @@ void APPositionCtrl::openFullPosition(double price)
 
 void APPositionCtrl::closeOffPosition(double price)
 {
-	closeAll(m_directionType, price);
+	APTradeDirection dir = getReversedDirection(m_directionType);
+	closeAll(dir, price);
 	m_closeOrdersPosition += m_availablePosition;
 	m_availablePosition = 0;	
 }
@@ -673,6 +675,18 @@ Json::Value APPositionCtrl::serializeToJsonValue()
 	v["AskOrders"] = askArr;
 
 	return v;
+}
+
+APTradeDirection APPositionCtrl::getReversedDirection(APTradeDirection direction)
+{
+	APTradeDirection rdir;
+	if (direction == TD_Buy) {
+		rdir = TD_Sell;
+	}
+	else {
+		rdir = TD_Buy;
+	}
+	return rdir;
 }
 
 void APPositionCtrl::cancel(APTradeType type, double price, APTradeDirection direction)
