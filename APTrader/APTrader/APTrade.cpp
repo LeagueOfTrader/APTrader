@@ -240,6 +240,13 @@ void APTrade::onTraded(APASSETID instrumentID, APTradeType type, double price, l
 			removeLocalOrder(orderID);
 		}
 	}
+
+	if (type == TT_Open) {
+		APAccountInfo::getInstance()->onOpenPosition(instrumentID, direction, volume);
+	}
+	else {
+		APAccountInfo::getInstance()->onClosePosition(instrumentID, direction, volume);
+	}
 }
 
 void APTrade::onOrderStatusChanged(APASSETID instrumentID, APTradeType type, APORDERID orderID, long volumeSurplus, long volumeTraded, 

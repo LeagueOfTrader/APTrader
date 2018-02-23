@@ -380,21 +380,22 @@ void APPositionCtrl::closePosition(double price, long volume)
 	}
 
 	double quotePrice = price;
+	APTradeDirection dir = getReversedDirection(m_directionType);
 
 	if (m_quotation != NULL)
 	{
 		double marketPrice = m_quotation->getCurPrice();
-		if (m_directionType == TD_Buy && price < marketPrice) {
+		if (dir == TD_Buy && price > marketPrice) {
 			quotePrice = marketPrice;
 		}
-		else if (m_directionType == TD_Sell && marketPrice > price) {
+		else if (dir == TD_Sell && marketPrice > price) {
 			quotePrice = marketPrice;
 		}
 	}
 	
 	m_availablePosition -= volume;
 	m_closeOrdersPosition += volume;
-	APTradeDirection dir = getReversedDirection(m_directionType);
+	
 	close(dir, quotePrice, volume);
 }
 

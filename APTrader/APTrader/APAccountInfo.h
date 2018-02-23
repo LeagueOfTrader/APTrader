@@ -67,9 +67,9 @@ public:
 	std::string getAccountID();
 	std::string getInterfaceType();
 
-	void onOpenPosition(APASSETID instrumentID, long volume);
-	void onClosePosition(APASSETID instrumentID, long volume);
-	APPositionData& getPositionData(APASSETID instrumentID);
+	void onOpenPosition(APASSETID instrumentID, APTradeDirection dir, long volume);
+	void onClosePosition(APASSETID instrumentID, APTradeDirection dir, long volume);
+	bool getPositionData(APASSETID instrumentID, APPositionData& posData);
 
 #ifdef USE_CTP
 	void onQueryPositionData(APASSETID instrumentID, std::vector<CThostFtdcInvestorPositionField>& positionData);

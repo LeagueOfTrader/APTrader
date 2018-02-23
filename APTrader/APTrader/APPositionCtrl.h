@@ -94,6 +94,8 @@ public:
 	void removeAllLocalOrders();
 	void outputInfo();
 
+	static APTradeDirection getReversedDirection(APTradeDirection direction);
+
 protected:
 	virtual void open(APTradeDirection direction, double price, long volume) = 0;
 	virtual void close(APTradeDirection direction, double price, long volume) = 0;
@@ -118,7 +120,7 @@ protected:
 	virtual std::string generateRedisKey();
 	virtual Json::Value serializeToJsonValue();
 
-	APTradeDirection getReversedDirection(APTradeDirection direction);
+	
 
 protected:
 	long m_openOrdersPosition; // ¿ª²Ö¶³½áÁ¿

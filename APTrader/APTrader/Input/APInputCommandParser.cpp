@@ -110,6 +110,10 @@ bool APInputCommandParser::processCommand(std::vector<std::string> param)
 				long vol = atoi(param[3].c_str());
 				posCtrl->setFrozenPosition(vol);
 			}
+			else if (posItem == "a") {
+				//long vol = atoi(param[3].c_str());
+				//posCtrl->setAva(vol);
+			}
 			else if (posItem == "order") {
 				APORDERID orderID = param[3];
 				posCtrl->relateOrder(orderID);

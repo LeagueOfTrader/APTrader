@@ -46,27 +46,30 @@ long APFuturesTrade::close(APORDERID orderID, APASSETID instrumentID, APTradeDir
 {
 	long amount = 0;
 	APTradeType type = TT_Close;
-	APPositionData& posData = APAccountInfo::getInstance()->getPositionData(instrumentID);
-	if (isInstrumentCloseTodayFirst(instrumentID)) {
-		if (posData.todayPosition > 0) {
-			amount = std::min(posData.todayPosition, volume);
-			posData.todayPosition -= amount;
-			type = TT_CloseToday;
-		}
+	APPositionData posData;
+	bool ret = APAccountInfo::getInstance()->getPositionData(instrumentID, posData);
+	if (ret) {
+		if (isInstrumentCloseTodayFirst(instrumentID)) {
+			if (posData.todayPosition > 0) {
+				amount = std::min(posData.todayPosition, volume);
+				posData.todayPosition -= amount;
+				type = TT_CloseToday;
+			}
 
-		if (amount == 0) {
-			amount = volume;
+			if (amount == 0) {
+				amount = volume;
+			}
 		}
-	}
-	else {
-		if (posData.yesterdayPosition > 0) {
-			amount = std::min(posData.yesterdayPosition, volume);
-			posData.yesterdayPosition -= amount;
-		}
+		else {
+			if (posData.yesterdayPosition > 0) {
+				amount = std::min(posData.yesterdayPosition, volume);
+				posData.yesterdayPosition -= amount;
+			}
 
-		if (amount == 0) {
-			amount = volume;
-			type = TT_CloseToday;
+			if (amount == 0) {
+				amount = volume;
+				type = TT_CloseToday;
+			}
 		}
 	}
 
@@ -75,9 +78,11 @@ long APFuturesTrade::close(APORDERID orderID, APASSETID instrumentID, APTradeDir
 	}
 
 #ifdef USE_CTP
-	APFuturesCTPTraderAgent::getInstance()->applyOrder(type, instrumentID, price, amount, orderID, direction);
+	if (amount > 0) {
+		APFuturesCTPTraderAgent::getInstance()->applyOrder(type, instrumentID, price, amount, orderID, direction);
+	}
 
-	return volume;
+	return amount;
 #endif
 }
 
@@ -150,7 +155,12 @@ void APFuturesTrade::onTraded(APASSETID instrumentID, APTradeType type, double p
 {
 	APTrade::onTraded(instrumentID, type, price, volume, orderID, direction);
 
-	APPositionData& posData = APAccountInfo::getInstance()->getPositionData(instrumentID);
+	APPositionData posData;
+	bool ret = APAccountInfo::getInstance()->getPositionData(instrumentID, posData);
+	if (!ret) {
+		return;
+	}
+
 	bool isSHFE = (APFuturesIDSelector::getDomesticExchangeID(instrumentID) == "SHFE");
 	switch (type) {
 	case TT_Open:
@@ -187,7 +197,11 @@ void APFuturesTrade::onCanceled(APORDERID orderID)
 		return;
 	}
 
-	APPositionData& posData = APAccountInfo::getInstance()->getPositionData(orderInfo.instrumentID);
+	APPositionData posData;
+	bool ret = APAccountInfo::getInstance()->getPositionData(orderInfo.instrumentID, posData);
+	if (!ret) {
+		return;
+	}
 	//bool isSHFE = (APFuturesIDSelector::getDomesticExchangeID(orderInfo.instrumentID) == "SHFE");
 
 	switch (orderInfo.type) {	

@@ -75,13 +75,16 @@ void APFuturesIDSelector::init()
 
 std::string APFuturesIDSelector::getDomesticExchangeID(APASSETID instrumentID)
 {
+	std::string exchangeID = "";
 	std::map<std::string, std::set<std::string>>::iterator it;
+	std::string typeID = getTypeID(instrumentID);
 	for (it = m_exchangeInstrumentsList.begin(); it != m_exchangeInstrumentsList.end(); it++) {
 		std::set<std::string>& instrumentsSet = it->second;
-		if (instrumentsSet.find(instrumentID) != instrumentsSet.end()) {
-			return it->first;
+		if (instrumentsSet.find(typeID) != instrumentsSet.end()) {
+			exchangeID = it->first;
+			break;
 		}
 	}
 
-	return "";
+	return exchangeID;
 }

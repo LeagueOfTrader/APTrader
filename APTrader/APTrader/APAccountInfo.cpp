@@ -178,23 +178,36 @@ void APAccountInfo::appendPositionInfo(APPositionData & pd, CThostFtdcInvestorPo
 	pd.yesterdayPosition += info.YdPosition;
 }
 
-void APAccountInfo::onOpenPosition(APASSETID instrumentID, long volume)
+void APAccountInfo::onOpenPosition(APASSETID instrumentID, APTradeDirection dir, long volume)
 {
-}
-
-void APAccountInfo::onClosePosition(APASSETID instrumentID, long volume)
-{
-}
-
-APPositionData & APAccountInfo::getPositionData(APASSETID instrumentID)
-{
-	if (m_positionInfo.find(instrumentID) != m_positionInfo.end()) {
-		return m_positionInfo[instrumentID];
+	if (m_positionInfo.find(instrumentID) == m_positionInfo.end()) {
+		APPositionData posData;
+		posData.init(instrumentID, dir);
+		m_positionInfo[instrumentID] = posData;
 	}
 
-	APPositionData emptyData;
-	emptyData.clear();
-	return emptyData;
+	m_positionInfo[instrumentID].append(dir, volume);
+}
+
+void APAccountInfo::onClosePosition(APASSETID instrumentID, APTradeDirection dir, long volume)
+{
+	if (m_positionInfo.find(instrumentID) == m_positionInfo.end()) {
+		return;
+	}
+
+	APTradeDirection direction = APPositionCtrl::getReversedDirection(dir);
+
+	m_positionInfo[instrumentID].substract(direction, volume);
+}
+
+bool APAccountInfo::getPositionData(APASSETID instrumentID, APPositionData& posData)
+{
+	if (m_positionInfo.find(instrumentID) != m_positionInfo.end()) {
+		posData = m_positionInfo[instrumentID];
+		return true;
+	}
+
+	return false;
 }
 
 void APAccountInfo::onQueryPositionData(APASSETID instrumentID, std::vector<CThostFtdcInvestorPositionField>& posData)

@@ -12,6 +12,13 @@ struct APPositionData {
 	long yesterdayPosition;
 	long todayPosition;
 
+	void init(APASSETID instrument, APTradeDirection dir) {
+		clear();
+
+		instrumentID = instrument;
+		direction = dir;
+	}
+
 	void clear() {
 		instrumentID = "";
 		direction = TD_Buy;
@@ -50,6 +57,49 @@ struct APPositionData {
 		holdPosition -= posData.holdPosition;
 		longFrozenPosition -= posData.longFrozenPosition;
 		shortFrozenPosition -= posData.shortFrozenPosition;
+	}
+
+	void append(APTradeDirection dir, long vol) {
+		if (dir == direction) {
+			holdPosition += vol;
+			todayPosition += vol;
+		}
+		else {
+			if (holdPosition == 0) {
+				holdPosition = vol;
+				todayPosition = vol;
+				direction = dir;
+			}
+		}
+	}
+
+	void substract(APTradeDirection dir, long vol, bool todayFirst = false) {
+		if (dir == direction) {
+			holdPosition -= vol;
+			if (todayFirst) {
+				if (todayPosition >= vol) {
+					todayPosition -= vol;
+				}
+				else {
+					vol -= todayPosition;
+					todayPosition = 0;
+					yesterdayPosition -= vol;
+				}
+			}
+			else {
+				if (yesterdayPosition >= vol) {
+					yesterdayPosition -= vol;
+				}
+				else {
+					vol -= yesterdayPosition;
+					yesterdayPosition = 0;
+					todayPosition -= vol;
+				}
+			}
+		}
+		else {
+			// it seems not to happen
+		}
 	}
 };
 
