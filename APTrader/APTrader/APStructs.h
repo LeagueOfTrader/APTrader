@@ -59,6 +59,11 @@ struct APPositionData {
 		shortFrozenPosition -= posData.shortFrozenPosition;
 	}
 
+	void shift() {
+		yesterdayPosition += todayPosition;
+		todayPosition = 0;
+	}
+
 	void append(APTradeDirection dir, long vol) {
 		if (dir == direction) {
 			holdPosition += vol;

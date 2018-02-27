@@ -270,6 +270,12 @@
     <ClInclude Include="Strategy\APFloatingGridOrderedStrategy.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="System\Win32\APTimer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="System\APTimerEventManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APPositionCtrl.cpp">
@@ -474,6 +480,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Strategy\APFloatingGridOrderedStrategy.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="System\Win32\APTimer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="System\APTimerEventManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

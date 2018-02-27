@@ -9,6 +9,7 @@
 #include <windows.h>
 #include "../APStrategyFactory.h"
 #include "../Input/APInputSystem.h"
+#include "../APPositionManager.h"
 
 #ifdef USE_CTP
 #include "../Impl/CTP/APFuturesCTPMDAgent.h"
@@ -170,6 +171,26 @@ void APFuturesFramework::initLocalSystem()
 	}
 
 	setInited();
+}
+
+void APFuturesFramework::onStartTransactionDay()
+{
+	APAccountInfo::getInstance()->onNewTransactionDay();
+	APAccountInfo::getInstance()->queryAllPosition();
+
+	APPositionManager::getInstance()->onStartTransactionDay();
+
+	setPause(false);
+}
+
+void APFuturesFramework::onEndTransactionDay()
+{
+	APPositionManager::getInstance()->onEndTransactionDay();
+
+	APTrade* trader = APTradeManager::getInstance()->getTradeInstance();
+	trader->removeLocalOrders();
+
+	setPause(true);
 }
 
 #ifdef USE_CTP

@@ -6,6 +6,7 @@
 APFramework::APFramework()
 {
 	m_finished = false;
+	m_pause = false;
 }
 
 
@@ -45,6 +46,10 @@ void APFramework::init()
 
 void APFramework::update()
 {
+	if (m_pause) {
+		return;
+	}
+
 	long curTick = GetTickCount();
 	for (int i = 0; i < m_tickList.size(); i++) {
 		Ticker* ticker = m_tickList[i];
@@ -162,4 +167,9 @@ bool APFramework::exited()
 	}
 
 	return true;
+}
+
+void APFramework::setPause(bool pause)
+{
+	m_pause = pause;
 }

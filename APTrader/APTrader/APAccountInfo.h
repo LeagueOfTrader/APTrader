@@ -71,6 +71,8 @@ public:
 	void onClosePosition(APASSETID instrumentID, APTradeDirection dir, long volume);
 	bool getPositionData(APASSETID instrumentID, APPositionData& posData);
 
+	void onNewTransactionDay();
+
 #ifdef USE_CTP
 	void onQueryPositionData(APASSETID instrumentID, std::vector<CThostFtdcInvestorPositionField>& positionData);
 	void onSyncPositionData();

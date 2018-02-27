@@ -31,7 +31,10 @@ public:
 	virtual bool inited();
 	bool exited();
 
+	void setPause(bool pause);
+
 protected:
+	bool m_pause;
 	bool m_finished;
 	std::vector<InitializableObject*> m_preInitList;
 	std::vector<InitializableObject*> m_initList;

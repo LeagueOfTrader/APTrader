@@ -67,3 +67,27 @@ std::map<UINT, APPositionCtrl*>& APPositionManager::getAllPositionCtrls()
 {
 	return m_positionCtrls;
 }
+
+void APPositionManager::onEndTransactionDay()
+{
+	std::map<UINT, APPositionCtrl*>::iterator it;
+	for (it = m_positionCtrls.begin(); it != m_positionCtrls.end(); it++) {
+		APPositionCtrl* pc = it->second;
+		if (pc != NULL) {
+			pc->forceClearOrdersPosition();
+			pc->removeAllLocalOrders();
+		}
+	}
+}
+
+void APPositionManager::onStartTransactionDay()
+{
+	std::map<UINT, APPositionCtrl*>::iterator it;
+	for (it = m_positionCtrls.begin(); it != m_positionCtrls.end(); it++) {
+		APPositionCtrl* pc = it->second;
+		if (pc != NULL) {
+			pc->onNewTransactionDay();
+		}
+	}
+}
+

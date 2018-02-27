@@ -92,7 +92,10 @@ public:
 	virtual void correctPosition();
 
 	void removeAllLocalOrders();
+	void forceClearOrdersPosition();
 	void outputInfo();
+
+	virtual void onNewTransactionDay();
 
 	static APTradeDirection getReversedDirection(APTradeDirection direction);
 

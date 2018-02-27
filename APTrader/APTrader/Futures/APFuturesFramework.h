@@ -31,6 +31,10 @@ public:
 //protected:
 	void initLocalSystem();
 
+protected:
+	void onStartTransactionDay();
+	void onEndTransactionDay();
+
 #ifdef USE_CTP
 public:
 	void onCTPApiInited(BYTE flag);

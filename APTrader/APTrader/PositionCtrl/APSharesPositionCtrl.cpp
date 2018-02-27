@@ -125,3 +125,10 @@ void APSharesPositionCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType t
 		break;
 	}
 }
+
+void APSharesPositionCtrl::onNewTransactionDay()
+{
+	APPositionCtrl::onNewTransactionDay();
+
+	m_availablePosition += m_frozenPosition;
+}

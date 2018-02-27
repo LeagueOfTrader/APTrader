@@ -241,12 +241,15 @@ void APTrade::onTraded(APASSETID instrumentID, APTradeType type, double price, l
 		}
 	}
 
+	//
 	if (type == TT_Open) {
 		APAccountInfo::getInstance()->onOpenPosition(instrumentID, direction, volume);
 	}
 	else {
 		APAccountInfo::getInstance()->onClosePosition(instrumentID, direction, volume);
 	}
+
+	APAccountInfo::getInstance()->queryAllPosition();
 }
 
 void APTrade::onOrderStatusChanged(APASSETID instrumentID, APTradeType type, APORDERID orderID, long volumeSurplus, long volumeTraded, 
@@ -354,6 +357,11 @@ void APTrade::onQueryOrderFailed(APORDERID localOrderID)
 void APTrade::onSyncOrders()
 {
 	setInited();
+}
+
+void APTrade::removeLocalOrders()
+{
+	m_localOrders.clear();
 }
 
 void APTrade::init()

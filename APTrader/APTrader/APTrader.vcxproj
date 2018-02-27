@@ -156,6 +156,8 @@
     <ClInclude Include="APDef.h" />
     <ClInclude Include="APFramework.h" />
     <ClInclude Include="APFundPool.h" />
+    <ClInclude Include="System\APTimerEventManager.h" />
+    <ClInclude Include="System\Win32\APTimer.h" />
     <ClInclude Include="Input\APInputCmdDef.h" />
     <ClInclude Include="Input\APInputCommandParser.h" />
     <ClInclude Include="Input\APInputSystem.h" />
@@ -241,6 +243,8 @@
     <ClCompile Include="APAccountInfo.cpp" />
     <ClCompile Include="APFramework.cpp" />
     <ClCompile Include="APFundPool.cpp" />
+    <ClCompile Include="System\APTimerEventManager.cpp" />
+    <ClCompile Include="System\Win32\APTimer.cpp" />
     <ClCompile Include="Input\APInputCommandParser.cpp" />
     <ClCompile Include="Input\APInputSystem.cpp" />
     <ClCompile Include="PositionCtrl\APFuturesSyncCombPosCtrl.cpp" />

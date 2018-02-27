@@ -210,6 +210,15 @@ bool APAccountInfo::getPositionData(APASSETID instrumentID, APPositionData& posD
 	return false;
 }
 
+void APAccountInfo::onNewTransactionDay()
+{
+	std::map<APASSETID, APPositionData>::iterator it;
+	for (it = m_positionInfo.begin(); it != m_positionInfo.end(); it++) {
+		APPositionData& posData = it->second;
+		posData.shift();
+	}
+}
+
 void APAccountInfo::onQueryPositionData(APASSETID instrumentID, std::vector<CThostFtdcInvestorPositionField>& posData)
 {
 	APPositionData posDataBuy;

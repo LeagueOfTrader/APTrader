@@ -17,6 +17,8 @@
 #include "Futures/APFuturesFramework.h"
 //
 #include "Test/APTestFramework.h"
+#include "System/APTimerEventManager.h"
+#include "Utils/APTimeUtility.h"
 #include "APTradeManager.h"
 #include "APTrade.h"
 #include "PositionCtrl/APFuturesPositionCtrl.h"
@@ -69,6 +71,11 @@ void runSimulation() {
 //	}
 //}
 
+void testTimerCallback() {
+	//APTimeUtility::getTimestamp();
+	printf("Timer Callback, %d. \n", APTimeUtility::getTimestamp());
+}
+
 void runTest() {
 	//std::thread inputThread(inputThreadLoop);
 	
@@ -97,7 +104,7 @@ void runTest() {
 	////APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPositionDetail();
 	////APFuturesCTPTraderAgent::getInstance()->reqQryTradingAccount();
 	////APFuturesCTPTraderAgent::getInstance()->reqQryAllOrders();
-
+	APTimerEventManager::getInstance()->registerEvent(testTimerCallback, 1, 100, true);
 
 	while (!framework->finished()) {
 		framework->update();

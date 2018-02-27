@@ -67,6 +67,7 @@ public:
 
 	void onSyncOrders();
 
+	void removeLocalOrders();
 	//bool isOrderDataComplete();
 	virtual void init();
 

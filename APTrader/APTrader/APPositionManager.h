@@ -21,6 +21,10 @@ public:
 
 	std::map<UINT, APPositionCtrl*>& getAllPositionCtrls();
 
+	//void removeLocalOrders();
+	void onEndTransactionDay();
+	void onStartTransactionDay();
+
 private:
 	std::map<UINT, APPositionCtrl*> m_positionCtrls;
 	APIntAccumulator* m_idAccumulator;

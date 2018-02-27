@@ -524,11 +524,23 @@ void APPositionCtrl::removeAllLocalOrders()
 	m_closeOrderList.clear();
 }
 
+void APPositionCtrl::forceClearOrdersPosition()
+{
+	m_openOrdersPosition = 0;
+
+	m_availablePosition += m_closeOrdersPosition;
+	m_closeOrdersPosition = 0;
+}
+
 void APPositionCtrl::outputInfo()
 {
 	APLogger->log("PositionCtrl: %d, hold: %d, frozen: %d, opening: %d, closing: %d. ", 
 		getID(), m_holdPosition, m_frozenPosition, 
 		m_openOrdersPosition, m_closeOrdersPosition);
+}
+
+void APPositionCtrl::onNewTransactionDay()
+{
 }
 
 //void APPositionCtrl::onSyncPositionStatus(const APPositionData & pd)
