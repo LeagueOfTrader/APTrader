@@ -31,7 +31,6 @@ public:
 //protected:
 	void initLocalSystem();
 
-protected:
 	void onStartTransactionDay();
 	void onEndTransactionDay();
 

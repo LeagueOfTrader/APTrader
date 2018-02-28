@@ -120,12 +120,11 @@ UINT APTimeUtility::getWorkDaysToFuturesDeliveryDate(std::string ym)
 	return 0;
 }
 
-UINT APTimeUtility::getTimestamp()
+time_t APTimeUtility::getTimestamp()
 {
 	time_t t = time(0);
 	localtime(&t);
-	UINT ts = t;
-	return ts;
+	return t;
 }
 
 std::string APTimeUtility::getDate()
@@ -154,7 +153,7 @@ std::string APTimeUtility::getDateTime()
 	return dateTime;
 }
 
-std::string APTimeUtility::getLastFutureTransactionDay()
+std::string APTimeUtility::getLastTransactionDay()
 {
 	SYSTEMTIME sys;
 	GetLocalTime(&sys);
@@ -167,6 +166,21 @@ std::string APTimeUtility::getLastFutureTransactionDay()
 	//}
 	else if (sys.wDayOfWeek == 1) {
 		bias = -3;
+	}
+	std::string today = getDate();
+	return calcDateByDeltaDays(today, bias);
+}
+
+std::string APTimeUtility::getNextTransactionDay()
+{
+	SYSTEMTIME sys;
+	GetLocalTime(&sys);
+	int bias = 1;
+	if (sys.wDayOfWeek == 5) {
+		bias = 3;
+	}
+	else if (sys.wDayOfWeek == 6) {
+		bias = 2;
 	}
 	std::string today = getDate();
 	return calcDateByDeltaDays(today, bias);
@@ -269,6 +283,49 @@ int APTimeUtility::compareDate(std::string dt0, std::string dt1)
 	}
 
 	return 0;
+}
+
+std::string APTimeUtility::makeUpDateTime(std::string date, UINT hour, UINT minute, UINT second)
+{
+	char strDateTime[64];
+
+	sprintf(strDateTime, "%s%02d%02d%02d", date.c_str(), hour, minute, second);
+	std::string dateTime = strDateTime;
+	return dateTime;
+}
+
+std::string APTimeUtility::makeUpDateTime(UINT year, UINT month, UINT day, UINT hour, UINT minute, UINT second)
+{
+	char strDateTime[64];
+
+	sprintf(strDateTime, "%4d%02d%02d%02d%02d%02d", year, month, day, hour, minute, second);
+	std::string dateTime = strDateTime;
+	return dateTime;
+}
+
+UINT APTimeUtility::calcDeltaSeconds(std::string dt0, std::string dt1)
+{
+	UINT y0 = getYearInDateTime(dt0);
+	UINT y1 = getYearInDateTime(dt1);
+	UINT deltaYear = y1 - y0;
+	UINT m0 = getMonthInDateTime(dt0);
+	UINT m1 = getMonthInDateTime(dt1);
+	UINT deltaMonth = m1 - m0;
+	UINT d0 = getDayInDateTime(dt0);
+	UINT d1 = getDayInDateTime(dt1);
+	UINT deltaDay = d1 - d0;
+	UINT h0 = getHourInDateTime(dt0);
+	UINT h1 = getHourInDateTime(dt1);
+	UINT deltaHour = h1 - h0;
+	UINT min0 = getMinuteInDateTime(dt0);
+	UINT min1 = getMinuteInDateTime(dt1);
+	UINT deltaMin = min1 - min0;
+	UINT sec0 = getSecondInDateTime(dt0);
+	UINT sec1 = getSecondInDateTime(dt1);
+	UINT deltaSec = sec1 - sec0;
+
+	UINT totalDeltaSec = (((deltaYear * 365 + deltaMonth * 30 + deltaDay) * 24 + deltaHour) * 60 + deltaMin )* 60 + deltaSec ;
+	return totalDeltaSec;
 }
 
 std::string APTimeUtility::calcDateByDeltaDays(std::string srcDate, int deltaDays) // delta < 1 month

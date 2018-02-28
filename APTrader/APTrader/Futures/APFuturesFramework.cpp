@@ -10,6 +10,8 @@
 #include "../APStrategyFactory.h"
 #include "../Input/APInputSystem.h"
 #include "../APPositionManager.h"
+#include "../System/APTimerEventManager.h"
+#include "../Utils/APTimeUtility.h"
 
 #ifdef USE_CTP
 #include "../Impl/CTP/APFuturesCTPMDAgent.h"
@@ -39,6 +41,14 @@ void onCTPMdInited()
 	APFuturesFramework::getInstance()->onCTPApiInited(CTP_Flag_Md);
 }
 #endif // USE_CTP
+
+void onNewTransactionDay() {
+	APFuturesFramework::getInstance()->onStartTransactionDay();
+}
+
+void onCloseTransactionDay() {
+	APFuturesFramework::getInstance()->onEndTransactionDay();
+}
 
 APFuturesFramework::APFuturesFramework()
 {	
@@ -118,6 +128,17 @@ void APFuturesFramework::start()
 #else
 	initLocalSystem();
 #endif
+
+	//time_t curTime = APTimeUtility::getTimestamp();
+	std::string curDateTime = APTimeUtility::getDateTime();
+	std::string curDate = APTimeUtility::getDate();
+	std::string nextTransactionDateTime = APTimeUtility::makeUpDateTime(curDate, 21);
+	UINT secToNext = APTimeUtility::calcDeltaSeconds(curDateTime, nextTransactionDateTime);
+	std::string curEndTransactionDateTime = APTimeUtility::makeUpDateTime(curDate, 15);
+	UINT secToEnd = APTimeUtility::calcDeltaSeconds(curDateTime, curEndTransactionDateTime);
+
+	APTimerEventManager::getInstance()->registerEvent(onNewTransactionDay, secToNext * 1000, 24 * 60 * 60 * 1000);
+	APTimerEventManager::getInstance()->registerEvent(onCloseTransactionDay, secToEnd * 1000, 24 * 60 * 60 * 1000);
 }
 
 bool APFuturesFramework::finished()

@@ -79,7 +79,7 @@ void APStandardGridStrategy::goGrids(double valueRef)
 	}
 
 	int nextIndex = m_curIndex + 1;
-	//int prevIndex = m_curIndex - 1;
+	int prevIndex = m_curIndex - 1;
 	if (valueRef > m_lastValue) {
 		if (nextIndex < 2 * m_gridsCount) {
 			if (valueRef > m_grids[nextIndex].valueRef) {
@@ -96,8 +96,8 @@ void APStandardGridStrategy::goGrids(double valueRef)
 		}
 	}
 	else if (valueRef < m_lastValue) {
-		if (m_curIndex > 0) {
-			if (valueRef < m_grids[m_curIndex].valueRef) {
+		if (prevIndex >= 0) {
+			if (valueRef < m_grids[prevIndex].valueRef) {
 				int index = getGridIndex(valueRef);
 
 				if (m_direction == TD_Buy) {

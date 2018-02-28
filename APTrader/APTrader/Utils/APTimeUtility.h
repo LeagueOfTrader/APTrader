@@ -18,14 +18,19 @@ public:
 	static UINT getDaysToFuturesDeliveryDate(std::string ym);
 	static UINT getWorkDaysToFuturesDeliveryDate(std::string ym);
 
-	static UINT getTimestamp();
+	static time_t getTimestamp();
 
 	static std::string getDate();
 	static std::string getDateInDateTime(std::string dateTime);
 	static std::string getDateTime();
-	static std::string getLastFutureTransactionDay();
+	static std::string getLastTransactionDay();
+	static std::string getNextTransactionDay();
 	static int compareDateTime(std::string dt0, std::string dt1);
 	static int compareDate(std::string dt0, std::string dt1);
+
+	static std::string makeUpDateTime(std::string date, UINT hour, UINT minute = 0, UINT second = 0);
+	static std::string makeUpDateTime(UINT year, UINT month, UINT day, UINT hour, UINT minute = 0, UINT second = 0);
+	static UINT calcDeltaSeconds(std::string dt0, std::string dt1);
 	
 	static std::string calcDateByDeltaDays(std::string srcDate, int deltaDays);
 	static UINT getYearInDateTime(std::string dateTime);
