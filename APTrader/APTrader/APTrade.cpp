@@ -235,7 +235,7 @@ void APTrade::onTraded(APASSETID instrumentID, APTradeType type, double price, l
 
 		if (orderInfo.state == OS_AllTraded || orderInfo.state == OS_PartTradedNotQueueing) {
 			if (posCtrl != NULL) {
-				posCtrl->onCompleteOrder(orderID, type);
+				posCtrl->onTradeFinished(instrumentID, type, orderID, direction);
 			}
 			removeLocalOrder(orderID);
 		}
@@ -260,6 +260,14 @@ void APTrade::onOrderStatusChanged(APASSETID instrumentID, APTradeType type, APO
 	if(it != m_localOrders.end()) {
 		APTradeOrderInfo& info = it->second;
 		info.sysID = sysID;
+
+		if (info.state <= OS_NotTouched && state >= OS_Touched) {
+			APPositionCtrl* posCtrl = getPositionCtrlByOrder(orderID);
+			if (posCtrl != NULL) {
+				posCtrl->onTradeOrdered(instrumentID, type, orderID, direction);
+			}
+		}
+
 		info.state = state;
 		info.exchangeID = exchangeID;
 		info.sessionID = sessionID;
@@ -279,7 +287,7 @@ void APTrade::onCanceled(APORDERID orderID)
 		APTradeOrderInfo& info = m_localOrders[orderID];
 		APPositionCtrl* posCtrl = getPositionCtrlByOrder(orderID);
 		if (posCtrl != NULL) {
-			posCtrl->onTradeCanceled(info.instrumentID, info.type, info.volume, orderID, info.direction);
+			posCtrl->onTradeCanceled(info.instrumentID, info.type, info.volumeSurplus, orderID, info.direction);
 		}
 
 		removeLocalOrder(orderID);
@@ -288,7 +296,16 @@ void APTrade::onCanceled(APORDERID orderID)
 
 void APTrade::onFailed(APORDERID orderID) 
 {
-	onCanceled(orderID);
+	//onCanceled(orderID);
+	if (m_localOrders.find(orderID) != m_localOrders.end()) {
+		APTradeOrderInfo& info = m_localOrders[orderID];
+		APPositionCtrl* posCtrl = getPositionCtrlByOrder(orderID);
+		if (posCtrl != NULL) {
+			posCtrl->onTradeFailed(info.instrumentID, info.type, info.volume,orderID, info.direction);
+		}
+	}
+
+	removeLocalOrder(orderID);
 }
 
 void APTrade::onFundChanged(APASSETID instrumentID, APTradeType type, double variableFund, APORDERID orderID, APTradeDirection direction) {

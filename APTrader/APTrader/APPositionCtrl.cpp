@@ -12,6 +12,8 @@
 #include "Utils/APLog.h"
 #include "Utils/APTimeUtility.h"
 
+#include "APPositionObserver.h"
+
 APPositionCtrl::APPositionCtrl()
 {
 	m_quotation = NULL;
@@ -438,6 +440,17 @@ void APPositionCtrl::cancelAllTrade()
 	cancelAll();
 }
 
+void APPositionCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction)
+{
+	onTradeRollback(instrumentID, type, volume, orderID, direction);
+
+	if (m_positionObservers.size() > 0) {
+		for (int i = 0; i < m_positionObservers.size(); i++) {
+			m_positionObservers[i]->onTradeCanceled(instrumentID, type, direction);
+		}
+	}
+}
+
 void APPositionCtrl::update()
 {
 }
@@ -447,13 +460,39 @@ void APPositionCtrl::bindTrade(APTrade * trade)
 	m_trade = trade;
 }
 
-void APPositionCtrl::onCompleteOrder(APORDERID orderID, APTradeType type)
+void APPositionCtrl::onTradeOrdered(APASSETID instrumentID, APTradeType type, APORDERID orderID, APTradeDirection direction)
+{
+	if (m_positionObservers.size() > 0) {
+		for (int i = 0; i < m_positionObservers.size(); i++) {
+			m_positionObservers[i]->onTradeOrdered(instrumentID, type, direction);
+		}
+	}
+}
+
+void APPositionCtrl::onTradeFinished(APASSETID instrumentID, APTradeType type, APORDERID orderID, APTradeDirection direction)
 {
 	if (type == TT_Open) {
 		m_openOrderList.remove(orderID);
 	}
 	else if (type == TT_Close) {
 		m_closeOrderList.remove(orderID);
+	}
+
+	if (m_positionObservers.size() > 0) {
+		for (int i = 0; i < m_positionObservers.size(); i++) {
+			m_positionObservers[i]->onTradeFinished(instrumentID, type, direction);
+		}
+	}
+}
+
+void APPositionCtrl::onTradeFailed(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction)
+{
+	onTradeRollback(instrumentID, type, volume, orderID, direction);
+
+	if (m_positionObservers.size() > 0) {
+		for (int i = 0; i < m_positionObservers.size(); i++) {
+			m_positionObservers[i]->onTradeFailed(instrumentID, type, direction);
+		}
 	}
 }
 
@@ -700,6 +739,11 @@ APTradeDirection APPositionCtrl::getReversedDirection(APTradeDirection direction
 		rdir = TD_Buy;
 	}
 	return rdir;
+}
+
+void APPositionCtrl::addObserver(APPositionObserver * observer)
+{
+	m_positionObservers.push_back(observer);
 }
 
 void APPositionCtrl::cancel(APTradeType type, double price, APTradeDirection direction)

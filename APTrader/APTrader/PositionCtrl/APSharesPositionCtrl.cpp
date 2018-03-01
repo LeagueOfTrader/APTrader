@@ -108,7 +108,7 @@ void APSharesPositionCtrl::onTradeDealt(APASSETID instrumentID, APTradeType type
 	}
 }
 
-void APSharesPositionCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction)
+void APSharesPositionCtrl::onTradeRollback(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction)
 {
 	switch (type) {
 	case TT_Open:
@@ -124,6 +124,8 @@ void APSharesPositionCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType t
 	default:
 		break;
 	}
+
+	//APPositionCtrl::onTradeCanceled(instrumentID, type, volume, orderID, direction);
 }
 
 void APSharesPositionCtrl::onNewTransactionDay()

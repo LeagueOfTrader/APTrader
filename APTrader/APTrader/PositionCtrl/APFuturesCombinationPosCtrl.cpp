@@ -230,7 +230,7 @@ void APFuturesCombinationPosCtrl::onTradeDealt(APASSETID instrumentID, APTradeTy
 	}
 }
 
-void APFuturesCombinationPosCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction)
+void APFuturesCombinationPosCtrl::onTradeRollback(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction)
 {
 	switch (type) {
 	case TT_Open:

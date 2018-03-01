@@ -117,6 +117,7 @@ void APFuturesSyncCombPosCtrl::onTradeDealt(APASSETID instrumentID, APTradeType 
 	}
 }
 
-void APFuturesSyncCombPosCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction)
+void APFuturesSyncCombPosCtrl::onTradeRollback(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction)
 {
+	//APFuturesPositionCtrl::onTradeRollback(instrumentID, type, volume, orderID, direction);
 }

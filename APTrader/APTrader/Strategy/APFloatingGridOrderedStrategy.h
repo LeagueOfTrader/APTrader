@@ -1,7 +1,9 @@
 #pragma once
 #include "APFloatingGridStrategy.h"
+#include "../APPositionObserver.h"
 
-class APFloatingGridOrderedStrategy : public APFloatingGridStrategy {
+class APFloatingGridOrderedStrategy : public APFloatingGridStrategy, public APPositionObserver
+{
 public:
 	APFloatingGridOrderedStrategy();
 
@@ -38,4 +40,10 @@ private:
 	int m_nextIndex;
 
 	std::vector<bool> m_gridsOverlapped;
+
+	// Í¨¹ý APPositionObserver ¼Ì³Ð
+	virtual void onTradeOrdered(APASSETID instrumentID, APTradeType type, APTradeDirection direction) override;
+	virtual void onTradeCanceled(APASSETID instrumentID, APTradeType type, APTradeDirection direction) override;
+	virtual void onTradeFinished(APASSETID instrumentID, APTradeType type, APTradeDirection direction) override;
+	virtual void onTradeFailed(APASSETID instrumentID, APTradeType type, APTradeDirection direction) override;
 };

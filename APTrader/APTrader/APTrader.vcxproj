@@ -156,6 +156,7 @@
     <ClInclude Include="APDef.h" />
     <ClInclude Include="APFramework.h" />
     <ClInclude Include="APFundPool.h" />
+    <ClInclude Include="APPositionObserver.h" />
     <ClInclude Include="System\APTimerEventManager.h" />
     <ClInclude Include="System\Win32\APTimer.h" />
     <ClInclude Include="Input\APInputCmdDef.h" />

@@ -4,11 +4,13 @@
 #include "APAccountInfo.h"
 #include "APTypes.h"
 #include <list>
+#include <vector>
 #include "Utils/APRedisSerializedObject.h"
 #include "3rdParty/jsoncpp/include/json/writer.h"
 
 class APTrade;
 class APInstrumentQuotation;
+class APPositionObserver;
 
 class APPositionCtrl : public APRedisSerializedObject
 {
@@ -79,13 +81,16 @@ public:
 	virtual void cancelAllTrade();
 
 	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTradeDirection direction = TD_Buy) = 0;
-	virtual void onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy) = 0;
+	virtual void onTradeRollback(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy) = 0;
 
 	virtual void update();
 
 	void bindTrade(APTrade* trade);
 
-	void onCompleteOrder(APORDERID orderID, APTradeType type);
+	void onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
+	void onTradeOrdered(APASSETID instrumentID, APTradeType type, APORDERID orderID, APTradeDirection direction = TD_Buy);
+	void onTradeFinished(APASSETID instrumentID, APTradeType type, APORDERID orderID, APTradeDirection direction = TD_Buy);
+	void onTradeFailed(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
 	void onOrderOutdated(APORDERID orderID);
 
 	void syncPosition();
@@ -98,6 +103,8 @@ public:
 	virtual void onNewTransactionDay();
 
 	static APTradeDirection getReversedDirection(APTradeDirection direction);
+
+	void addObserver(APPositionObserver* observer);
 
 protected:
 	virtual void open(APTradeDirection direction, double price, long volume) = 0;
@@ -163,6 +170,8 @@ protected:
 	int m_priority;
 
 	std::mutex m_positionMutex;
+
+	std::vector<APPositionObserver*> m_positionObservers;
 
 public:
 	friend class APPositionManager;

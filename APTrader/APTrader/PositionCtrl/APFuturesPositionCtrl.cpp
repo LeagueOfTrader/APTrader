@@ -147,7 +147,7 @@ void APFuturesPositionCtrl::onTradeDealt(APASSETID instrumentID, APTradeType typ
 	m_positionMutex.unlock();
 }
 
-void APFuturesPositionCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction)
+void APFuturesPositionCtrl::onTradeRollback(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction)
 {
 	m_positionMutex.lock();
 	switch (type) {
@@ -165,6 +165,8 @@ void APFuturesPositionCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType 
 		break;
 	}
 	m_positionMutex.unlock();
+
+	//APPositionCtrl::onTradeCanceled(instrumentID, type, volume, orderID, direction);
 }
 
 void APFuturesPositionCtrl::setInstrumentID(APASSETID instrumentID)

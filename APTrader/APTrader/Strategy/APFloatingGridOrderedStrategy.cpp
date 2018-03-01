@@ -35,6 +35,8 @@ void APFloatingGridOrderedStrategy::init(std::string strategyInfo)
 			m_positionCtrl->cancelAllTrade();
 			m_positionCtrl->removeAllLocalOrders();
 		}
+
+		m_positionCtrl->addObserver(this);
 	}
 }
 
@@ -241,5 +243,33 @@ void APFloatingGridOrderedStrategy::tryOrderAdjacentGrid()
 	else {
 		openIfNotOverlapped(m_nextIndex);
 		closeIfNotOverlapped(m_prevIndex);
+	}
+}
+
+void APFloatingGridOrderedStrategy::onTradeOrdered(APASSETID instrumentID, APTradeType type, APTradeDirection direction)
+{
+}
+
+void APFloatingGridOrderedStrategy::onTradeCanceled(APASSETID instrumentID, APTradeType type, APTradeDirection direction)
+{
+	if (direction == TD_Buy) {
+		m_gridsOverlapped[m_prevIndex] = false;
+	}
+	else {
+		m_gridsOverlapped[m_nextIndex] = false;
+	}
+}
+
+void APFloatingGridOrderedStrategy::onTradeFinished(APASSETID instrumentID, APTradeType type, APTradeDirection direction)
+{
+}
+
+void APFloatingGridOrderedStrategy::onTradeFailed(APASSETID instrumentID, APTradeType type, APTradeDirection direction)
+{
+	if (direction == TD_Buy) {
+		m_gridsOverlapped[m_prevIndex] = false;
+	}
+	else {
+		m_gridsOverlapped[m_nextIndex] = false;
 	}
 }
