@@ -154,8 +154,11 @@
   <ItemGroup>
     <ClInclude Include="APAccountInfo.h" />
     <ClInclude Include="APDef.h" />
+    <ClInclude Include="Utils\APFileUtility.h" />
     <ClInclude Include="APFramework.h" />
     <ClInclude Include="APFundPool.h" />
+    <ClInclude Include="BackTest\DataCollect\APFuturesDataCollector.h" />
+    <ClInclude Include="BackTest\DataCollect\APFuturesQuotationCollector.h" />
     <ClInclude Include="APPositionObserver.h" />
     <ClInclude Include="System\APTimerEventManager.h" />
     <ClInclude Include="System\Win32\APTimer.h" />
@@ -242,8 +245,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APAccountInfo.cpp" />
+    <ClCompile Include="Utils\APFileUtility.cpp" />
     <ClCompile Include="APFramework.cpp" />
     <ClCompile Include="APFundPool.cpp" />
+    <ClCompile Include="BackTest\DataCollect\APFuturesDataCollector.cpp" />
+    <ClCompile Include="BackTest\DataCollect\APFuturesQuotationCollector.cpp" />
     <ClCompile Include="System\APTimerEventManager.cpp" />
     <ClCompile Include="System\Win32\APTimer.cpp" />
     <ClCompile Include="Input\APInputCommandParser.cpp" />

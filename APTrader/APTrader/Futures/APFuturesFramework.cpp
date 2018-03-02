@@ -132,9 +132,27 @@ void APFuturesFramework::start()
 	//time_t curTime = APTimeUtility::getTimestamp();
 	std::string curDateTime = APTimeUtility::getDateTime();
 	std::string curDate = APTimeUtility::getDate();
-	std::string nextTransactionDateTime = APTimeUtility::makeUpDateTime(curDate, 21);
+	std::string nextDate = APTimeUtility::getNextTransactionDay();
+	std::string nextTransactionDateTime = "";	
+	std::string curEndTransactionDateTime = "";
+
+	UINT curHour = APTimeUtility::getHourInDateTime(curDateTime);
+	if (curHour <= 15) {
+		nextTransactionDateTime = APTimeUtility::makeUpDateTime(curDate, 21);
+		curEndTransactionDateTime = APTimeUtility::makeUpDateTime(curDate, 15);
+	}
+	else
+	{
+		if (curHour >= 21) {
+			nextTransactionDateTime = APTimeUtility::makeUpDateTime(nextDate, 21);
+		}
+		else {
+			nextTransactionDateTime = APTimeUtility::makeUpDateTime(curDate, 21);
+		}
+		curEndTransactionDateTime = APTimeUtility::makeUpDateTime(nextDate, 15);
+	}
+
 	UINT secToNext = APTimeUtility::calcDeltaSeconds(curDateTime, nextTransactionDateTime);
-	std::string curEndTransactionDateTime = APTimeUtility::makeUpDateTime(curDate, 15);
 	UINT secToEnd = APTimeUtility::calcDeltaSeconds(curDateTime, curEndTransactionDateTime);
 
 	APTimerEventManager::getInstance()->registerEvent(onNewTransactionDay, secToNext * 1000, 24 * 60 * 60 * 1000);

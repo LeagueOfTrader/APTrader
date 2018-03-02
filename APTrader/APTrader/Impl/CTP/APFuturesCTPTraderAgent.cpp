@@ -3,6 +3,7 @@
 #include "../../APAccountInfo.h"
 #include "../../APTradeManager.h"
 #include "../../Utils/APTimeUtility.h"
+#include "../../Utils/APFileUtility.h"
 
 #ifdef USE_CTP
 
@@ -243,6 +244,8 @@ APFuturesCTPTraderAgent::~APFuturesCTPTraderAgent()
 
 void APFuturesCTPTraderAgent::initCTP()
 {
+	APFileUtility::validPath(tradeFlowPath);
+
 	m_traderApi = CThostFtdcTraderApi::CreateFtdcTraderApi(tradeFlowPath.c_str());
 	m_tradeResponser = new APFuturesCTPTraderResponser();
 	m_traderApi->RegisterSpi(m_tradeResponser);

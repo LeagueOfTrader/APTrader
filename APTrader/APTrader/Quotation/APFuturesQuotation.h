@@ -15,7 +15,7 @@ public:
 
 	virtual void queryQuotation();
 
-private:
+protected:
 #ifdef USE_CTP
 	void parseCTPData(const CThostFtdcDepthMarketDataField& data);
 #endif

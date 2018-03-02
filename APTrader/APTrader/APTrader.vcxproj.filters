@@ -279,6 +279,15 @@
     <ClInclude Include="APPositionObserver.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="BackTest\DataCollect\APFuturesQuotationCollector.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="BackTest\DataCollect\APFuturesDataCollector.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\APFileUtility.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APPositionCtrl.cpp">
@@ -489,6 +498,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="System\APTimerEventManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BackTest\DataCollect\APFuturesQuotationCollector.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BackTest\DataCollect\APFuturesDataCollector.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\APFileUtility.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,5 +1,6 @@
 #include "APFuturesCTPMDAgent.h"
 #include "../../Utils/APJsonReader.h"
+#include "../../Utils/APFileUtility.h"
 
 std::string mdflowpath = "Data/CTP/mdflow/";
 
@@ -14,6 +15,8 @@ APFuturesCTPMDAgent::~APFuturesCTPMDAgent()
 
 void APFuturesCTPMDAgent::initCTP() 
 {
+	APFileUtility::validPath(mdflowpath);
+
 	m_mdApi = CThostFtdcMdApi::CreateFtdcMdApi(mdflowpath.c_str(), true);
 	m_mdResponser = new APFuturesCTPMDResponser();	
 	m_mdApi->RegisterSpi(m_mdResponser);
