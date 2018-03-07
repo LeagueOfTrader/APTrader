@@ -746,7 +746,7 @@ void APPositionCtrl::addObserver(APPositionObserver * observer)
 	m_positionObservers.push_back(observer);
 }
 
-void APPositionCtrl::cancel(APTradeType type, double price, APTradeDirection direction)
+void APPositionCtrl::cancel(APTradeType type, double price, APTradeDirection direction, bool cascade)
 {
 }
 

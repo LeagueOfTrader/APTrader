@@ -51,7 +51,7 @@ void APFuturesPositionCtrl::closeAll(APTradeDirection direction, double price)
 //{
 //}
 
-void APFuturesPositionCtrl::cancel(APTradeType type, double price, APTradeDirection direction)
+void APFuturesPositionCtrl::cancel(APTradeType type, double price, APTradeDirection direction, bool cascade)
 {
 	if (m_trade != NULL) {
 		std::list<APORDERID>::iterator it;
@@ -61,8 +61,12 @@ void APFuturesPositionCtrl::cancel(APTradeType type, double price, APTradeDirect
 				if (m_trade->getOrderInfo(*it, info)) {
 					if (info.direction == direction) {
 						if (fabs(info.price - price) < DBL_EPSILON ||
-							(direction == TD_Sell && info.price > price) ||  //Short Open, cancel higher offered price
-							(direction == TD_Buy &&  info.price < price)) { // Long Open, cancel lower offered price
+							(
+								cascade &&
+								((direction == TD_Sell && info.price > price) ||  //Short Open, cancel higher offered price
+								(direction == TD_Buy &&  info.price < price))
+							)
+							) { // Long Open, cancel lower offered price
 							APORDERID orderID = *it;
 							std::list<APORDERID>::iterator itNext = ++it;
 							m_trade->cancel(orderID, this);
@@ -79,8 +83,11 @@ void APFuturesPositionCtrl::cancel(APTradeType type, double price, APTradeDirect
 				if (m_trade->getOrderInfo(*it, info)) {
 					if (info.direction == direction) {
 						if (fabs(info.price - price) < DBL_EPSILON ||
-							(direction == TD_Buy  && info.price > price) ||  // Long Close, cancel higher offered price
-							(direction == TD_Sell && info.price < price)) { // Short Close, cancel lower offered price
+							(
+								cascade &&
+								((direction == TD_Buy  && info.price < price) ||  // Long Close, cancel higher offered price
+								(direction == TD_Sell && info.price > price)))
+							) { // Short Close, cancel lower offered price
 							APORDERID orderID = *it;
 							std::list<APORDERID>::iterator itNext = ++it;
 							m_trade->cancel(orderID, this);

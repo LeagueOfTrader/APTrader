@@ -3,6 +3,7 @@
 #include "../QuotationDecision/APSingleQuotationDecision.h"
 #include "../APPositionCtrl.h"
 #include "../Utils/APLog.h"
+#include "../Futures/APFuturesIDSelector.h"
 
 APFloatingGridOrderedStrategy::APFloatingGridOrderedStrategy()
 {

@@ -14,7 +14,7 @@ public:
 	virtual void close(APTradeDirection direction, double price, long volume);
 	virtual void openAll(APTradeDirection direction, double price);
 	virtual void closeAll(APTradeDirection direction, double price);
-	virtual void cancel(APTradeType type, double price, APTradeDirection direction = TD_Buy);
+	virtual void cancel(APTradeType type, double price, APTradeDirection direction = TD_Buy, bool cascade = false);
 	virtual void cancel(APTradeType type);
 	//virtual void cancelAll();
 

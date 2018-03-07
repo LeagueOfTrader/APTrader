@@ -49,7 +49,7 @@ void APSharesPositionCtrl::closeAll(APTradeDirection direction, double price)
 	//
 }
 
-void APSharesPositionCtrl::cancel(APTradeType type, double price, APTradeDirection direction)
+void APSharesPositionCtrl::cancel(APTradeType type, double price, APTradeDirection direction, bool cascade)
 {
 	if (direction != TD_Buy) {
 		return;
@@ -64,7 +64,8 @@ void APSharesPositionCtrl::cancel(APTradeType type, double price, APTradeDirecti
 				//m_trade->cancel(*it, this);				
 				if (m_trade->getOrderInfo(*it, info)) {					
 					if (fabs(info.price - price) < DBL_EPSILON ||						
-						info.price < price) { 
+						(info.price < price && cascade)
+						) { 
 						m_trade->cancel(*it, this);
 					}					
 				}
@@ -74,7 +75,8 @@ void APSharesPositionCtrl::cancel(APTradeType type, double price, APTradeDirecti
 			for (it = m_closeOrderList.begin(); it != m_closeOrderList.end(); it++) {
 				if (m_trade->getOrderInfo(*it, info)) {
 					if (fabs(info.price - price) < DBL_EPSILON ||
-						info.price > price) {
+						(info.price > price && cascade)
+						) {
 						m_trade->cancel(*it, this);
 					}					
 				}

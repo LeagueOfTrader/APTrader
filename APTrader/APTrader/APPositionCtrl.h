@@ -112,7 +112,7 @@ protected:
 	virtual void openAll(APTradeDirection direction, double price) = 0;
 	virtual void closeAll(APTradeDirection direction, double price) = 0;
 	//virtual void cancel(APTradeType type, double price, long volume) = 0;
-	virtual void cancel(APTradeType type, double price, APTradeDirection direction = TD_Buy);
+	virtual void cancel(APTradeType type, double price, APTradeDirection direction = TD_Buy, bool cascade = false);
 	virtual void cancel(APTradeType type) = 0;
 	virtual void cancelAll();
 	void cancel(APORDERID orderID);
