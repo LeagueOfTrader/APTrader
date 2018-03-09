@@ -46,7 +46,7 @@ void APTransferPositionStrategy::initWithTransferInfo(std::string transferInfo)
 	}
 
 	m_instrumentID = jr.getStrValue("SrcID");
-	m_targetContractID = jr.getStrValue("TargetID");
+	m_targetInstrumentID = jr.getStrValue("TargetID");
 	m_criticalDays = jr.getIntValue("CriticalDays");
 	m_deadlineDays = jr.getIntValue("DeadlineDays");
 
@@ -64,7 +64,7 @@ void APTransferPositionStrategy::initWithTransferInfo(std::string transferInfo)
 	}
 
 	m_curQuotation = dynamic_cast<APFuturesQuotation*>(APMarketDataMgr->subscribeInstrument(m_instrumentID));
-	m_targetQuotation = dynamic_cast<APFuturesQuotation*>(APMarketDataMgr->subscribeInstrument(m_targetContractID));
+	m_targetQuotation = dynamic_cast<APFuturesQuotation*>(APMarketDataMgr->subscribeInstrument(m_targetInstrumentID));
 }
 
 void APTransferPositionStrategy::update()
@@ -98,7 +98,7 @@ void APTransferPositionStrategy::alert()
 
 bool APTransferPositionStrategy::isCloseToDeliver()
 {
-	std::string ym = APFuturesIDSelector::getTimeSymbol(m_targetContractID);
+	std::string ym = APFuturesIDSelector::getTimeSymbol(m_targetInstrumentID);
 	UINT months = APTimeUtility::getMonthsToFuturesDeliveryDate(ym);
 	if (months > BEYOND_TRANSFER_MONTHS) {
 		return false;
@@ -146,7 +146,7 @@ bool APTransferPositionStrategy::canArbitage()
 
 double APTransferPositionStrategy::getCurPriceMargin()
 {
-	std::string ym = APFuturesIDSelector::getTimeSymbol(m_targetContractID);
+	std::string ym = APFuturesIDSelector::getTimeSymbol(m_targetInstrumentID);
 	UINT days = APTimeUtility::getDaysToFuturesDeliveryDate(ym);
 
 	double pm = APInterpolator::interplate<double, double>(m_priceMarginMax, m_priceMargin, (double)m_deadlineDays, (double)m_criticalDays, (double)days, m_interpType);

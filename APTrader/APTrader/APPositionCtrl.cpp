@@ -440,13 +440,13 @@ void APPositionCtrl::cancelAllTrade()
 	cancelAll();
 }
 
-void APPositionCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction)
+void APPositionCtrl::onTradeCanceled(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction)
 {
 	onTradeRollback(instrumentID, type, volume, orderID, direction);
 
 	if (m_positionObservers.size() > 0) {
 		for (int i = 0; i < m_positionObservers.size(); i++) {
-			m_positionObservers[i]->onTradeCanceled(instrumentID, type, direction);
+			m_positionObservers[i]->onTradeCanceled(instrumentID, type, price, volume, direction);
 		}
 	}
 }
@@ -460,16 +460,16 @@ void APPositionCtrl::bindTrade(APTrade * trade)
 	m_trade = trade;
 }
 
-void APPositionCtrl::onTradeOrdered(APASSETID instrumentID, APTradeType type, APORDERID orderID, APTradeDirection direction)
+void APPositionCtrl::onTradeOrdered(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction)
 {
 	if (m_positionObservers.size() > 0) {
 		for (int i = 0; i < m_positionObservers.size(); i++) {
-			m_positionObservers[i]->onTradeOrdered(instrumentID, type, direction);
+			m_positionObservers[i]->onTradeOrdered(instrumentID, type, price, volume, direction);
 		}
 	}
 }
 
-void APPositionCtrl::onTradeFinished(APASSETID instrumentID, APTradeType type, APORDERID orderID, APTradeDirection direction)
+void APPositionCtrl::onTradeFinished(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction)
 {
 	if (type == TT_Open) {
 		m_openOrderList.remove(orderID);
@@ -480,18 +480,18 @@ void APPositionCtrl::onTradeFinished(APASSETID instrumentID, APTradeType type, A
 
 	if (m_positionObservers.size() > 0) {
 		for (int i = 0; i < m_positionObservers.size(); i++) {
-			m_positionObservers[i]->onTradeFinished(instrumentID, type, direction);
+			m_positionObservers[i]->onTradeFinished(instrumentID, type, price, volume, direction);
 		}
 	}
 }
 
-void APPositionCtrl::onTradeFailed(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction)
+void APPositionCtrl::onTradeFailed(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction)
 {
 	onTradeRollback(instrumentID, type, volume, orderID, direction);
 
 	if (m_positionObservers.size() > 0) {
 		for (int i = 0; i < m_positionObservers.size(); i++) {
-			m_positionObservers[i]->onTradeFailed(instrumentID, type, direction);
+			m_positionObservers[i]->onTradeFailed(instrumentID, type, price, volume, direction);
 		}
 	}
 }

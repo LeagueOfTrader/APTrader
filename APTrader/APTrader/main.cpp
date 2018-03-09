@@ -104,7 +104,8 @@ void runTest() {
 	////APFuturesCTPTraderAgent::getInstance()->reqQryAllInvestorPositionDetail();
 	////APFuturesCTPTraderAgent::getInstance()->reqQryTradingAccount();
 	////APFuturesCTPTraderAgent::getInstance()->reqQryAllOrders();
-	APTimerEventManager::getInstance()->registerEvent(testTimerCallback, 1, 100, true);
+
+	//APTimerEventManager::getInstance()->registerEvent(testTimerCallback, 1, 100, true);
 
 	while (!framework->finished()) {
 		framework->update();

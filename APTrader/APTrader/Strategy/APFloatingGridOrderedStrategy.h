@@ -26,24 +26,33 @@ private:
 	void closeIfNotOverlapped(int index);
 	bool closeIfAvailable(int index);
 
-	void setAdjacentIndex(APTradeDirection direction);
+	//void setAdjacentIndex(APTradeDirection direction);
 	bool isIndexValid(int index);
 	int getReferIndex(int index, APTradeType tradeType);
 
 	void enterGrid(int gridIndex);
 	void tryOrderAdjacentGrid();
 
+	void setAdjacentGridsTarget();
+	void setGridTarget(int index, long target);
+
 private:
 	bool m_valid;
+	
 	//bool m_ordered;
 	int m_prevIndex;
 	int m_nextIndex;
 
-	std::vector<bool> m_gridsOverlapped;
+	int m_orderCount;
+	//std::vector<bool> m_gridsOverlapped;
+
+	std::vector<int> m_gridsTarget;
+	std::vector<int> m_gridsOrdered;
+	std::vector<int> m_gridsApplied;
 
 	// Í¨¹ý APPositionObserver ¼Ì³Ð
-	virtual void onTradeOrdered(APASSETID instrumentID, APTradeType type, APTradeDirection direction) override;
-	virtual void onTradeCanceled(APASSETID instrumentID, APTradeType type, APTradeDirection direction) override;
-	virtual void onTradeFinished(APASSETID instrumentID, APTradeType type, APTradeDirection direction) override;
-	virtual void onTradeFailed(APASSETID instrumentID, APTradeType type, APTradeDirection direction) override;
+	virtual void onTradeOrdered(APASSETID instrumentID, APTradeType type, double price, long volume, APTradeDirection direction) override;
+	virtual void onTradeCanceled(APASSETID instrumentID, APTradeType type, double price, long volume, APTradeDirection direction) override;
+	virtual void onTradeFinished(APASSETID instrumentID, APTradeType type, double price, long volume, APTradeDirection direction) override;
+	virtual void onTradeFailed(APASSETID instrumentID, APTradeType type, double price, long volume, APTradeDirection direction) override;
 };

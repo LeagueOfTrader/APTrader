@@ -37,6 +37,7 @@ protected:
 	int m_openIndex;
 
 	bool m_located;
+	bool m_positionBuilt;
 	//int m_prevIndex;
 	//int m_nextIndex;
 	double m_lastValue;

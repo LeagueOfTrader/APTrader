@@ -87,10 +87,10 @@ public:
 
 	void bindTrade(APTrade* trade);
 
-	void onTradeCanceled(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
-	void onTradeOrdered(APASSETID instrumentID, APTradeType type, APORDERID orderID, APTradeDirection direction = TD_Buy);
-	void onTradeFinished(APASSETID instrumentID, APTradeType type, APORDERID orderID, APTradeDirection direction = TD_Buy);
-	void onTradeFailed(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
+	void onTradeCanceled(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
+	void onTradeOrdered(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
+	void onTradeFinished(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
+	void onTradeFailed(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
 	void onOrderOutdated(APORDERID orderID);
 
 	void syncPosition();

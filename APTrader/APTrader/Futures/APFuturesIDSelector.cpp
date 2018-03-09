@@ -37,6 +37,8 @@
 //}
 
 std::map<std::string, std::set<std::string>> APFuturesIDSelector::m_exchangeInstrumentsList;
+std::set<std::string> APFuturesIDSelector::m_nonferrousMetalList;
+std::set<std::string> APFuturesIDSelector::m_nobleMetalList;
 
 std::string APFuturesIDSelector::getTimeSymbol(APASSETID instrumentID)
 {

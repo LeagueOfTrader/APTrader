@@ -32,7 +32,7 @@ private:
 
 private:
 	//APASSETID m_srcContractID; //use m_instrumentID
-	APASSETID m_targetContractID;
+	APASSETID m_targetInstrumentID;
 	UINT m_criticalDays;
 	UINT m_deadlineDays;
 	double m_priceMargin;

@@ -235,7 +235,7 @@ void APTrade::onTraded(APASSETID instrumentID, APTradeType type, double price, l
 
 		if (orderInfo.state == OS_AllTraded || orderInfo.state == OS_PartTradedNotQueueing) {
 			if (posCtrl != NULL) {
-				posCtrl->onTradeFinished(instrumentID, type, orderID, direction);
+				posCtrl->onTradeFinished(instrumentID, type, orderInfo.price, orderInfo.volume, orderID, direction);
 			}
 			removeLocalOrder(orderID);
 		}
@@ -264,7 +264,7 @@ void APTrade::onOrderStatusChanged(APASSETID instrumentID, APTradeType type, APO
 		if (info.state <= OS_NotTouched && state >= OS_Touched) {
 			APPositionCtrl* posCtrl = getPositionCtrlByOrder(orderID);
 			if (posCtrl != NULL) {
-				posCtrl->onTradeOrdered(instrumentID, type, orderID, direction);
+				posCtrl->onTradeOrdered(instrumentID, type, info.price, info.volume, orderID, direction);
 			}
 		}
 
@@ -287,7 +287,7 @@ void APTrade::onCanceled(APORDERID orderID)
 		APTradeOrderInfo& info = m_localOrders[orderID];
 		APPositionCtrl* posCtrl = getPositionCtrlByOrder(orderID);
 		if (posCtrl != NULL) {
-			posCtrl->onTradeCanceled(info.instrumentID, info.type, info.volumeSurplus, orderID, info.direction);
+			posCtrl->onTradeCanceled(info.instrumentID, info.type, info.price, info.volumeSurplus, orderID, info.direction);
 		}
 
 		removeLocalOrder(orderID);
@@ -301,7 +301,7 @@ void APTrade::onFailed(APORDERID orderID)
 		APTradeOrderInfo& info = m_localOrders[orderID];
 		APPositionCtrl* posCtrl = getPositionCtrlByOrder(orderID);
 		if (posCtrl != NULL) {
-			posCtrl->onTradeFailed(info.instrumentID, info.type, info.volume,orderID, info.direction);
+			posCtrl->onTradeFailed(info.instrumentID, info.type, info.price, info.volume, orderID, info.direction);
 		}
 	}
 

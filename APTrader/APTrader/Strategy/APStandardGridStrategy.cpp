@@ -8,6 +8,8 @@
 APStandardGridStrategy::APStandardGridStrategy()
 {
 	m_located = false;
+	m_positionBuilt = false;
+
 	m_curIndex = -1;
 	//m_prevIndex = -1;
 	//m_nextIndex = -1;
@@ -80,18 +82,24 @@ void APStandardGridStrategy::goGrids(double valueRef)
 
 	int nextIndex = m_curIndex + 1;
 	int prevIndex = m_curIndex - 1;
+	bool moved = false;
+
 	if (valueRef > m_lastValue) {
 		if (nextIndex < 2 * m_gridsCount) {
 			if (valueRef > m_grids[nextIndex].valueRef) {
 				int index = getGridIndex(valueRef);
 				// move to new grid;
-				if (m_direction == TD_Buy) {
-					enterGridInCloseWay(index, section);
+				if (m_positionBuilt) {
+					if (m_direction == TD_Buy) {
+						enterGridInCloseWay(index, section);
+					}
+					else
+					{
+						enterGridInOpenWay(index, section);
+					}
 				}
-				else
-				{
-					enterGridInOpenWay(index, section);
-				}
+
+				moved = true;
 			}
 		}
 	}
@@ -100,13 +108,28 @@ void APStandardGridStrategy::goGrids(double valueRef)
 			if (valueRef < m_grids[prevIndex].valueRef) {
 				int index = getGridIndex(valueRef);
 
-				if (m_direction == TD_Buy) {
-					enterGridInOpenWay(index, section);
+				if (m_positionBuilt) {
+					if (m_direction == TD_Buy) {
+						enterGridInOpenWay(index, section);
+					}
+					else
+					{
+						enterGridInCloseWay(index, section);
+					}
 				}
-				else
-				{
-					enterGridInCloseWay(index, section);
-				}
+
+				moved = true;
+			}
+		}
+	}
+	if (!m_positionBuilt) {
+		if (moved) {			
+			m_positionCtrl->cancelAllTrade();
+			m_located = false;			
+		}
+		else {
+			if (m_positionCtrl->getHoldPosition() >= m_grids[m_curIndex].position) {
+				m_positionBuilt = true;
 			}
 		}
 	}
@@ -116,7 +139,8 @@ void APStandardGridStrategy::goGrids(double valueRef)
 
 void APStandardGridStrategy::locateGrids(double valueRef)
 {
-	// [n ~ n+1] : index = n, <= max(n)
+	// LONG [n ~ n+1] : index = n, <= max(n)
+	// SHORT [n ~ n+1] : index = n + 1, <= max(n)
 	m_curIndex = getGridIndex(valueRef);
 
 	if (m_positionCtrl == NULL) {
@@ -124,38 +148,27 @@ void APStandardGridStrategy::locateGrids(double valueRef)
 	}
 
 	APGridSectionType section = getSection(valueRef);
-	int targetIndex = m_curIndex;
+	//int targetIndex = m_curIndex;
 	
 	if (section == GST_Open) {	
-		if (m_direction == TD_Buy) {
-			targetIndex = m_curIndex + 1;
-		}
-		else {
-			targetIndex = m_curIndex;
-		}
-
 		long hold = m_positionCtrl->getForeseeableHoldPosition();
-		if (hold < m_grids[targetIndex].position) {
-			long volume = m_grids[targetIndex].position - hold;
+		if (hold < m_grids[m_curIndex].position) {
+			long volume = m_grids[m_curIndex].position - hold;
 			m_positionCtrl->openPosition(volume);
 		}
 	}
 	else if(section == GST_Close){
-		if (m_direction == TD_Buy) {
-			targetIndex = m_curIndex;
-		}
-		else {
-			targetIndex = m_curIndex + 1;
-		}
-
 		long available = m_positionCtrl->getAvailablePosition();
-		if (available > m_grids[targetIndex].position) {
-			long volume = available - m_grids[targetIndex].position;
+		if (available > m_grids[m_curIndex].position) {
+			long volume = available - m_grids[m_curIndex].position;
 			m_positionCtrl->closePosition(volume);
 		}
 	}
 
-	m_located = true;
+	if (m_grids[m_curIndex].position > 0) {
+		m_located = true;
+	}
+	
 	m_lastIndex = m_curIndex;
 	m_lastValue = valueRef;
 }
@@ -171,6 +184,11 @@ int APStandardGridStrategy::getGridIndex(double curValue)//, bool reversed)
 	}
 
 	index = std::max(i - 1, 0);
+
+	if (m_direction == TD_Buy) {
+		index++;
+		index = std::min(index, (int)(m_grids.size() - 1));
+	}
 
 	return index;
 }
