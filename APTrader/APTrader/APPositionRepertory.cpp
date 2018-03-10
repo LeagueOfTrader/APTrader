@@ -16,7 +16,7 @@ APPositionData & APPositionRepertory::getPositionData(APASSETID instrumentID, AP
 	if (direction == TD_Buy) {
 		return m_buyPositionData[instrumentID];
 	}
-	else if (direction == TD_Sell) {
+	else{ //if (direction == TD_Sell) {
 		return m_sellPositionData[instrumentID];
 	}
 }

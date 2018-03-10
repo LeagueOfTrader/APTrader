@@ -79,14 +79,15 @@ void APFuturesPositionCtrl::cancel(APTradeType type, double price, APTradeDirect
 			}
 		}
 		else if (type == TT_Close) {
+			APTradeDirection dir = getReversedDirection(direction);
 			for (it = m_closeOrderList.begin(); it != m_closeOrderList.end();) {
 				if (m_trade->getOrderInfo(*it, info)) {
-					if (info.direction == direction) {
+					if (info.direction == dir) {
 						if (fabs(info.price - price) < DBL_EPSILON ||
 							(
 								cascade &&
-								((direction == TD_Buy  && info.price < price) ||  // Long Close, cancel higher offered price
-								(direction == TD_Sell && info.price > price)))
+								((dir == TD_Buy  && info.price < price) ||  // Long Close, cancel higher offered price
+								(dir == TD_Sell && info.price > price)))
 							) { // Short Close, cancel lower offered price
 							APORDERID orderID = *it;
 							std::list<APORDERID>::iterator itNext = ++it;

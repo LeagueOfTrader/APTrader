@@ -22,19 +22,25 @@ protected:
 	virtual void goGrids(double valueRef);
 
 private:
-	void openIfNotOverlapped(int index);
-	void closeIfNotOverlapped(int index);
-	bool closeIfAvailable(int index);
+	//void openIfNotOverlapped(int index);
+	//void closeIfNotOverlapped(int index);
+	//bool closeIfAvailable(int index);
+	int getIndexByPrice(double price);
 
 	//void setAdjacentIndex(APTradeDirection direction);
 	bool isIndexValid(int index);
-	int getReferIndex(int index, APTradeType tradeType);
+	//int getReferIndex(int index, APTradeType tradeType);
 
 	void enterGrid(int gridIndex);
 	void tryOrderAdjacentGrid();
 
 	void setAdjacentGridsTarget();
 	void setGridTarget(int index, long target);
+
+	void followUp();
+
+	void cancelByIndex(int index, APTradeType type);
+	void orderByIndex(int index,  APTradeType type, int volume);
 
 private:
 	bool m_valid;

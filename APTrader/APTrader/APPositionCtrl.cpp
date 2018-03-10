@@ -421,9 +421,9 @@ void APPositionCtrl::closeOffPosition(double price)
 //	cancel(type, price, volume);
 //}
 
-void APPositionCtrl::cancelTrade(APTradeType type, double price, APTradeDirection direction)
+void APPositionCtrl::cancelTrade(APTradeType type, double price, APTradeDirection direction, bool cascade)
 {
-	cancel(type, price, direction);
+	cancel(type, price, direction, cascade);
 }
 
 void APPositionCtrl::cancelTrade(APTradeType type, APTradeDirection direction)
