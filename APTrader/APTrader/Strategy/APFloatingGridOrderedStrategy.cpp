@@ -60,11 +60,6 @@ void APFloatingGridOrderedStrategy::init(std::string strategyInfo)
 	}
 }
 
-//void APFloatingGridOrderedStrategy::setOrdered(bool ordered)
-//{
-//	m_ordered = ordered;
-//}
-
 void APFloatingGridOrderedStrategy::exit()
 {
 	if (!m_valid) {
@@ -101,10 +96,8 @@ void APFloatingGridOrderedStrategy::locateGrids(double valueRef)
 		}
 		
 		//APLogger->log("Open index: %d, price: %f, volume: %d. ", openIndex, m_grids[openIndex].valueRef, m_grids[openIndex].position);
-		//m_gridsOverlapped[openIndex] = true;
 
-		//setAdjacentIndex(m_direction);
-		tryOrderAdjacentGrid();
+		setAdjacentGridsTarget();
 	}
 
 	if (m_grids[m_curIndex].position > 0) {
@@ -160,52 +153,11 @@ bool APFloatingGridOrderedStrategy::isIndexValid(int index)
 	return true;
 }
 
-//int APFloatingGridOrderedStrategy::getReferIndex(int index, APTradeType tradeType)
-//{
-//	int targetIndex = index;
-//	if (tradeType == TT_Open) {
-//		if (m_direction == TD_Buy) {
-//			targetIndex = index + 1;
-//		}
-//	}
-//	else {
-//		if (m_direction == TD_Sell) {
-//			targetIndex = index + 1;
-//		}
-//	}
-//
-//	return targetIndex;
-//}
-
 void APFloatingGridOrderedStrategy::enterGrid(int gridIndex)
 {
 	if (!m_valid) {
 		return;
 	}
-
-	//if (gridIndex > m_curIndex) {
-	//	for (int i = m_curIndex; i <= gridIndex; i++) {
-	//		m_gridsOverlapped[i] = false;
-	//	}
-	//}
-	//else if (gridIndex < m_curIndex) {
-	//	for (int i = gridIndex; i <= m_curIndex; i++) {
-	//		m_gridsOverlapped[i] = false;
-	//	}
-	//}
-
-	//m_curIndex = gridIndex;
-
-	//if (m_direction == TD_Buy) {
-	//	setAdjacentIndex(TD_Buy);
-	//	openIfNotOverlapped(m_prevIndex);
-	//	closeIfNotOverlapped(m_nextIndex);
-	//}
-	//else {
-	//	setAdjacentIndex(TD_Sell);
-	//	openIfNotOverlapped(m_nextIndex);
-	//	closeIfNotOverlapped(m_prevIndex);
-	//}
 
 	setAdjacentGridsTarget();
 }
@@ -247,6 +199,8 @@ void APFloatingGridOrderedStrategy::setAdjacentGridsTarget()
 		}
 	}
 
+	setGridTarget(m_curIndex, 0);
+
 	for (int i = m_nextIndex + m_orderCount; i < m_grids.size(); i++) {
 		setGridTarget(i, 0);
 	}
@@ -276,21 +230,23 @@ void APFloatingGridOrderedStrategy::followUp()
 					type = TT_Close;
 				}
 				cancelByIndex(i, type);
-				commitedCount = 0;
-			}
-
-			if (m_gridsTarget[i] > 0) {
-				type = TT_Open;
-			}
-			else if (m_gridsTarget[i] < 0) {
-				type == TT_Close;
+				
 			}
 			else {
-				continue;
-			}
 
-			int vol = m_gridsTarget[i] - commitedCount;
-			orderByIndex(i, type, abs(vol));
+				if (m_gridsTarget[i] > 0) {
+					type = TT_Open;
+				}
+				else if (m_gridsTarget[i] < 0) {
+					type == TT_Close;
+				}
+				else {
+					continue;
+				}
+
+				int vol = m_gridsTarget[i] - commitedCount;
+				orderByIndex(i, type, abs(vol));
+			}
 		}
 	}
 }
@@ -306,7 +262,7 @@ void APFloatingGridOrderedStrategy::cancelByIndex(int index, APTradeType type)
 	}
 
 	m_gridsApplied[index] = 0;
-	m_gridsOrdered[index] = 0;
+	//m_gridsOrdered[index] = 0;
 }
 
 void APFloatingGridOrderedStrategy::orderByIndex(int index, APTradeType type, int volume)
@@ -330,6 +286,9 @@ void APFloatingGridOrderedStrategy::orderByIndex(int index, APTradeType type, in
 void APFloatingGridOrderedStrategy::onTradeOrdered(APASSETID instrumentID, APTradeType type, double price, long volume, APTradeDirection direction)
 {
 	int index = getIndexByPrice(price);
+	if (fabs(price - m_grids[index].valueRef) > 1.0) {
+		return;
+	}
 	if (type == TT_Open) {
 		m_gridsApplied[index] -= volume;
 		m_gridsOrdered[index] += volume;
@@ -342,13 +301,16 @@ void APFloatingGridOrderedStrategy::onTradeOrdered(APASSETID instrumentID, APTra
 
 void APFloatingGridOrderedStrategy::onTradeCanceled(APASSETID instrumentID, APTradeType type, double price, long volume, APTradeDirection direction)
 {
-	//int index = getIndexByPrice(price);
-	//if (type == TT_Open) {
-	//	m_gridsOrdered[index] -= volume;
-	//}
-	//else {
-	//	m_gridsOrdered[index] += volume;
-	//}
+	int index = getIndexByPrice(price);
+	if (fabs(price - m_grids[index].valueRef) > 1.0) {
+		return;
+	}
+	if (type == TT_Open) {
+		m_gridsOrdered[index] -= volume;
+	}
+	else {
+		m_gridsOrdered[index] += volume;
+	}
 }
 
 void APFloatingGridOrderedStrategy::onTradeFinished(APASSETID instrumentID, APTradeType type, double price, long volume, APTradeDirection direction)
@@ -358,6 +320,9 @@ void APFloatingGridOrderedStrategy::onTradeFinished(APASSETID instrumentID, APTr
 void APFloatingGridOrderedStrategy::onTradeFailed(APASSETID instrumentID, APTradeType type, double price, long volume, APTradeDirection direction)
 {
 	int index = getIndexByPrice(price);
+	if (fabs(price - m_grids[index].valueRef) > 1.0) {
+		return;
+	}
 	if (type == TT_Open) {
 		m_gridsApplied[index] -= volume;
 	}

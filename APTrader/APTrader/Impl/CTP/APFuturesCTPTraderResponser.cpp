@@ -568,7 +568,13 @@ void APFuturesCTPTraderResponser::OnRspQryTrade(CThostFtdcTradeField * pTrade, C
 
 void APFuturesCTPTraderResponser::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField * pInvestorPosition, CThostFtdcRspInfoField * pRspInfo, int nRequestID, bool bIsLast)
 {
-	if (isErrorRspInfo(pRspInfo) || pInvestorPosition == NULL) {
+	if (isErrorRspInfo(pRspInfo)) {
+		return;
+	}
+
+	if (pInvestorPosition == NULL) {
+		// empty positon
+		APFuturesCTPTraderAgent::getInstance()->onQryInstrumentPositionFinished();
 		return;
 	}
 

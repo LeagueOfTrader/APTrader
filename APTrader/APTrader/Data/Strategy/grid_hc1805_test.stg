@@ -19,13 +19,13 @@
 			"GridType": 3,
 			"Diff": 10,
             "Direction": "Sell",
-            "Ceil": 3980,
-            "Floor": 3960,
+            "Ceil": 3780,
+            "Floor": 3760,
             "DeltaPosition": 1,
             "BasePosition": 2,
             "GridsCount": 20,
-            "LongValue": 3980,
-            "ShortValue": 3960
+            "LongValue": 3780,
+            "ShortValue": 3760
         }
     }
 }
