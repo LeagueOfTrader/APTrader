@@ -7,12 +7,13 @@
 #include <vector>
 #include "Utils/APRedisSerializedObject.h"
 #include "3rdParty/jsoncpp/include/json/writer.h"
+#include "APTradeObserver.h"
 
 class APTrade;
 class APInstrumentQuotation;
 class APPositionObserver;
 
-class APPositionCtrl : public APRedisSerializedObject
+class APPositionCtrl : public APRedisSerializedObject, public APTradeObserver
 {
 public:
 	APPositionCtrl();
@@ -25,7 +26,6 @@ public:
 	void setInstrumentID(APASSETID instrumentID);
 	APTradeDirection getTradeDirection();
 	const APASSETID& getInstrumentID();
-	UINT getID();
 
 	void setTag(std::string tag);
 	int getPriority();
@@ -80,17 +80,18 @@ public:
 	virtual void cancelTrade(APTradeType type);
 	virtual void cancelAllTrade();
 
-	virtual void onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTradeDirection direction = TD_Buy) = 0;
+	//virtual void onTradeDealt(APASSETID instrumentID, APTradeType type,  double price, long deltaVolume, APORDERID orderID, APTradeDirection direction = TD_Buy) = 0;
 	virtual void onTradeRollback(APASSETID instrumentID, APTradeType type, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy) = 0;
-
+	virtual void onTradeCanceled(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
+	virtual void onTradeOrdered(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
+	virtual void onTradeFinished(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
+	virtual void onTradeFailed(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
+	
 	virtual void update();
 
 	void bindTrade(APTrade* trade);
 
-	void onTradeCanceled(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
-	void onTradeOrdered(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
-	void onTradeFinished(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
-	void onTradeFailed(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
+	
 	void onOrderOutdated(APORDERID orderID);
 
 	void syncPosition();

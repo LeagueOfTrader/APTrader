@@ -984,7 +984,7 @@ void APFuturesCTPTraderAgent::getOrderInfo(APORDERID orderID, APTradeOrderInfo& 
 			info.direction = TD_Sell;
 		}
 		info.orderID.assign(orderID);
-		info.positionCtrlID = 0;
+		info.observerID = 0;
 		info.price = of.LimitPrice;
 		info.state = parseOrderState(of.OrderStatus);
 		info.sysID.assign(of.OrderSysID);

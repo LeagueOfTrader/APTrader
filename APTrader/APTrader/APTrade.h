@@ -14,7 +14,8 @@
 //#define INVALID_ORDER_ID 0
 //#define MATCH_ANY_ORDER_ID 0xFEEEFEEE
 
-class APPositionCtrl;
+//class APPositionCtrl;
+class APTradeObserver;
 class APIntAccumulator;
 
 class APTrade : public InitializableObject //: public APRedisSerializedObject
@@ -25,25 +26,25 @@ public:
 
 public:
 	virtual APORDERID open(APASSETID instrumentID, APTradeDirection direction, double price, long volume, 
-							APPositionCtrl* pc, APOrderTimeCondition ot = OTC_GoodForDay);
+							APTradeObserver* ob, APOrderTimeCondition ot = OTC_GoodForDay);
 	virtual APORDERID close(APASSETID instrumentID, APTradeDirection direction, double price, long volume, 
-							APPositionCtrl* pc, APOrderTimeCondition ot = OTC_GoodForDay);
+							APTradeObserver* ob, APOrderTimeCondition ot = OTC_GoodForDay);
 
 	virtual APORDERID open(APASSETID instrumentID, APTradeDirection direction,
-							APOrderPriceType orderPriceType, double price, APPositionCtrl* pc,
+							APOrderPriceType orderPriceType, double price, APTradeObserver* ob,
 							APOrderTimeCondition orderTimeCondition = OTC_GoodForDay, std::string date = "",
 							APOrderVolumeCondition orderVolumeCondition = OVC_Any, long volume = 0, long minVolume = 0,
 							APOrderContingentCondition orderContingentCondition = OCC_Immediately, double stopPrice = 0.0);
 	virtual APORDERID close(APASSETID instrumentID, APTradeDirection direction,
-							APOrderPriceType orderPriceType, double price, APPositionCtrl* pc,
+							APOrderPriceType orderPriceType, double price, APTradeObserver* ob,
 							APOrderTimeCondition orderTimeCondition = OTC_GoodForDay, std::string date = "",
 							APOrderVolumeCondition orderVolumeCondition = OVC_Any, long volume = 0, long minVolume = 0,
 							APOrderContingentCondition orderContingentCondition = OCC_Immediately, double stopPrice = 0.0);
 
-	virtual void cancel(APASSETID instrumentID, APTradeType type, APTradeDirection direction, double price, APPositionCtrl* pc);
-	virtual void cancel(APASSETID instrumentID, APTradeType type, APPositionCtrl* pc);
-	virtual void cancelAll(APASSETID instrumentID, APPositionCtrl* pc);
-	virtual void cancel(APORDERID orderID, APPositionCtrl* pc);
+	virtual void cancel(APASSETID instrumentID, APTradeType type, APTradeDirection direction, double price, APTradeObserver* ob);
+	virtual void cancel(APASSETID instrumentID, APTradeType type, APTradeObserver* ob);
+	virtual void cancelAll(APASSETID instrumentID, APTradeObserver* ob);
+	virtual void cancel(APORDERID orderID, APTradeObserver* ob);
 	
 	virtual void onTraded(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
 	virtual void onOrderStatusChanged(APASSETID instrumentID, APTradeType type, APORDERID orderID, long volumeSurplus, long volumeTraded,
@@ -60,7 +61,7 @@ public:
 
 	// sync orders
 	void queryAllOrders();
-	void bindOrder(APORDERID localOrderID, APPositionCtrl* posCtrl);
+	void bindOrder(APORDERID localOrderID, APTradeObserver* ob);
 	void queryOrder(APORDERID localOrderID);
 	void onQueryOrder(APORDERID localOrderID);
 	void onQueryOrderFailed(APORDERID localOrderID);
@@ -102,7 +103,7 @@ protected:
 	int getFrontIDByOrderID(APORDERID orderID);
 	APSYSTEMID getExchangeIDByOrderID(APORDERID orderID);
 
-	APORDERID initializeLocalOrder(APASSETID instrumentID, APTradeType type, APTradeDirection direction, double price, long volume, APPositionCtrl* pc);
+	APORDERID initializeLocalOrder(APASSETID instrumentID, APTradeType type, APTradeDirection direction, double price, long volume, APTradeObserver* ob);
 
 	//// serialize
 	//virtual std::string serialize();
@@ -111,19 +112,18 @@ protected:
 	//APOrderRecordInfo convertOrderInfo(APTradeOrderInfo& info);
 
 private:
-	std::vector<APORDERID> getRelatedOrders(APPositionCtrl* pc);
-	APPositionCtrl* getPositionCtrlByOrder(APORDERID orderID);
+	std::vector<APORDERID> getRelatedOrders(APTradeObserver* ob);
+	APTradeObserver* getObserverByOrder(APORDERID orderID);
 
 	void saveOrderAccumID(UINT accumID);
 
 protected:
 	std::map<APORDERID, APTradeOrderInfo> m_localOrders;
 
-	//std::map<APORDERID, UINT> m_orderPosCtrlRelation;
-	//std::map <UINT, std::set<UINT>> m_posCtrlOrders;
 	APIntAccumulator* m_idAccumulator;
 	APORDERID m_baseID;
 	
+	std::map<UINT, APTradeObserver*> m_tradeObservers;
 //private:
 //	std::map<APORDERID, APOrderRecordInfo> m_orderRecordInfo;
 };

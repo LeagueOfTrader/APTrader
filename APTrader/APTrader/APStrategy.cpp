@@ -112,16 +112,6 @@ bool APStrategy::equals(APStrategy * strategy)
 	return m_id == strategy->getID();
 }
 
-UINT APStrategy::getID()
-{
-	return m_id;
-}
-
-void APStrategy::setID(UINT id)
-{
-	m_id = id;
-}
-
 void APStrategy::initQuotationDecision(std::string quotationInfo)
 {
 	APJsonReader jr;

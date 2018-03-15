@@ -32,7 +32,7 @@ private:
 	//int getReferIndex(int index, APTradeType tradeType);
 
 	void enterGrid(int gridIndex);
-	void tryOrderAdjacentGrid();
+	//void tryOrderAdjacentGrid();
 
 	void setAdjacentGridsTarget();
 	void setGridTarget(int index, long target);
@@ -41,6 +41,10 @@ private:
 
 	void cancelByIndex(int index, APTradeType type);
 	void orderByIndex(int index,  APTradeType type, int volume);
+
+#ifdef _DEBUG
+	void printGridsTarget();
+#endif
 
 private:
 	bool m_valid;

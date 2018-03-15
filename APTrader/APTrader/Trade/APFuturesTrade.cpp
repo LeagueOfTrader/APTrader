@@ -25,9 +25,9 @@ void APFuturesTrade::open(APORDERID orderID, APASSETID instrumentID, APTradeDire
 #endif
 }
 
-APORDERID APFuturesTrade::close(APASSETID instrumentID, APTradeDirection direction, double price, long volume, APPositionCtrl* pc, APOrderTimeCondition ot) {
+APORDERID APFuturesTrade::close(APASSETID instrumentID, APTradeDirection direction, double price, long volume, APTradeObserver* ob, APOrderTimeCondition ot) {
 	
-	APORDERID orderID = initializeLocalOrder(instrumentID, TT_Close, direction, price, volume, pc);
+	APORDERID orderID = initializeLocalOrder(instrumentID, TT_Close, direction, price, volume, ob);
 
 	if (orderID == INVALID_ORDER_ID) {
 		return orderID;

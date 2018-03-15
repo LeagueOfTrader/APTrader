@@ -288,6 +288,12 @@
     <ClInclude Include="Utils\APFileUtility.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="APTradeObserver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\IdentifiedObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APPositionCtrl.cpp">

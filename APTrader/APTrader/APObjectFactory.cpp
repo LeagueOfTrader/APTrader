@@ -42,7 +42,7 @@ APInstrumentQuotation * APObjectFactory::newInstrumentQuotation(APFinancialInstr
 
 APPositionCtrl * APObjectFactory::newPositionCtrl(APFinancialInstrumentType marketType, std::string pcType)
 {
-	APPositionCtrl* pc = NULL;
+	APPositionCtrl * pc = NULL;
 	switch (marketType) {
 	case FCT_Shares:
 		pc = new APSharesPositionCtrl();

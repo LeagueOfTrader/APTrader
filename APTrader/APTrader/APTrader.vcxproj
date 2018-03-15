@@ -154,6 +154,8 @@
   <ItemGroup>
     <ClInclude Include="APAccountInfo.h" />
     <ClInclude Include="APDef.h" />
+    <ClInclude Include="APTradeObserver.h" />
+    <ClInclude Include="Common\IdentifiedObject.h" />
     <ClInclude Include="Utils\APFileUtility.h" />
     <ClInclude Include="APFramework.h" />
     <ClInclude Include="APFundPool.h" />

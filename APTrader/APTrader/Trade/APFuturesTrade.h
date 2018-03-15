@@ -9,7 +9,7 @@ public:
 	~APFuturesTrade();
 
 	virtual APORDERID close(APASSETID instrumentID, APTradeDirection direction, double price, long volume,
-						APPositionCtrl* pc, APOrderTimeCondition ot = OTC_GoodForDay);
+						APTradeObserver* ob, APOrderTimeCondition ot = OTC_GoodForDay);
 
 	virtual void open(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, 
 						APOrderTimeCondition ot = OTC_GoodForDay);

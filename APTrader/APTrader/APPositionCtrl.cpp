@@ -74,11 +74,6 @@ APTradeDirection APPositionCtrl::getTradeDirection()
 	return m_directionType;
 }
 
-UINT APPositionCtrl::getID()
-{
-	return m_id;
-}
-
 void APPositionCtrl::setAvailableFund(double fund)
 {
 	m_availableFund = fund;

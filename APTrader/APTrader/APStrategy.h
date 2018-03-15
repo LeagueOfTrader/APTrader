@@ -2,6 +2,7 @@
 #include "APDef.h"
 #include <string>
 #include "Common/ParentChildrenHierarchy.h"
+#include "Common/IdentifiedObject.h"
 #include "APTypes.h"
 
 class APPositionCtrl;
@@ -13,7 +14,7 @@ enum APGridSectionType {
 	GST_Indeterminate = 0
 };
 
-class APStrategy //: public ParentChildrenHierarchy<APStrategy>
+class APStrategy : public IdentifiedObject //: public ParentChildrenHierarchy<APStrategy>
 {
 public:
 	APStrategy();
@@ -31,9 +32,6 @@ public:
 	APPositionCtrl* getPositionCtrl();
 
 	virtual bool equals(APStrategy* strategy);
-
-	UINT getID();
-	void setID(UINT id);
 
 	void setInstrumentID(APASSETID instrumentID);
 
