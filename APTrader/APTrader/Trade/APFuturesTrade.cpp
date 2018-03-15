@@ -118,12 +118,17 @@ void APFuturesTrade::cancel(APORDERID orderID)
 	if (!isOrderExists(orderID)) {
 		return;
 	}
-
-	APSYSTEMID orderRef = getOrderRefByOrderID(orderID);
-	int sessionID = getSessionIDByOrderID(orderID);
-	int frontID = getFrontIDByOrderID(orderID);
+	
 	APASSETID instrumentID = getInstrumentIDByOrderID(orderID);
-	APFuturesCTPTraderAgent::getInstance()->cancelOrder(instrumentID, frontID, sessionID, orderRef);	
+	
+	//APSYSTEMID orderRef = getOrderRefByOrderID(orderID);
+	//int sessionID = getSessionIDByOrderID(orderID);
+	//int frontID = getFrontIDByOrderID(orderID);	
+	//APFuturesCTPTraderAgent::getInstance()->cancelOrder(instrumentID, frontID, sessionID, orderRef);	
+
+	APSYSTEMID sysID = getSysIDByOrderID(orderID);
+	APSYSTEMID exchangeID = getExchangeIDByOrderID(orderID);
+	APFuturesCTPTraderAgent::getInstance()->cancelOrder(instrumentID, exchangeID, sysID);
 #endif
 }
 

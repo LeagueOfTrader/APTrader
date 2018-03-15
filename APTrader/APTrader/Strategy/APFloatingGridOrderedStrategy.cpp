@@ -258,7 +258,7 @@ void APFloatingGridOrderedStrategy::cancelByIndex(int index, APTradeType type)
 	}
 
 	m_gridsApplied[index] = 0;
-	//m_gridsOrdered[index] = 0;
+	m_gridsOrdered[index] = 0;
 }
 
 void APFloatingGridOrderedStrategy::orderByIndex(int index, APTradeType type, int volume)
@@ -309,19 +309,19 @@ void APFloatingGridOrderedStrategy::onTradeOrdered(APASSETID instrumentID, APTra
 
 void APFloatingGridOrderedStrategy::onTradeCanceled(APASSETID instrumentID, APTradeType type, double price, long volume, APTradeDirection direction)
 {
-	if (!m_positionBuilt) {
-		return;
-	}
-	int index = getIndexByPrice(price);
-	if (fabs(price - m_grids[index].valueRef) > 1.0) {
-		return;
-	}
-	if (type == TT_Open) {
-		m_gridsOrdered[index] -= volume;
-	}
-	else {
-		m_gridsOrdered[index] += volume;
-	}
+	//if (!m_positionBuilt) {
+	//	return;
+	//}
+	//int index = getIndexByPrice(price);
+	//if (fabs(price - m_grids[index].valueRef) > 1.0) {
+	//	return;
+	//}
+	//if (type == TT_Open) {
+	//	m_gridsOrdered[index] -= volume;
+	//}
+	//else {
+	//	m_gridsOrdered[index] += volume;
+	//}
 }
 
 void APFloatingGridOrderedStrategy::onTradeFinished(APASSETID instrumentID, APTradeType type, double price, long volume, APTradeDirection direction)
