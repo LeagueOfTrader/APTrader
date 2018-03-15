@@ -92,10 +92,10 @@ void APFloatingGridOrderedStrategy::locateGrids(double valueRef)
 	if (m_grids[m_curIndex].position > 0) {
 		long hold = m_positionCtrl->getHoldPosition();
 		if (hold < m_grids[m_curIndex].position) {
-			//open(m_grids[m_curIndex].valueRef, m_grids[m_curIndex].position - hold);
+			open(m_grids[m_curIndex].valueRef, m_grids[m_curIndex].position - hold);
 		}
 		
-		//APLogger->log("Open index: %d, price: %f, volume: %d. ", openIndex, m_grids[openIndex].valueRef, m_grids[openIndex].position);
+		APLogger->log("Open index: %d, price: %f, volume: %d. ", m_curIndex, m_grids[m_curIndex].valueRef, m_grids[m_curIndex].position - hold);
 
 		setAdjacentGridsTarget();
 	}
@@ -162,6 +162,10 @@ void APFloatingGridOrderedStrategy::enterGrid(int gridIndex)
 		return;
 	}
 
+	m_curIndex = gridIndex;
+	m_prevIndex = m_curIndex - 1;
+	m_nextIndex = m_curIndex + 1;
+
 	setAdjacentGridsTarget();
 }
 
@@ -227,16 +231,13 @@ void APFloatingGridOrderedStrategy::followUp()
 				cancelByIndex(i, type);
 				
 			}
-			else {
+			else if(m_gridsTarget[i] != 0){
 
 				if (m_gridsTarget[i] > 0) {
 					type = TT_Open;
 				}
-				else if (m_gridsTarget[i] < 0) {
-					type == TT_Close;
-				}
-				else {
-					continue;
+				else{
+					type = TT_Close;
 				}
 
 				int vol = m_gridsTarget[i] - commitedCount;

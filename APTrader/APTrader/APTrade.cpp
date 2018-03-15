@@ -520,7 +520,7 @@ APORDERID APTrade::initializeLocalOrder(APASSETID instrumentID, APTradeType type
 		return INVALID_ORDER_ID;
 	}
 
-	if (m_tradeObservers.find(ob->getID()) != m_tradeObservers.end()) {
+	if (m_tradeObservers.find(ob->getID()) == m_tradeObservers.end()) {
 		m_tradeObservers[ob->getID()] = ob;
 	}
 
