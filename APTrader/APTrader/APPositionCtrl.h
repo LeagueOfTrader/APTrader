@@ -103,7 +103,7 @@ public:
 
 	virtual void onNewTransactionDay();
 
-	static APTradeDirection getReversedDirection(APTradeDirection direction);
+	//static APTradeDirection getReversedDirection(APTradeDirection direction);
 
 	void addObserver(APPositionObserver* observer);
 
@@ -123,7 +123,8 @@ protected:
 
 	virtual void initWithData(std::string positionInfo);
 
-	bool getMarketPrice(APASSETID instrumentID, APTradeType tradeType, APTradeDirection direction, double& price);
+	virtual bool getMarketPrice(APASSETID instrumentID, APTradeType tradeType, APTradeDirection direction, double& price);
+	virtual bool getLimitPrice(APASSETID instrumentID, APTradeType tradeType, double& price);
 
 	// serialize
 	virtual std::string serialize();

@@ -42,7 +42,7 @@ void APFuturesCombinationPosCtrl::initWithData(std::string positionInfo)
 	}
 
 #ifndef SIM
-	m_coQuotation = APMarketDataMgr->subscribeInstrument(m_instrumentID);
+	m_coQuotation = APMarketDataMgr->subscribeInstrument(m_coInstrumentID);
 #else 
 	m_coQuotation = NULL;
 #endif
@@ -361,31 +361,85 @@ void APFuturesCombinationPosCtrl::deserialize(std::string str)
 void APFuturesCombinationPosCtrl::openPrPosition()
 {
 	long vol = m_curOpenOperation.prTarget;
-	double price = m_quotation->getCurPrice();
+	double price = m_quotation->getOpponentPrice(m_directionType);//m_quotation->getCurPrice();
 	open(m_instrumentID, m_directionType, price, vol);
 }
 
 void APFuturesCombinationPosCtrl::openCoPosition()
 {
 	long vol = m_curOpenOperation.coTarget;
-	double price = m_coQuotation->getCurPrice();
-	open(m_coInstrumentID, m_coDirectionType, price, vol);
+	//double price = m_coQuotation->getOpponentPrice(m_coDirectionType);//m_coQuotation->getCurPrice();
+	//open(m_coInstrumentID, m_coDirectionType, price, vol);
+	//open(m_coInstrumentID, m_coDirectionType, OPT_AnyPrice, limitPrice, OTC_GoodForDay, "", OVC_Any, vol);
+
+	//double preClosePrice = m_coQuotation->getPreClosePrice();
+	//double limitPrice = preClosePrice * 1.1;
+	openAnyPrice(m_coInstrumentID, m_coDirectionType, vol);
 }
 
 void APFuturesCombinationPosCtrl::closePrPosition()
 {
 	long vol = m_curCloseOperation.prTarget;
-	double price = m_quotation->getCurPrice();
 	APTradeDirection dir = getReversedDirection(m_directionType);
+	double price = m_quotation->getOpponentPrice(dir);//m_quotation->getCurPrice();
+	
 	close(m_instrumentID, dir, price, vol);
 }
 
 void APFuturesCombinationPosCtrl::closeCoPosition()
 {
 	long vol = m_curCloseOperation.coTarget;
-	double price = m_coQuotation->getCurPrice();
 	APTradeDirection dir = getReversedDirection(m_coDirectionType);
-	close(m_coInstrumentID, m_coDirectionType, price, vol);
+	//double price = m_coQuotation->getOpponentPrice(dir);//m_coQuotation->getCurPrice();
+	////close(m_coInstrumentID, dir, price, vol);
+
+	//close(m_coInstrumentID, dir, OPT_AnyPrice, price, OTC_GoodForDay, "", OVC_Any, vol);
+
+	//double preClosePrice = m_coQuotation->getPreClosePrice();
+	//double limitPrice = preClosePrice * 0.9;
+	closeAnyPrice(m_coInstrumentID, dir, vol);
+}
+
+bool APFuturesCombinationPosCtrl::getMarketPrice(APASSETID instrumentID, APTradeType tradeType, APTradeDirection direction, double & price)
+{
+	if (instrumentID == m_instrumentID) {
+		return APFuturesPositionCtrl::getMarketPrice(instrumentID, tradeType, direction, price);
+	}
+	else if (instrumentID == m_coInstrumentID) {
+		if (m_coQuotation != NULL) {
+			if (tradeType != TT_Open) {
+				direction = getReversedDirection(direction);
+			}
+			price = m_coQuotation->getOpponentPrice(direction);
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool APFuturesCombinationPosCtrl::getLimitPrice(APASSETID instrumentID, APTradeType tradeType, double & price)
+{
+	if (instrumentID == m_instrumentID) {
+		return APFuturesPositionCtrl::getLimitPrice(instrumentID, tradeType, price);
+	}
+	else if (instrumentID == m_coInstrumentID) {
+		if (m_coQuotation != NULL) {
+			price = 0.0;
+			double preClosePrice = m_coQuotation->getPreClosePrice();
+			if (tradeType == TT_Open) {
+				price = preClosePrice * 1.1;
+			}
+			else {
+				price = preClosePrice * 0.9;
+			}
+
+			return true;
+		}
+	}
+
+	return false;
 }
 
 Json::Value APFuturesCombinationPosCtrl::serializeOperationData(APCombinationOperationData & data)

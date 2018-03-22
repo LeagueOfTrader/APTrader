@@ -195,7 +195,7 @@ void APAccountInfo::onClosePosition(APASSETID instrumentID, APTradeDirection dir
 		return;
 	}
 
-	APTradeDirection direction = APPositionCtrl::getReversedDirection(dir);
+	APTradeDirection direction = getReversedDirection(dir);
 
 	m_positionInfo[instrumentID].substract(direction, volume);
 }

@@ -1,6 +1,7 @@
 #include "APFuturesPositionCtrl.h"
 #include "../APTradeManager.h"
 #include "../Utils/APLog.h"
+#include "../Futures/APFuturesIDSelector.h"
 
 APFuturesPositionCtrl::APFuturesPositionCtrl()
 {
@@ -227,6 +228,44 @@ void APFuturesPositionCtrl::setCloseTodayFirst(bool closeTDFirst)
 void APFuturesPositionCtrl::setTrade(APTrade * trader)
 {
 	m_trade = trader;
+}
+
+void APFuturesPositionCtrl::openAnyPrice(APASSETID instrumentID, APTradeDirection direction, long volume)
+{
+	if (m_trade != NULL) {
+		std::string exchangeID = APFuturesIDSelector::getDomesticExchangeID(instrumentID);
+
+		APOrderPriceType priceType = OPT_AnyPrice;
+		if (exchangeID == "SHFE") {
+			priceType = OPT_LimitPrice;
+		}
+
+		double limitPrice = 0.0;
+		bool ret = getLimitPrice(instrumentID, TT_Open, limitPrice);
+
+		if (ret) {
+			open(instrumentID, direction, priceType, limitPrice, OTC_GoodForDay, "", OVC_Any, volume);
+		}
+	}
+}
+
+void APFuturesPositionCtrl::closeAnyPrice(APASSETID instrumentID, APTradeDirection direction, long volume)
+{
+	if (m_trade != NULL) {
+		std::string exchangeID = APFuturesIDSelector::getDomesticExchangeID(instrumentID);
+
+		APOrderPriceType priceType = OPT_AnyPrice;
+		if (exchangeID == "SHFE") {
+			priceType = OPT_LimitPrice;
+		}
+
+		double limitPrice = 0.0;
+		bool ret = getLimitPrice(instrumentID, TT_Close, limitPrice);
+
+		if (ret) {
+			close(instrumentID, direction, priceType, limitPrice, OTC_GoodForDay, "", OVC_Any, volume);
+		}
+	}
 }
 
 void APFuturesPositionCtrl::open(APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot)

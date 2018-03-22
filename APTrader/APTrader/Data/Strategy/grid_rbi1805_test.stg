@@ -1,0 +1,36 @@
+{		
+    "StrategyType": "FloatingGrid",
+    "Priority": 20,
+    "StrategyInfo": {
+		"Tag":"rb1805:i1805",
+        "Position": {
+			"Type": "Combine",
+            "InstrumentID": "i1805",
+            "TotalPosition": 50,
+            "Direction": "Buy",
+			"CoInstrumentID": "rb1805",
+			"CoDirection": "Sell",
+			"PrUnit": 3,
+			"CoUnit": 4
+        },
+        "Quotation": {
+            "QuotationDecisionType": 3,
+            "SrcID": "i1805",
+            "TargetID": "rb1805",
+            "UpperLimit": 100.0,
+			"LowerLimit": 0.0
+        },
+        "Grids": {
+			"GridType": 3,
+			"Diff": 0.05,
+            "Direction": "Sell",
+            "Ceil": 7.61,
+            "Floor": 7.60,
+            "DeltaPosition": 1,
+            "BasePosition": 3,
+            "GridsCount": 10,
+            "LongValue": 7.61,
+            "ShortValue": 7.51
+        }
+    }
+}

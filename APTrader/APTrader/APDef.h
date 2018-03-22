@@ -137,3 +137,5 @@ enum APOrderContingentCondition {
 
 const std::string INVALID_ORDER_ID = "00";
 const double MARKET_ORDER_PRICE = -0.00999;
+
+APTradeDirection getReversedDirection(APTradeDirection direction);

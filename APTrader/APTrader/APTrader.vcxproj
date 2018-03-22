@@ -247,6 +247,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APAccountInfo.cpp" />
+    <ClCompile Include="APDef.cpp" />
     <ClCompile Include="Utils\APFileUtility.cpp" />
     <ClCompile Include="APFramework.cpp" />
     <ClCompile Include="APFundPool.cpp" />

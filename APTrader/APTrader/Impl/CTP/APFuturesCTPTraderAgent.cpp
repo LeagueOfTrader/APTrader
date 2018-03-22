@@ -375,6 +375,8 @@ void APFuturesCTPTraderAgent::applyOrder(APTradeType tradeType, APASSETID instru
 	//itoa(localOrderID, localID, 10);
 	strcpy(order.OrderRef, localOrderID.c_str());
 
+	strcpy(order.InstrumentID, instrumentID.c_str());
+
 	if (direction == TD_Buy) {
 		order.Direction = THOST_FTDC_D_Buy;
 	}

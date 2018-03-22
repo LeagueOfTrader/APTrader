@@ -76,6 +76,20 @@ long APInstrumentQuotation::getSellVolume(UINT index)
 	return m_sellList[index].volume;
 }
 
+double APInstrumentQuotation::getOpponentPrice(APTradeDirection dir)
+{
+	//if (type == TT_Close) {
+	//	dir = getReversedDirection(dir);
+	//}
+
+	if (dir == TD_Buy) {
+		return getSellPrice();
+	}
+	else {
+		return getBuyPrice();
+	}
+}
+
 bool APInstrumentQuotation::isValid()
 {
 	bool ret = false;

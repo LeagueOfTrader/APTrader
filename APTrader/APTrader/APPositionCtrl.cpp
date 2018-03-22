@@ -263,7 +263,7 @@ void APPositionCtrl::relateOrder(APORDERID orderID)
 void APPositionCtrl::openPosition(long volume)
 {
 	double price = 0.0;
-	if (getMarketPrice(m_instrumentID, TT_Open, m_directionType, price)) {
+	if (getLimitPrice(m_instrumentID, TT_Open, price)) {
 		openPosition(price, volume);
 	}
 }
@@ -271,7 +271,7 @@ void APPositionCtrl::openPosition(long volume)
 void APPositionCtrl::closePosition(long volume)
 {
 	double price = 0.0;
-	if (getMarketPrice(m_instrumentID, TT_Close, m_directionType, price)) {
+	if (getLimitPrice(m_instrumentID, TT_Close, price)) {
 		closePosition(price, volume);
 	}
 }
@@ -279,7 +279,7 @@ void APPositionCtrl::closePosition(long volume)
 void APPositionCtrl::openFullPosition()
 {
 	double price = 0.0;
-	if (getMarketPrice(m_instrumentID, TT_Close, m_directionType, price)) {
+	if (getLimitPrice(m_instrumentID, TT_Close, price)) {
 		openFullPosition(price);
 	}
 }
@@ -287,7 +287,7 @@ void APPositionCtrl::openFullPosition()
 void APPositionCtrl::closeOffPosition()
 {
 	double price = 0.0;
-	if (getMarketPrice(m_instrumentID, TT_Close, m_directionType, price)) {
+	if (getLimitPrice(m_instrumentID, TT_Close, price)) {
 		closeOffPosition(price);
 	}
 }
@@ -295,22 +295,27 @@ void APPositionCtrl::closeOffPosition()
 bool APPositionCtrl::getMarketPrice(APASSETID instrumentID, APTradeType tradeType, APTradeDirection direction, double& price)
 {
 	if (m_quotation != NULL) {
+		if (tradeType != TT_Open) {
+			direction = getReversedDirection(direction);
+		}
+		price = m_quotation->getOpponentPrice(direction);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool APPositionCtrl::getLimitPrice(APASSETID instrumentID, APTradeType tradeType, double & price)
+{
+	if (m_quotation != NULL) {
 		price = 0.0;
-		if (tradeType == TT_Open) {
-			if (direction == TD_Buy) {
-				price = m_quotation->getSellPrice();
-			}
-			else {
-				price = m_quotation->getBuyPrice();
-			}
+		double preClosePrice = m_quotation->getPreClosePrice();
+		if (tradeType == TT_Open) {			
+			price = preClosePrice * 1.1;
 		}
 		else {
-			if (direction == TD_Buy) {
-				price = m_quotation->getBuyPrice();
-			}
-			else {
-				price = m_quotation->getSellPrice();
-			}
+			price = preClosePrice * 0.9;
 		}
 
 		return true;
@@ -724,17 +729,17 @@ Json::Value APPositionCtrl::serializeToJsonValue()
 	return v;
 }
 
-APTradeDirection APPositionCtrl::getReversedDirection(APTradeDirection direction)
-{
-	APTradeDirection rdir;
-	if (direction == TD_Buy) {
-		rdir = TD_Sell;
-	}
-	else {
-		rdir = TD_Buy;
-	}
-	return rdir;
-}
+//APTradeDirection APPositionCtrl::getReversedDirection(APTradeDirection direction)
+//{
+//	APTradeDirection rdir;
+//	if (direction == TD_Buy) {
+//		rdir = TD_Sell;
+//	}
+//	else {
+//		rdir = TD_Buy;
+//	}
+//	return rdir;
+//}
 
 void APPositionCtrl::addObserver(APPositionObserver * observer)
 {

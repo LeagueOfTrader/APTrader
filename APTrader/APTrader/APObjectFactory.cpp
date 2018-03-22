@@ -52,7 +52,7 @@ APPositionCtrl * APObjectFactory::newPositionCtrl(APFinancialInstrumentType mark
 			pc = new APFuturesPositionCtrl();
 		}
 		else if (pcType == "Combine") {
-			pc = new APFuturesSyncCombPosCtrl(); //APFuturesCombinationPosCtrl();
+			pc = new APFuturesCombinationPosCtrl();//APFuturesSyncCombPosCtrl(); //
 		}
 		break;
 	case FCT_Options:

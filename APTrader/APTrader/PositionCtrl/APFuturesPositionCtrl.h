@@ -34,6 +34,8 @@ public:
 	void setTradeDirection(APTradeDirection direction);
 
 	// open/close directly
+	void openAnyPrice(APASSETID instrumentID, APTradeDirection direction, long volume);
+	void closeAnyPrice(APASSETID instrumentID, APTradeDirection direction, long volume);
 	void open(APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot = OTC_GoodForDay);
 	void close(APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot = OTC_GoodForDay);
 	// advanced open/close

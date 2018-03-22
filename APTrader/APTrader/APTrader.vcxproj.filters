@@ -515,5 +515,8 @@
     <ClCompile Include="Utils\APFileUtility.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="APDef.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

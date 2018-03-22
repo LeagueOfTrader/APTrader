@@ -74,10 +74,13 @@ protected:
 	virtual Json::Value serializeToJsonValue();
 	virtual void deserialize(std::string str);
 
-	void openPrPosition();
-	void openCoPosition();
-	void closePrPosition();
-	void closeCoPosition();
+	virtual void openPrPosition();
+	virtual void openCoPosition();
+	virtual void closePrPosition();
+	virtual void closeCoPosition();
+
+	virtual bool getMarketPrice(APASSETID instrumentID, APTradeType tradeType, APTradeDirection direction, double& price);
+	virtual bool getLimitPrice(APASSETID instrumentID, APTradeType tradeType, double& price);
 
 private:	
 	//void onFinishOpenOperation();

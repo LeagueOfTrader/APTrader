@@ -27,6 +27,8 @@ public:
 	virtual long getBuyVolume(UINT index = 0);
 	virtual long getSellVolume(UINT index = 0);
 
+	double getOpponentPrice(APTradeDirection dir);
+
 	bool isValid();
 
 protected:
