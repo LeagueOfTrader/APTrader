@@ -279,7 +279,7 @@ void APPositionCtrl::closePosition(long volume)
 void APPositionCtrl::openFullPosition()
 {
 	double price = 0.0;
-	if (getLimitPrice(m_instrumentID, TT_Close, price)) {
+	if (getLimitPrice(m_instrumentID, TT_Open, price)) {
 		openFullPosition(price);
 	}
 }
