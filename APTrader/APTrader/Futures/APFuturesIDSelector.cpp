@@ -68,11 +68,23 @@ void APFuturesIDSelector::init()
 	shfeInstrumentsSet.insert("ni");
 	shfeInstrumentsSet.insert("pb");
 	shfeInstrumentsSet.insert("sn");
-	shfeInstrumentsSet.insert("jd");
+	shfeInstrumentsSet.insert("fu");
+	shfeInstrumentsSet.insert("wr");
+
 	m_exchangeInstrumentsList["SHFE"] = shfeInstrumentsSet;
 
 	std::set<std::string> dceInstrumentsSet;
 	dceInstrumentsSet.insert("a");
+	dceInstrumentsSet.insert("jd");
+	dceInstrumentsSet.insert("b");
+	dceInstrumentsSet.insert("c");
+	dceInstrumentsSet.insert("bb");	
+	dceInstrumentsSet.insert("cs");
+	dceInstrumentsSet.insert("fb");
+	dceInstrumentsSet.insert("m");
+	dceInstrumentsSet.insert("p");
+	dceInstrumentsSet.insert("v");
+	dceInstrumentsSet.insert("y");
 	dceInstrumentsSet.insert("pp");
 	dceInstrumentsSet.insert("rm");
 	dceInstrumentsSet.insert("i");
@@ -94,6 +106,15 @@ void APFuturesIDSelector::init()
 	czceInstrumentsSet.insert("CF");
 	czceInstrumentsSet.insert("ZC");
 	czceInstrumentsSet.insert("OI");
+	czceInstrumentsSet.insert("CY");
+	czceInstrumentsSet.insert("JR");
+	czceInstrumentsSet.insert("LR");
+	czceInstrumentsSet.insert("PM");
+	czceInstrumentsSet.insert("RI");
+	czceInstrumentsSet.insert("RM");
+	czceInstrumentsSet.insert("RS");
+	czceInstrumentsSet.insert("SR");
+	czceInstrumentsSet.insert("WH");
 	m_exchangeInstrumentsList["CZCE"] = czceInstrumentsSet;
 
 	// category
@@ -111,9 +132,8 @@ void APFuturesIDSelector::init()
 	m_nobleMetalList.insert("au");
 
 	// min unit
-	m_minPriceUnit["au"] = 1;
-	m_minPriceUnit["ag"] = 1;
-	m_minPriceUnit["jd"] = 1;
+	m_minPriceUnit["au"] = 0.05;
+	m_minPriceUnit["ag"] = 1;	
 	m_minPriceUnit["rb"] = 1;
 	m_minPriceUnit["hc"] = 1;
 	m_minPriceUnit["bu"] = 2;
@@ -122,26 +142,50 @@ void APFuturesIDSelector::init()
 	m_minPriceUnit["al"] = 5;
 	m_minPriceUnit["zn"] = 5;
 	m_minPriceUnit["ni"] = 10;
-	m_minPriceUnit["pb"] = 1;
+	m_minPriceUnit["pb"] = 5;
 	m_minPriceUnit["sn"] = 1;
+	m_minPriceUnit["fu"] = 1;
+	m_minPriceUnit["wr"] = 1;
+
+	m_minPriceUnit["jd"] = 1;
 	m_minPriceUnit["a"] = 1;
 	m_minPriceUnit["pp"] = 1;
 	m_minPriceUnit["rm"] = 1;
 	m_minPriceUnit["i"] = 0.5;
 	m_minPriceUnit["j"] = 0.5;
 	m_minPriceUnit["jm"] = 0.5;
+	m_minPriceUnit["v"] = 5;
+	m_minPriceUnit["b"] = 1;
+	m_minPriceUnit["c"] = 1;
+	m_minPriceUnit["bb"] = 0.05;
+	m_minPriceUnit["cs"] = 1;
+	m_minPriceUnit["fb"] = 1;
+	m_minPriceUnit["m"] = 1;
+	m_minPriceUnit["p"] = 1;
+	m_minPriceUnit["y"] = 1;
+	m_minPriceUnit["l"] = 5;
+
 	m_minPriceUnit["FG"] = 1;
 	m_minPriceUnit["TA"] = 2;
 	m_minPriceUnit["M"] = 1;
 	m_minPriceUnit["MA"] = 1;
 	m_minPriceUnit["SR"] = 1;
 	m_minPriceUnit["CF"] = 1;
-	m_minPriceUnit["ZC"] = 1;
+	m_minPriceUnit["ZC"] = 0.2;
 	m_minPriceUnit["AP"] = 1;
-	m_minPriceUnit["CF"] = 1;
+	m_minPriceUnit["CF"] = 5;
 	m_minPriceUnit["OI"] = 1;
 	m_minPriceUnit["SF"] = 1;
 	m_minPriceUnit["SM"] = 1;
+	m_minPriceUnit["CY"] = 5;
+	m_minPriceUnit["JR"] = 1;
+	m_minPriceUnit["LR"] = 1;
+	m_minPriceUnit["PM"] = 1;
+	m_minPriceUnit["RI"] = 1;
+	m_minPriceUnit["RM"] = 1;
+	m_minPriceUnit["RS"] = 1;
+	m_minPriceUnit["SR"] = 1;
+	m_minPriceUnit["WH"] = 1;
 }
 
 std::string APFuturesIDSelector::getDomesticExchangeID(APASSETID instrumentID)
