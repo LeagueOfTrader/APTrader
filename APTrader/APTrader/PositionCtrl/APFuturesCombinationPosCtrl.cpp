@@ -4,6 +4,7 @@
 #include "../APMarketDataManager.h"
 #include "../APInstrumentQuotation.h"
 #include "../APPositionRepertory.h"
+#include "../Futures/APFuturesIDSelector.h"
 
 APFuturesCombinationPosCtrl::APFuturesCombinationPosCtrl()
 {
@@ -403,17 +404,10 @@ void APFuturesCombinationPosCtrl::closeCoPosition()
 bool APFuturesCombinationPosCtrl::getMarketPrice(APASSETID instrumentID, APTradeType tradeType, APTradeDirection direction, double & price)
 {
 	if (instrumentID == m_instrumentID) {
-		return APFuturesPositionCtrl::getMarketPrice(instrumentID, tradeType, direction, price);
+		return APFuturesPositionCtrl::getMarketPrice(instrumentID, m_quotation, tradeType, direction, price);
 	}
 	else if (instrumentID == m_coInstrumentID) {
-		if (m_coQuotation != NULL) {
-			if (tradeType != TT_Open) {
-				direction = getReversedDirection(direction);
-			}
-			price = m_coQuotation->getOpponentPrice(direction);
-
-			return true;
-		}
+		return APFuturesPositionCtrl::getMarketPrice(instrumentID, m_coQuotation, tradeType, direction, price);
 	}
 
 	return false;
@@ -422,21 +416,10 @@ bool APFuturesCombinationPosCtrl::getMarketPrice(APASSETID instrumentID, APTrade
 bool APFuturesCombinationPosCtrl::getLimitPrice(APASSETID instrumentID, APTradeType tradeType, double & price)
 {
 	if (instrumentID == m_instrumentID) {
-		return APFuturesPositionCtrl::getLimitPrice(instrumentID, tradeType, price);
+		return APFuturesPositionCtrl::getLimitPrice(instrumentID, m_quotation, tradeType, price);
 	}
 	else if (instrumentID == m_coInstrumentID) {
-		if (m_coQuotation != NULL) {
-			price = 0.0;
-			double preClosePrice = m_coQuotation->getPreClosePrice();
-			if (tradeType == TT_Open) {
-				price = preClosePrice * 1.1;
-			}
-			else {
-				price = preClosePrice * 0.9;
-			}
-
-			return true;
-		}
+		return APFuturesPositionCtrl::getLimitPrice(instrumentID, m_coQuotation, tradeType, price);
 	}
 
 	return false;

@@ -295,11 +295,21 @@ void APPositionCtrl::closeOffPosition()
 
 bool APPositionCtrl::getMarketPrice(APASSETID instrumentID, APTradeType tradeType, APTradeDirection direction, double& price)
 {
-	if (m_quotation != NULL) {
+	return getMarketPrice(instrumentID, m_quotation, tradeType, direction, price);
+}
+
+bool APPositionCtrl::getLimitPrice(APASSETID instrumentID, APTradeType tradeType, double & price)
+{
+	return getLimitPrice(instrumentID, m_quotation, tradeType, price);
+}
+
+bool APPositionCtrl::getMarketPrice(APASSETID instrumentID, APInstrumentQuotation * quotation, APTradeType tradeType, APTradeDirection direction, double & price)
+{
+	if (quotation != NULL) {
 		if (tradeType != TT_Open) {
 			direction = getReversedDirection(direction);
 		}
-		price = m_quotation->getOpponentPrice(direction);
+		price = quotation->getOpponentPrice(direction);
 
 		return true;
 	}
@@ -307,20 +317,20 @@ bool APPositionCtrl::getMarketPrice(APASSETID instrumentID, APTradeType tradeTyp
 	return false;
 }
 
-bool APPositionCtrl::getLimitPrice(APASSETID instrumentID, APTradeType tradeType, double & price)
+bool APPositionCtrl::getLimitPrice(APASSETID instrumentID, APInstrumentQuotation * quotation, APTradeType tradeType, double & price)
 {
-	if (m_quotation != NULL) {
+	if (quotation != NULL) {
 		price = 0.0;
-		double preClosePrice = m_quotation->getPreClosePrice();
+		double preClosePrice = quotation->getPreClosePrice();
 		double minUnit = APFuturesIDSelector::getMinPriceUnit(instrumentID);
 
-		if (tradeType == TT_Open) {			
-			price = preClosePrice * 1.1 ;
+		if (tradeType == TT_Open) {
+			price = preClosePrice * 1.1;
 		}
 		else {
 			price = preClosePrice * 0.9 + minUnit;
 		}
-		
+
 		int multiple = (int)(price / minUnit);
 		price = (double)multiple * minUnit;
 

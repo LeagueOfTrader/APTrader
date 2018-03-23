@@ -39,6 +39,7 @@
 std::map<std::string, std::set<std::string>> APFuturesIDSelector::m_exchangeInstrumentsList;
 std::set<std::string> APFuturesIDSelector::m_nonferrousMetalList;
 std::set<std::string> APFuturesIDSelector::m_nobleMetalList;
+std::map<std::string, int> APFuturesIDSelector::m_minPriceUnit;
 
 std::string APFuturesIDSelector::getTimeSymbol(APASSETID instrumentID)
 {
@@ -216,8 +217,9 @@ bool APFuturesIDSelector::isInstrumentInTradeTime(APASSETID instrumentID, std::s
 
 double APFuturesIDSelector::getMinPriceUnit(APASSETID instrumentID)
 {
-	if (m_minPriceUnit.find(instrumentID) != m_minPriceUnit.end()) {
-		return m_minPriceUnit[instrumentID];
+	std::string typeID = getTypeID(instrumentID);
+	if (m_minPriceUnit.find(typeID) != m_minPriceUnit.end()) {
+		return m_minPriceUnit[typeID];
 	}
 
 	return 0.0;
