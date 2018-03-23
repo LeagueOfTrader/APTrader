@@ -67,18 +67,26 @@ void APFuturesIDSelector::init()
 	shfeInstrumentsSet.insert("ni");
 	shfeInstrumentsSet.insert("pb");
 	shfeInstrumentsSet.insert("sn");
+	shfeInstrumentsSet.insert("jd");
 	m_exchangeInstrumentsList["SHFE"] = shfeInstrumentsSet;
 
 	std::set<std::string> dceInstrumentsSet;
+	dceInstrumentsSet.insert("a");
+	dceInstrumentsSet.insert("pp");
 	dceInstrumentsSet.insert("rm");
 	dceInstrumentsSet.insert("i");
 	dceInstrumentsSet.insert("j");
 	dceInstrumentsSet.insert("jm");
+	dceInstrumentsSet.insert("l");
 	m_exchangeInstrumentsList["DCE"] = dceInstrumentsSet;
 
 	std::set<std::string> czceInstrumentsSet;
 	czceInstrumentsSet.insert("FG");
-	czceInstrumentsSet.insert("PTA");
+	czceInstrumentsSet.insert("AP");
+	czceInstrumentsSet.insert("CF");
+	czceInstrumentsSet.insert("SF");
+	czceInstrumentsSet.insert("SM");
+	czceInstrumentsSet.insert("TA");
 	czceInstrumentsSet.insert("M");
 	czceInstrumentsSet.insert("MA");
 	czceInstrumentsSet.insert("SR");
@@ -100,6 +108,39 @@ void APFuturesIDSelector::init()
 
 	m_nobleMetalList.insert("ag");
 	m_nobleMetalList.insert("au");
+
+	// min unit
+	m_minPriceUnit["au"] = 1;
+	m_minPriceUnit["ag"] = 1;
+	m_minPriceUnit["jd"] = 1;
+	m_minPriceUnit["rb"] = 1;
+	m_minPriceUnit["hc"] = 1;
+	m_minPriceUnit["bu"] = 2;
+	m_minPriceUnit["ru"] = 5;
+	m_minPriceUnit["cu"] = 10;
+	m_minPriceUnit["al"] = 5;
+	m_minPriceUnit["zn"] = 5;
+	m_minPriceUnit["ni"] = 10;
+	m_minPriceUnit["pb"] = 1;
+	m_minPriceUnit["sn"] = 1;
+	m_minPriceUnit["a"] = 1;
+	m_minPriceUnit["pp"] = 1;
+	m_minPriceUnit["rm"] = 1;
+	m_minPriceUnit["i"] = 0.5;
+	m_minPriceUnit["j"] = 0.5;
+	m_minPriceUnit["jm"] = 0.5;
+	m_minPriceUnit["FG"] = 1;
+	m_minPriceUnit["TA"] = 2;
+	m_minPriceUnit["M"] = 1;
+	m_minPriceUnit["MA"] = 1;
+	m_minPriceUnit["SR"] = 1;
+	m_minPriceUnit["CF"] = 1;
+	m_minPriceUnit["ZC"] = 1;
+	m_minPriceUnit["AP"] = 1;
+	m_minPriceUnit["CF"] = 1;
+	m_minPriceUnit["OI"] = 1;
+	m_minPriceUnit["SF"] = 1;
+	m_minPriceUnit["SM"] = 1;
 }
 
 std::string APFuturesIDSelector::getDomesticExchangeID(APASSETID instrumentID)
@@ -171,4 +212,13 @@ bool APFuturesIDSelector::isInstrumentInTradeTime(APASSETID instrumentID, std::s
 	}
 
 	return true;
+}
+
+double APFuturesIDSelector::getMinPriceUnit(APASSETID instrumentID)
+{
+	if (m_minPriceUnit.find(instrumentID) != m_minPriceUnit.end()) {
+		return m_minPriceUnit[instrumentID];
+	}
+
+	return 0.0;
 }

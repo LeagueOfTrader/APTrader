@@ -21,9 +21,13 @@ public:
 
 	static bool isInstrumentInTradeTime(APASSETID instrumentID, std::string dateTime);
 
+	static double getMinPriceUnit(APASSETID instrumentID);
+
 protected:
 	static std::map<std::string, std::set<std::string>> m_exchangeInstrumentsList;
 	static std::set<std::string> m_nonferrousMetalList;
 	static std::set<std::string> m_nobleMetalList;
+
+	static std::map<std::string, int> m_minPriceUnit;
 };
 

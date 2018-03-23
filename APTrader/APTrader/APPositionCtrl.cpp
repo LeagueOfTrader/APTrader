@@ -13,6 +13,7 @@
 #include "Utils/APTimeUtility.h"
 
 #include "APPositionObserver.h"
+#include "Futures/APFuturesIDSelector.h"
 
 APPositionCtrl::APPositionCtrl()
 {
@@ -311,12 +312,17 @@ bool APPositionCtrl::getLimitPrice(APASSETID instrumentID, APTradeType tradeType
 	if (m_quotation != NULL) {
 		price = 0.0;
 		double preClosePrice = m_quotation->getPreClosePrice();
+		double minUnit = APFuturesIDSelector::getMinPriceUnit(instrumentID);
+
 		if (tradeType == TT_Open) {			
-			price = preClosePrice * 1.1;
+			price = preClosePrice * 1.1 ;
 		}
 		else {
-			price = preClosePrice * 0.9;
+			price = preClosePrice * 0.9 + minUnit;
 		}
+		
+		int multiple = (int)(price / minUnit);
+		price = (double)multiple * minUnit;
 
 		return true;
 	}
