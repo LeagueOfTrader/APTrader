@@ -124,10 +124,10 @@ protected:
 	virtual void initWithData(std::string positionInfo);
 
 	virtual bool getMarketPrice(APASSETID instrumentID, APTradeType tradeType, APTradeDirection direction, double& price);
-	virtual bool getLimitPrice(APASSETID instrumentID, APTradeType tradeType, double& price);
+	virtual bool getLimitPrice(APASSETID instrumentID, APTradeType tradeType, APTradeDirection direction, double& price);
 
 	virtual bool getMarketPrice(APASSETID instrumentID, APInstrumentQuotation* quotation, APTradeType tradeType, APTradeDirection direction, double& price);
-	virtual bool getLimitPrice(APASSETID instrumentID, APInstrumentQuotation* quotation, APTradeType tradeType, double& price);
+	virtual bool getLimitPrice(APASSETID instrumentID, APInstrumentQuotation* quotation, APTradeType tradeType, APTradeDirection direction, double& price);
 
 	// serialize
 	virtual std::string serialize();

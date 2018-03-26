@@ -31,6 +31,9 @@ public:
 
 	bool isValid();
 
+	double getUpperLimitPrice();
+	double getLowerLimitPrice();
+
 protected:
 	APASSETID m_instrumentID;
 
@@ -38,6 +41,9 @@ protected:
 	double m_preClosePrice;
 	APKLine m_kLineData;
 	double m_averagePrice;
+
+	double m_upperLimitPrice;
+	double m_lowerLimitPrice;
 
 	double m_hightestPriceHistory;
 	double m_lowestPriceHistory;

@@ -264,7 +264,7 @@ void APPositionCtrl::relateOrder(APORDERID orderID)
 void APPositionCtrl::openPosition(long volume)
 {
 	double price = 0.0;
-	if (getLimitPrice(m_instrumentID, TT_Open, price)) {
+	if (getLimitPrice(m_instrumentID, TT_Open, m_directionType, price)) {
 		openPosition(price, volume);
 	}
 }
@@ -272,7 +272,8 @@ void APPositionCtrl::openPosition(long volume)
 void APPositionCtrl::closePosition(long volume)
 {
 	double price = 0.0;
-	if (getLimitPrice(m_instrumentID, TT_Close, price)) {
+	APTradeDirection dir = getReversedDirection(m_directionType);
+	if (getLimitPrice(m_instrumentID, TT_Close, dir, price)) {
 		closePosition(price, volume);
 	}
 }
@@ -280,7 +281,7 @@ void APPositionCtrl::closePosition(long volume)
 void APPositionCtrl::openFullPosition()
 {
 	double price = 0.0;
-	if (getLimitPrice(m_instrumentID, TT_Open, price)) {
+	if (getLimitPrice(m_instrumentID, TT_Open, m_directionType, price)) {
 		openFullPosition(price);
 	}
 }
@@ -288,7 +289,8 @@ void APPositionCtrl::openFullPosition()
 void APPositionCtrl::closeOffPosition()
 {
 	double price = 0.0;
-	if (getLimitPrice(m_instrumentID, TT_Close, price)) {
+	APTradeDirection dir = getReversedDirection(m_directionType);
+	if (getLimitPrice(m_instrumentID, TT_Close, dir, price)) {
 		closeOffPosition(price);
 	}
 }
@@ -298,9 +300,9 @@ bool APPositionCtrl::getMarketPrice(APASSETID instrumentID, APTradeType tradeTyp
 	return getMarketPrice(instrumentID, m_quotation, tradeType, direction, price);
 }
 
-bool APPositionCtrl::getLimitPrice(APASSETID instrumentID, APTradeType tradeType, double & price)
+bool APPositionCtrl::getLimitPrice(APASSETID instrumentID, APTradeType tradeType, APTradeDirection direction, double & price)
 {
-	return getLimitPrice(instrumentID, m_quotation, tradeType, price);
+	return getLimitPrice(instrumentID, m_quotation, tradeType, direction, price);
 }
 
 bool APPositionCtrl::getMarketPrice(APASSETID instrumentID, APInstrumentQuotation * quotation, APTradeType tradeType, APTradeDirection direction, double & price)
@@ -317,22 +319,18 @@ bool APPositionCtrl::getMarketPrice(APASSETID instrumentID, APInstrumentQuotatio
 	return false;
 }
 
-bool APPositionCtrl::getLimitPrice(APASSETID instrumentID, APInstrumentQuotation * quotation, APTradeType tradeType, double & price)
+bool APPositionCtrl::getLimitPrice(APASSETID instrumentID, APInstrumentQuotation * quotation, APTradeType tradeType, APTradeDirection direction, double & price)
 {
 	if (quotation != NULL) {
 		price = 0.0;
-		double preClosePrice = quotation->getPreClosePrice();
-		double minUnit = APFuturesIDSelector::getMinPriceUnit(instrumentID);
 
-		if (tradeType == TT_Open) {
-			price = preClosePrice * 1.1;
+		if ((tradeType == TT_Open && direction == TD_Buy) 
+			|| (tradeType == TT_Close && direction == TD_Sell)) {
+			price = quotation->getUpperLimitPrice();
 		}
 		else {
-			price = preClosePrice * 0.9 + minUnit;
+			price = quotation->getLowerLimitPrice();
 		}
-
-		int multiple = (int)(price / minUnit);
-		price = (double)multiple * minUnit;
 
 		return true;
 	}

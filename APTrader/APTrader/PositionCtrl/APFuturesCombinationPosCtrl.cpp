@@ -413,13 +413,16 @@ bool APFuturesCombinationPosCtrl::getMarketPrice(APASSETID instrumentID, APTrade
 	return false;
 }
 
-bool APFuturesCombinationPosCtrl::getLimitPrice(APASSETID instrumentID, APTradeType tradeType, double & price)
+bool APFuturesCombinationPosCtrl::getLimitPrice(APASSETID instrumentID, APTradeType tradeType, APTradeDirection direction, double & price)
 {
+	//if(tradeType == TT_Close)
+	//{// 
+	//}
 	if (instrumentID == m_instrumentID) {
-		return APFuturesPositionCtrl::getLimitPrice(instrumentID, m_quotation, tradeType, price);
+		return APFuturesPositionCtrl::getLimitPrice(instrumentID, m_quotation, tradeType, direction, price);
 	}
 	else if (instrumentID == m_coInstrumentID) {
-		return APFuturesPositionCtrl::getLimitPrice(instrumentID, m_coQuotation, tradeType, price);
+		return APFuturesPositionCtrl::getLimitPrice(instrumentID, m_coQuotation, tradeType, direction, price);
 	}
 
 	return false;

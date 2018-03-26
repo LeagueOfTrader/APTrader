@@ -98,3 +98,13 @@ bool APInstrumentQuotation::isValid()
 	m_mutex.unlock();
 	return ret;
 }
+
+double APInstrumentQuotation::getUpperLimitPrice()
+{
+	return m_upperLimitPrice;
+}
+
+double APInstrumentQuotation::getLowerLimitPrice()
+{
+	return m_lowerLimitPrice;
+}

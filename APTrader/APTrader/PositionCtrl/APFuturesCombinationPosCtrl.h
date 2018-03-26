@@ -80,7 +80,7 @@ protected:
 	virtual void closeCoPosition();
 
 	virtual bool getMarketPrice(APASSETID instrumentID, APTradeType tradeType, APTradeDirection direction, double& price);
-	virtual bool getLimitPrice(APASSETID instrumentID, APTradeType tradeType, double& price);
+	virtual bool getLimitPrice(APASSETID instrumentID, APTradeType tradeType, APTradeDirection direction, double& price);
 
 private:	
 	//void onFinishOpenOperation();

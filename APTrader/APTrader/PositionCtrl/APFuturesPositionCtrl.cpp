@@ -241,7 +241,7 @@ void APFuturesPositionCtrl::openAnyPrice(APASSETID instrumentID, APTradeDirectio
 		}
 
 		double limitPrice = 0.0;
-		bool ret = getLimitPrice(instrumentID, TT_Open, limitPrice);
+		bool ret = getLimitPrice(instrumentID, TT_Open, direction, limitPrice);
 
 		if (ret) {
 			open(instrumentID, direction, priceType, limitPrice, OTC_GoodForDay, "", OVC_Any, volume);
@@ -260,7 +260,7 @@ void APFuturesPositionCtrl::closeAnyPrice(APASSETID instrumentID, APTradeDirecti
 		}
 
 		double limitPrice = 0.0;
-		bool ret = getLimitPrice(instrumentID, TT_Close, limitPrice);
+		bool ret = getLimitPrice(instrumentID, TT_Close, direction, limitPrice);
 
 		if (ret) {
 			close(instrumentID, direction, priceType, limitPrice, OTC_GoodForDay, "", OVC_Any, volume);

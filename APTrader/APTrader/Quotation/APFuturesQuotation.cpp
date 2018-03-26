@@ -46,6 +46,8 @@ void APFuturesQuotation::parseCTPData(const CThostFtdcDepthMarketDataField& data
 	m_kLineData.openingPrice = data.OpenPrice;
 	m_kLineData.closingPrice = data.ClosePrice;
 	m_averagePrice = data.AveragePrice;
+	m_upperLimitPrice = data.UpperLimitPrice;
+	m_lowerLimitPrice = data.LowerLimitPrice;
 
 	m_buyList[0].price = data.BidPrice1;
 	m_buyList[0].volume = data.BidVolume1;
