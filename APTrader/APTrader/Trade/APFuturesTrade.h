@@ -36,6 +36,8 @@ public:
 	virtual void onTraded(APASSETID instrumentID, APTradeType type, double price, long volume, APORDERID orderID, APTradeDirection direction = TD_Buy);
 	virtual void onCanceled(APORDERID orderID);
 
+	double calcValidPrice(APASSETID instrumentID, double targetPrice);
+
 protected:
 	static std::set<std::string> m_closeTodayFirstList;
 

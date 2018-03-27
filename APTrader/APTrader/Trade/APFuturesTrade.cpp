@@ -21,6 +21,7 @@ APFuturesTrade::~APFuturesTrade()
 void APFuturesTrade::open(APORDERID orderID, APASSETID instrumentID, APTradeDirection direction, double price, long volume, APOrderTimeCondition ot)
 {
 #ifdef USE_CTP
+	price = calcValidPrice(instrumentID, price);
 	APFuturesCTPTraderAgent::getInstance()->applyOrder(TT_Open, instrumentID, price, volume, orderID, direction);
 #endif
 }
@@ -79,6 +80,7 @@ long APFuturesTrade::close(APORDERID orderID, APASSETID instrumentID, APTradeDir
 
 #ifdef USE_CTP
 	if (amount > 0) {
+		price = calcValidPrice(instrumentID, price);
 		APFuturesCTPTraderAgent::getInstance()->applyOrder(type, instrumentID, price, amount, orderID, direction);
 	}
 
@@ -221,4 +223,18 @@ void APFuturesTrade::onCanceled(APORDERID orderID)
 	default:
 		break;
 	}
+}
+
+double APFuturesTrade::calcValidPrice(APASSETID instrumentID, double targetPrice)
+{
+	double minUnit = APFuturesIDSelector::getMinPriceUnit(instrumentID);
+
+	if (minUnit < DBL_EPSILON) {
+		return targetPrice;
+	}
+
+	double price = 0.0;
+	int multiple = (int)(targetPrice / minUnit);
+	price = (double)multiple * minUnit;
+	return price;
 }
