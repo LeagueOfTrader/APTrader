@@ -95,6 +95,7 @@ void APFuturesTrade::open(APASSETID instrumentID, APORDERID localOrderID, APTrad
 							APOrderContingentCondition orderContingentCondition, double stopPrice)
 {
 #ifdef USE_CTP
+	price = calcValidPrice(instrumentID, price);
 	APFuturesCTPTraderAgent::getInstance()->applyOrder(TT_Open, instrumentID, price, volume, localOrderID, direction, 
 														orderPriceType, orderTimeCondition, date, orderVolumeCondition, minVolume, 
 														orderContingentCondition, stopPrice);
@@ -108,6 +109,7 @@ void APFuturesTrade::close(APASSETID instrumentID, APORDERID localOrderID, APTra
 							APOrderContingentCondition orderContingentCondition, double stopPrice)
 {
 #ifdef USE_CTP
+	price = calcValidPrice(instrumentID, price);
 	APFuturesCTPTraderAgent::getInstance()->applyOrder(TT_Close, instrumentID, price, volume, localOrderID, direction,
 														orderPriceType, orderTimeCondition, date, orderVolumeCondition, minVolume,
 														orderContingentCondition, stopPrice);
