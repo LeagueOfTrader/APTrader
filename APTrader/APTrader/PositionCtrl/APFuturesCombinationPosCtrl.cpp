@@ -207,8 +207,8 @@ void APFuturesCombinationPosCtrl::onTradeDealt(APASSETID instrumentID, APTradeTy
 			m_prVolume -= deltaVolume;
 			m_curCloseOperation.prVolume += deltaVolume;
 			if (m_curCloseOperation.prVolume == m_curCloseOperation.prTarget) {
-				// open co trade
-				openCoPosition();
+				// close co trade
+				closeCoPosition();
 			}
 		}
 		else if (instrumentID == m_coInstrumentID) {
