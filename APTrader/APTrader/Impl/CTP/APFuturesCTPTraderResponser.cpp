@@ -497,7 +497,7 @@ void APFuturesCTPTraderResponser::OnRspQryTradingAccount(CThostFtdcTradingAccoun
 		return;
 	}
 
-	APFuturesCTPTraderAgent::getInstance()->onLogin();
+	//APFuturesCTPTraderAgent::getInstance()->onLogin();
 }
 
 
