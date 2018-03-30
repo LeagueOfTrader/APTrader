@@ -324,8 +324,9 @@ bool APPositionCtrl::getLimitPrice(APASSETID instrumentID, APInstrumentQuotation
 	if (quotation != NULL) {
 		price = 0.0;
 
-		if ((tradeType == TT_Open && direction == TD_Buy) 
-			|| (tradeType == TT_Close && direction == TD_Sell)) {
+		//if ((tradeType == TT_Open && direction == TD_Buy) 
+		//	|| (tradeType == TT_Close && direction == TD_Sell)) {
+		if(direction == TD_Buy)	{
 			price = quotation->getUpperLimitPrice();
 		}
 		else {
