@@ -108,6 +108,10 @@
     <Lib>
       <AdditionalLibraryDirectories>.\3rdParty\jsoncpp\lib\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <PostBuildEvent>
+      <Command>copy "$(SolutionDir)APTrader\3rdParty\ctp\thostmduserapi.dll" "$(TargetDir)"
+copy "$(SolutionDir)APTrader\3rdParty\ctp\thosttraderapi.dll" "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
